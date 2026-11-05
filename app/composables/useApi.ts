@@ -6,7 +6,7 @@ import { useAuthStore } from '~/stores/auth'
 let refreshPromise: Promise<string | null> | null = null
 
 const refreshAccessToken = (apiBase: string): Promise<string | null> => {
-  refreshPromise ??= $fetch<{ data: string }>(`${apiBase}/api/auth/refresh`, {
+  refreshPromise ??= $fetch<{ data: string }>(`${apiBase}/auth/refresh`, {
     method: 'POST',
     credentials: 'include',
   })

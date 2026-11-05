@@ -33,7 +33,7 @@ const authStore = useAuthStore()
     <!-- يسار الهيدر: تبديل الثيم + معلومات المشرف -->
     <div class="flex items-center gap-3">
       <div class="hidden sm:flex flex-col items-end">
-        <span class="text-xs font-bold text-primary">{{ authStore.user?.username || 'المشرف' }}</span>
+        <NuxtLink to="/dashboard/profile" class="text-xs font-bold text-primary">{{ authStore.user?.username || 'المشرف' }}</NuxtLink>
         <span class="text-[10px] text-text/60">{{ authStore.user?.email || '' }}</span>
       </div>
 

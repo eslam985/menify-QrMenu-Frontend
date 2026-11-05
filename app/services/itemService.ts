@@ -5,7 +5,7 @@ export const useItemService = () => {
   return {
     async getItems(params?: Record<string, any>) {
       return await apiFetch<{ success: boolean; data: any[] }>(
-        "/api/menu-items",
+        "/menu-items",
         {
           params,
         },
@@ -14,7 +14,7 @@ export const useItemService = () => {
 
     async getItemById(id: string) {
       return await apiFetch<{ success: boolean; data: any }>(
-        `/api/menu-items/${id}`,
+        `/menu-items/${id}`,
       );
     },
 
@@ -26,7 +26,7 @@ export const useItemService = () => {
       image_url?: string;
       is_available?: boolean;
     }) {
-      return await apiFetch("/api/menu-items", {
+      return await apiFetch("/menu-items", {
         method: "POST",
         body,
       });
@@ -44,41 +44,41 @@ export const useItemService = () => {
         display_order: number;
       }>,
     ) {
-      return await apiFetch(`/api/menu-items/${id}`, {
+      return await apiFetch(`/menu-items/${id}`, {
         method: "PATCH",
         body,
       });
     },
 
     async deleteItem(id: string) {
-      return await apiFetch(`/api/menu-items/${id}`, {
+      return await apiFetch(`/menu-items/${id}`, {
         method: "DELETE",
       });
     },
 
     async setAvailability(id: string, is_available: boolean) {
-      return await apiFetch(`/api/menu-items/${id}/availability`, {
+      return await apiFetch(`/menu-items/${id}/availability`, {
         method: "PATCH",
         body: { is_available },
       });
     },
 
     async uploadImage(id: string, formData: FormData) {
-      return await apiFetch(`/api/menu-items/${id}/image`, {
+      return await apiFetch(`/menu-items/${id}/image`, {
         method: "POST",
         body: formData,
       });
     },
 
     async deleteImage(id: string) {
-      return await apiFetch(`/api/menu-items/${id}/image`, {
+      return await apiFetch(`/menu-items/${id}/image`, {
         method: "DELETE",
       });
     },
 
     // في itemService.ts
     async reorderItems(payload: { category_id: string; ids: string[] }) {
-      return await apiFetch("/api/menu-items/reorder", {
+      return await apiFetch("/menu-items/reorder", {
         method: "PATCH",
         body: payload, // يرسل category_id و ids بالشكل الصحيح تماماً للباك اند
       });

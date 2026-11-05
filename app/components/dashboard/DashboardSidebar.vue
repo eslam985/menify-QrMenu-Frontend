@@ -1,10 +1,9 @@
 <!-- app/components/dashboard/DashboardSidebar.vue -->
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
-import { useDashboardLayout } from '~/composables/useDashboardLayout'
 
-const authStore = useAuthStore()
 const { isMobileOpen, closeMobile } = useDashboardLayout()
+const authStore = useAuthStore()
 const route = useRoute()
 
 // إغلاق القائمة تلقائياً عند التنقل بين الصفحات في الموبايل
@@ -20,12 +19,11 @@ const handleLogout = () => {
 
 <template>
   <div>
-    <!-- خلفية مظلمة للموبايل -->
     <div v-if="isMobileOpen" @click="closeMobile"
       class="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-xs transition-opacity"></div>
 
     <aside :class="[
-      'fixed md:static inset-y-0 right-0 z-50 w-64 min-h-screen bg-card border-l border-primary/10 flex flex-col justify-between p-fluid transition-transform duration-300 ease-in-out shrink-0',
+      'fixed md:static inset-y-0 right-0 z-50 w-64 h-full bg-card border-l border-primary/10 flex flex-col justify-between p-fluid transition-transform duration-300 ease-in-out shrink-0',
       isMobileOpen ? 'translate-x-0 shadow-2xl' : 'translate-x-full md:translate-x-0'
     ]">
       <div>
@@ -37,7 +35,8 @@ const handleLogout = () => {
               M
             </div>
             <div>
-              <h2 class="font-bold text-primary text-fluid-sm">{{ authStore.user?.restaurant_name + ' ' + 'Dashboard' }}</h2>
+              <h2 class="font-bold text-primary text-fluid-sm">{{ authStore.user?.restaurant_name + ' ' + 'Dashboard' }}
+              </h2>
               <p class="text-[10px] text-text/60">لوحة التحكم الإدارية</p>
             </div>
           </div>
@@ -65,7 +64,7 @@ const handleLogout = () => {
           <NuxtLink to="/dashboard/items"
             class="flex items-center gap-fluid px-fluid py-3 rounded-xl text-fluid-sm font-medium transition hover:bg-primary/10 text-text/80 hover:text-primary"
             active-class="bg-bg text-primary! hover:text-text!">
-            <Icon name="lucide:utensils" class="w-5 h-5" />
+            <Icon name="lucide:list-checks" class="w-5 h-5" />
             الأصناف
           </NuxtLink>
 
@@ -83,13 +82,18 @@ const handleLogout = () => {
             رمز الـ QR
           </NuxtLink>
 
-          <NuxtLink 
-            v-if="authStore.isAdmin" 
-            :to="`/dashboard/${ authStore.user?.restaurant_slug}`"
+          <NuxtLink v-if="authStore.isEditorAndAbove" :to="`/dashboard/${authStore.user?.restaurant_slug}`"
             class="flex items-center gap-fluid px-fluid py-3 rounded-xl text-fluid-sm font-medium transition hover:bg-primary/10 text-text/80 hover:text-primary"
             active-class="bg-bg text-primary! hover:text-text!">
-            <Icon name="lucide:home" class="w-5 h-5" />
-            {{ authStore.user?.restaurant_name + ' ' + 'Details'}}
+            <Icon name="lucide:info" class="w-5 h-5" />
+            {{ authStore.user?.restaurant_name + ' ' + 'Details' }}
+          </NuxtLink>
+
+          <NuxtLink to="/dashboard/profile"
+            class="flex items-center gap-fluid px-fluid py-3 rounded-xl text-fluid-sm font-medium transition hover:bg-primary/10 text-text/80 hover:text-primary"
+            active-class="bg-bg text-primary! hover:text-text!">
+            <Icon name="lucide:user" class="w-5 h-5" />
+            {{ authStore.user?.username ?? 'Profile' }} 
           </NuxtLink>
         </nav>
       </div>
@@ -113,5 +117,5 @@ const handleLogout = () => {
       </div>
     </aside>
   </div>
-  
+
 </template>

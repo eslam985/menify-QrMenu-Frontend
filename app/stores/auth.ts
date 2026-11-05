@@ -88,7 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
     
     isLoading.value = true 
     try {
-      const res = await $fetch<{ success: boolean; data: Profile }>(`${apiBase()}/api/user`, {
+      const res = await $fetch<{ success: boolean; data: Profile }>(`${apiBase()}/user`, {
         headers: { Authorization: `Bearer ${accessToken.value}` },
         credentials: 'include',
       })
@@ -114,10 +114,10 @@ export const useAuthStore = defineStore('auth', () => {
 
 
 
-  /** Called after a successful login (the profile comes from GET /api/user: it has the restaurant info) */
-    /** Called after a successful login (the profile comes from GET /api/user: it has the restaurant info) */
+  /** Called after a successful login (the profile comes from GET /user: it has the restaurant info) */
+    /** Called after a successful login (the profile comes from GET /user: it has the restaurant info) */
   async function login(email: string, password: string) {
-    const res = await $fetch<{ data: { accessToken: string } }>(`${apiBase()}/api/auth/login`, {
+    const res = await $fetch<{ data: { accessToken: string } }>(`${apiBase()}/auth/login`, {
       method: 'POST',
       body: { email, password },
       credentials: 'include',
@@ -154,7 +154,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function logout() {
     isLoading.value = true
     try {
-      await $fetch(`${apiBase()}/api/auth/logout`, { method: 'POST', credentials: 'include' })
+      await $fetch(`${apiBase()}/auth/logout`, { method: 'POST', credentials: 'include' })
 
     } catch (err){
       /* even if the request fails, clear locally */
@@ -186,7 +186,7 @@ export const useAuthStore = defineStore('auth', () => {
     initPromise ??= (async () => {
       isLoading.value = true
       try {
-        const r = await $fetch<{success: boolean, data: string }>(`${apiBase()}/api/auth/refresh`, {
+        const r = await $fetch<{success: boolean, data: string }>(`${apiBase()}/auth/refresh`, {
           method: 'POST',
           credentials: 'include',
           timeout: 5000, // تقليل المهلة إلى 5 ثوانٍ لسرعة الاستجابة

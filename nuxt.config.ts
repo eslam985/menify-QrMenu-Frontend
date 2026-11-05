@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     public: { 
       supportWhatsapp: process.env.NUXT_PUBLIC_SUPPORT_WHATSAPP ?? "", // e.g. 201001234567 (international format, digits only)
       supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL ?? "",     // -> NUXT_PUBLIC_SUPPORT_EMAIL
-      apiBase: "http://localhost:3000" // override with NUXT_PUBLIC_API_BASE in production
+      apiBase: "http://localhost:3000/api" // override with NUXT_PUBLIC_API_BASE in production
     }, 
   },
   routeRules: {
