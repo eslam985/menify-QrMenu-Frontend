@@ -35,7 +35,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="w-full 2xl:max-w-[90%] mx-auto">
     <div class="mb-8">
       <h1 class="text-2xl font-bold text-primary">أهلاً بك، {{ authStore.user?.username || 'مشرف المطعم' }}
         👋</h1>
@@ -45,7 +45,7 @@ onMounted(async () => {
     </div>
 
     <!-- Quick Cards -->
-    <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-fluid mb-fluid">
+    <div class=" grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-fluid mb-section-fluid">
 
       <div class="p-fluid bg-card rounded-2xl border border-primary/10 shadow-soft">
         <h3 class="text-fluid-sm font-bold text-text/60 mb-2">تاريخ الانضمام </h3>

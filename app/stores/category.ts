@@ -35,9 +35,11 @@ export const useCategoryStore = defineStore('category', () => {
     try {
       const res = await categoryService.getCategories()
 
-      if (!res) return false
+      if (!res || !res.success) return false
 
-      categories.value = res.data || []
+      categories.value = res.data || [] 
+
+      return res.success
     } catch (err: any) {
       // 🌟 إذا كان الخطأ هو توقف الاشتراك، اتركه يصعد ولا تكبته
       const status = err?.status || err?.statusCode || err?.response?.status

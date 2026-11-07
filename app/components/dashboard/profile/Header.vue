@@ -64,8 +64,9 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
 <template>
   <section dir="ltr">
     <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
-      class="space-y-6 max-w-6xl mx-auto w-full min-w-0 overflow-x-hidden mt-fluid">
-      <h2 dir="rtl" class="text-fluid-h2 mb-fluid text-primary">البيانات الأساسية</h2>
+      class="space-y-6 mb-section-fluid w-full min-w-0 overflow-x-hidden">
+      
+      <h2 dir="rtl" class="text-fluid-h2 mb-fluid text-text md:hover:text-primary">البيانات الأساسية</h2>
 
       <!-- container -->
       <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"

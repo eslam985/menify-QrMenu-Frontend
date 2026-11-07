@@ -11,7 +11,7 @@ defineSlots<{
 </script>
 
 <template>
-  <div class="bg-card border border-primary/30 rounded-2xl shadow-soft overflow-hidden">
+  <div class="w-full 2xl:max-w-[90%] mx-auto bg-card border border-primary/30 rounded-2xl shadow-soft overflow-hidden">
     <!-- loading -->
     <div v-if="isLoading" class="p-8 text-center text-text font-medium">
       loading...

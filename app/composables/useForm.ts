@@ -85,12 +85,18 @@ export const useForm = () => {
 
   // دالة لتفريغ بيانات وفورمات الـ Composable تماماً عند الخروج من الصفحة (Cleanup)
     // دالة لتفريغ بيانات وفورمات الـ Composable تماماً عند الخروج من الصفحة (Cleanup)
-    const resetForm = () => {
-    fields.value = [];
-    isLoading.value = false;
-    isSubmitting.value = false;
-    workingHours.value = { sat: null, sun: null, mon: null, tue: null, wed: null, thu: null, fri: null };
-  };
+const resetForm = () => {
+  // بدلاً من حذف المصفوفة، نمر على الحقول ونفرغ قيمها فقط مع الحفاظ على الهيكل
+  fields.value = fields.value.map((field) => ({
+    ...field,
+    value: field.type === 'select' ? (field.options?.[0]?.value ?? "") : "" // تصفير القيمة بناءً على نوع الحقل
+  }));
+  
+  isLoading.value = false;
+  isSubmitting.value = false;
+  workingHours.value = { sat: null, sun: null, mon: null, tue: null, wed: null, thu: null, fri: null };
+};
+
 
 
   return {

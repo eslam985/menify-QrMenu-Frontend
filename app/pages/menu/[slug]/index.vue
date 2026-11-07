@@ -22,7 +22,7 @@ const notFound = computed(() => (publicMenuStore.error as any)?.response?.status
 </script>
 
 <template>
-  <div class="w-full 2xl:max-w-[80%] mx-auto px-fluid pb-16">
+  <div class="w-full 2xl:max-w-[90%] mx-auto px-fluid pb-16">
     <!-- خطأ في التحميل -->
     <div v-if="publicMenuStore.error" class="text-center py-24" dir="rtl">
       <h1 class="text-2xl font-bold text-primary mb-2">

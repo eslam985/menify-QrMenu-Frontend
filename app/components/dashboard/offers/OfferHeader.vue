@@ -24,7 +24,7 @@ const handleRefresh = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-8">
+  <div class="w-full 2xl:max-w-[90%] mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-8">
     <div class="w-full lg:max-w-[40%]">
       <h1 class="text-2xl font-bold text-primary">إدارة العروض والخصومات</h1>
       <p class="text-xs text-text/60 mt-1">تحكم في العروض الخاصة، الفترات الزمنية، وحالة التفعيل للعملاء</p>
@@ -69,7 +69,7 @@ const handleRefresh = async () => {
       <!-- زر الإضافة -->
 <button
   @click="navigateTo('/dashboard/offers/new')"
-  class="px-4 py-2.5 rounded-xl bg-primary text-white font-bold text-xs hover:opacity-90 transition cursor-pointer shadow-soft flex items-center gap-2"
+  class="btn-primary"
 >
   <Icon name="lucide:plus" class="w-4 h-4" />
   <span>إضافة عرض جديد</span>

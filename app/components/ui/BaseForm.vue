@@ -19,6 +19,9 @@ const daysTranslation: Record<string, string> = {
 
 <template>
   <form @submit.prevent="onSubmitHandler" class="grid grid-cols-3 gap-fluid w-full">
+    <!-- حقول خداع ذكية لمنع المتصفح من ملء بيانات الموظف تلقائياً ببيانات الأدمن -->
+    <input type="text" name="email" style="display:none; width: 0; height: 0;" autocomplete="username" />
+    <input type="password" name="password" style="display:none; width: 0; height: 0;" autocomplete="new-password" />
 
     <!-- 1. الحقول الديناميكية المشتركة -->
     <div v-for="form in fields" :key="form.column" :class="form.colspan || 'col-span-3'" class="flex flex-col">
@@ -44,7 +47,9 @@ const daysTranslation: Record<string, string> = {
       <!-- الحقول القياسية (text, tel, password) -->
       <input v-else-if="form.type !== 'file'" :type="form.type" v-model="form.value" :placeholder="form.label"
         :required="form.required"
+        :autocomplete="form.type === 'password' ? 'new-password' : 'off'"
         class="w-full p-fluid rounded-xl bg-card border border-primary/10 text-text/80 text-fluid-p focus:outline-none focus:border-primary transition-colors" />
+
     </div>
 
     <!-- 2. شق مواعيد العمل المطور بأسلوب عصري ومتجاوب بالكامل -->
@@ -101,9 +106,17 @@ const daysTranslation: Record<string, string> = {
       </div>
     </div>
 
+    <!-- مكان مخصص لحقن أي حقول إضافية خارج المعمارية القياسية (مثل الصورة والـ Checkbox) -->
+    <div class="col-span-3">
+      <slot name="extra-fields" />
+    </div>
 
     <!-- 3. زر الإرسال الموحد المعتمد على حالة الـ Submitting لمنع التكرار عشوائياً -->
-    <div class="col-span-3 flex justify-end mt-fluid">
+    <div class="col-span-3 flex justify-end items-center gap-3 mt-fluid">
+
+      <!-- الـ Slot المخصص للسماح بإضافة أزرار مثل إلغاء بجانب الحفظ -->
+      <slot name="actions" />
+      
       <button type="submit" :disabled="isSubmitting"
         class="btn-primary font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
         <Icon v-if="isSubmitting" name="lucide:loader-2" class="w-5 h-5 animate-spin" />

@@ -81,7 +81,7 @@ const handleRegister = async () => {
 </script>
 
 <template>
-  <div dir="rtl" class="min-h-[85vh] flex items-center justify-center px-4 py-8">
+  <div dir="rtl" class="w-full 2xl:max-w-[90%] mx-auto min-h-[85vh] flex items-center justify-center px-4 py-8">
     <div class="max-w-lg w-full p-8 bg-card rounded-2xl border border-primary/10 shadow-soft text-right">
       <div class="mb-6">
         <h1 class="text-2xl font-bold text-primary">تسجيل مطعم جديد</h1>

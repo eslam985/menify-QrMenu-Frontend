@@ -4,11 +4,13 @@ import { useUserService } from "@/services/userService";
 
 export const useUserStore = defineStore("user", () => {
   const notiStore = useNotificationStore();
-  const userService = useUserService();
   const confirmStore = useConfirmStore()
+  const userService = useUserService();
+  
   const successMessage = ref("");
   const errorMessage = ref("");
   const isLoading = ref(false);
+  const sessions = ref([]);
   const userInfo = ref<{
     avatar_url?: string;
     avatar_history?: string[];
@@ -17,7 +19,6 @@ export const useUserStore = defineStore("user", () => {
     email?: string;
     created_at?: string
   }>({});
-  const sessions = ref([]);
 
   async function findUserById() {
     isLoading.value = true;

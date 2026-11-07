@@ -1,10 +1,8 @@
 <!-- app/components/dashboard/profile/ActiveSessionsList.vue -->
 <script setup lang="ts">
-import { onMounted, computed, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useUserStore } from '~/stores/user'
+
 import { useTable } from '~/composables/useTable'
-import UiBaseTable from '~/components/ui/BaseTable.vue'
 
 const userStore = useUserStore()
 const { sessions, isLoading } = storeToRefs(userStore)
@@ -74,14 +72,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="w-full max-w-6xl mb-section-fluid mx-auto rounded-card shadow-soft h-full">
+  <div class="mb-section-fluid rounded-card shadow-soft">
     <h3
-      class="text-fluid-p text-primary font-bold mb-fluid border-b border-primary/5 pb-2 flex items-center gap-2 select-none">
+      class="w-full 2xl:max-w-[90%] mx-auto text-fluid-h3 text-text md:hover:text-primary font-bold mb-fluid border-b border-primary/5 pb-2 flex items-center gap-2 select-none">
       <Icon name="lucide:shield-alert" class="w-5 h-5 text-primary" />
       <span>إدارة الجلسات النشطة والأجهزة المتصلة</span>
     </h3>
 
-    <div class="mt-fluid">
+    <div class="">
       <!-- استدعاء الجدول الموحد الخاص بمشروعك -->
       <UiBaseTable>
 

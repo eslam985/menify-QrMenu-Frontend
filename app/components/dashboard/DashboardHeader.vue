@@ -9,7 +9,7 @@ const authStore = useAuthStore()
 
 <template>
   <header
-    class="w-full border-b border-primary/15 p-fluid flex items-center justify-between bg-card shrink-0 sticky top-0 z-30 shadow-xs">
+    class="w-full mb-section-fluid border-b border-primary/15 p-fluid flex items-center justify-between bg-card shrink-0 sticky top-0 z-30 shadow-xs">
     <!-- يمين الهيدر: زر القائمة للموبايل + الشعار والعنوان -->
     <div class="flex items-center gap-4">
       <button @click="toggleMobile"

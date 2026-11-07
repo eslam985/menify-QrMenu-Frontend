@@ -95,6 +95,13 @@ const handleLogout = () => {
             <Icon name="lucide:user" class="w-5 h-5" />
             {{ authStore.user?.username ?? 'Profile' }} 
           </NuxtLink>
+
+          <NuxtLink to="/dashboard/staff"
+            class="flex items-center gap-fluid px-fluid py-3 rounded-xl text-fluid-sm font-medium transition hover:bg-primary/10 text-text/80 hover:text-primary"
+            active-class="bg-bg text-primary! hover:text-text!">
+            <Icon name="lucide:user" class="w-5 h-5" />
+            الموظفين
+          </NuxtLink>
         </nav>
       </div>
 

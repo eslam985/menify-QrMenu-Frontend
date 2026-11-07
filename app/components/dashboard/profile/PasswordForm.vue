@@ -41,8 +41,7 @@ const passwordFieldsConfig: FormField[] = [
 // 2. دالة الحفظ المركزية التي سيطلقها الـ BaseForm ديناميكياً عند الـ Submit
 const handlePasswordSubmit = async () => {
   const payload = formDataPayload.value
-  console.log(Object.keys(payload)?.length < 1)
-  console.log(payload)
+
   if (Object.keys(payload)?.length < 1) return
 
   // التحقق الفوري (Validation) من تطابق كلمة المرور الجديدة قبل إرسال الطلب للسيرفر

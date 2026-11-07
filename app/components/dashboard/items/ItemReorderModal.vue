@@ -141,12 +141,12 @@ const handleSaveReorder = async () => {
           type="button"
           @click="handleSaveReorder"
           :disabled="isSaving || localItems.length === 0"
-          class="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-xs cursor-pointer hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+          class="btn-primary"
         >
           <Icon v-if="isSaving" name="lucide:loader-2" class="w-4 h-4 animate-spin" />
           {{ isSaving ? 'جاري الحفظ...' : 'حفظ الترتيب الجديد' }}
         </button>
-        <button type="button" @click="closeModal" class="flex-1 py-3 rounded-xl bg-card border border-primary/10 text-text font-bold text-xs cursor-pointer">
+        <button type="button" @click="closeModal" class="btn-danger">
           إلغاء
         </button>
       </div>

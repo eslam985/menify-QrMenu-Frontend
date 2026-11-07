@@ -47,7 +47,7 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="min-h-[80vh] flex items-center justify-center px-4">
+  <div class="w-full 2xl:max-w-[90%] mx-auto min-h-[80vh] flex items-center justify-center px-4">
     <div class="max-w-md w-full p-8 bg-card rounded-2xl border border-primary/10 shadow-soft text-right">
       <div class="mb-6">
         <h1 class="text-2xl font-bold text-primary">تسجيل الدخول</h1>

@@ -34,4 +34,9 @@ export default defineNuxtConfig({
   nuxtZod: {
     zodVersion: "v4",
   },
+  router: {
+    options: {
+      scrollBehaviorType: 'smooth'
+    }
+  }
 });
