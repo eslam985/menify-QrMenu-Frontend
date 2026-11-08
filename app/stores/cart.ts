@@ -21,6 +21,7 @@ export const useCartStore = defineStore('cart', () => {
     maxAge: 60 * 60 * 24 
   })
 
+
   const addItem = (item: MenuItemType) => {
     // عمل نسخة من مصفوفة العناصر لتحديث الـ Cookie بشكل صحيح
     const currentItems = [...(items.value || [])]

@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { RolesList } from '~/stores/auth'
+
 definePageMeta({
   layout: 'dashboard',
-  middleware: ['auth']
+  middleware: ['auth'],
+  requiredRole: RolesList.Admin
 })
 
 
@@ -9,7 +12,7 @@ definePageMeta({
 
 <template>
   <div class="w-full">
-    <DashboardStaffHeader/>
-    <DashboardStaffTable/>
+    <DashboardStaffHeader />
+    <DashboardStaffTable />
   </div>
 </template>

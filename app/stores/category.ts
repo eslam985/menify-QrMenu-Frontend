@@ -1,18 +1,15 @@
 // app/stores/category.ts
 import { defineStore } from 'pinia'
+import type { CategoryResponse, DeleteCategoryResult } from '@/types/dataType/categoryType'
+import type { CreateCategoryType, UpdateCategoryType } from '@/schemas/categorySchema/categorySchema'
 
 
 import { useCategoryService } from '~/services/categoryService'
 import { useNotificationStore } from '~/stores/notification'
 import { useConfirmStore } from '~/stores/confirm'
 import { useAuthStore } from '~/stores/auth'
-export type CategorySection = "food" | "drinks" | "desserts" | "other";
 
-export interface UpdateCategoryInput {
-  name?: string | undefined;
-  section?: CategorySection | undefined; 
-  display_order?: number | undefined;
-}
+
 
 export const useCategoryStore = defineStore('category', () => {
   const notiStore = useNotificationStore()
@@ -57,7 +54,7 @@ export const useCategoryStore = defineStore('category', () => {
     }
   }
 
-  async function addCategory(body: { name: string; section?: string; display_order?: number }) {
+  async function addCategory(body: CreateCategoryType) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show('هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!', 'error')
       return false
@@ -83,7 +80,7 @@ export const useCategoryStore = defineStore('category', () => {
     }
   }
   
-  async function updateCategory(id: string, body: UpdateCategoryInput) {
+  async function updateCategory(id: string, body: UpdateCategoryType) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show('هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!', 'error')
       return false
@@ -130,8 +127,10 @@ export const useCategoryStore = defineStore('category', () => {
     isSaving.value = true
     try {
       await categoryService.deleteCategory(id)
+
       categories.value = categories.value.filter((c) => c.id !== id)
       notiStore.show('تم حذف التصنيف بنجاح!', 'success')
+      
       return true
     } catch (err: any) {
       notiStore.show(err?.data?.message || 'فشل حذف التصنيف', 'error')

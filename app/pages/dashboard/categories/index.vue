@@ -12,8 +12,10 @@ definePageMeta({
 
 const categoryStore = useCategoryStore()
 
-onMounted(() => {
-  categoryStore.fetchCategories()
+onMounted(async () => {
+  if (categoryStore.categoriesCount < 1) {
+    await categoryStore.fetchCategories()
+  }
 })
 </script>
 

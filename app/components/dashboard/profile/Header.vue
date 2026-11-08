@@ -1,10 +1,6 @@
 <script setup lang="ts">
 const userStore = useUserStore()
-
-onMounted(async () => {
-  await userStore.findUserById()
-  await userStore.getSessionsByUserId({})
-})
+const authStore = useAuthStore()
 
 const selectedFile = ref<File | null>(null)
 const avatarPreview = ref<string | null>(null)
@@ -52,11 +48,11 @@ const handleSelectHistory = async (url: string): Promise<null | undefined> => {
 }
 
 const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
-  userStore.userInfo?.roles === '5150'
+  authStore.user?.roles === '5150'
     ? 'Admin'
-    : userStore.userInfo?.roles === '1984'
+    : authStore.user?.roles === '1984'
       ? 'Editor'
-      : userStore.userInfo?.roles === '2001'
+      : authStore.user?.roles === '2001'
         ? 'User'
         : 'N/A'
 </script>
@@ -65,7 +61,7 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
   <section dir="ltr">
     <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
       class="space-y-6 mb-section-fluid w-full min-w-0 overflow-x-hidden">
-      
+
       <h2 dir="rtl" class="text-fluid-h2 mb-fluid text-text md:hover:text-primary">البيانات الأساسية</h2>
 
       <!-- container -->
@@ -81,7 +77,7 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
               <label class="block w-full h-full rounded-full overflow-hidden cursor-pointer">
                 <!-- الـ src هنا ذكي: يعرض المعاينة المؤقتة أولاً، وإذا لم توجد يعرض صورة المستخدم الفعلية أو صورة افتراضية -->
                 <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" :src="avatarPreview ||
-                  userStore.userInfo?.avatar_url ||
+                  authStore.user?.avatar_url ||
                   DEFAULT_AVATAR
                   " alt="profile" fetchpriority="high" loading="eager" decoding="async" />
 
@@ -116,8 +112,8 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
 
                   <!-- خيار 2: اختيار من الصور السابقة (قمنا بتغليفه داخل button أصيل) -->
                   <button v-if="
-                    userStore.userInfo?.avatar_history &&
-                    userStore.userInfo?.avatar_history?.length > 0
+                    authStore.user?.avatar_history &&
+                    authStore.user?.avatar_history?.length > 0
                   " type="button" @click="
                     isModalOpen = true;
                   isDropdownOpen = false;
@@ -129,8 +125,8 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
 
                   <!-- خيار 3: حذف الصورة الحالية والعودة للافتراضية (قمنا بتغليفه داخل button أصيل) -->
                   <button v-if="
-                    userStore.userInfo?.avatar_url &&
-                    userStore.userInfo?.avatar_url !==
+                    authStore.user?.avatar_url &&
+                    authStore.user?.avatar_url !==
                     'https://cloudinary.com'
                   " type="button" @click="handleDelete"
                     class="w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer hover:bg-danger/10 text-danger transition-colors duration-200">
@@ -151,12 +147,12 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
           <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
             class=" flex flex-col gap-fluid">
             <NuxtLink to="/dashboard/profile" class="text-fluid-h3 lg:hover:text-primary">{{
-              userStore.userInfo?.username }}</NuxtLink>
+              authStore.user?.username }}</NuxtLink>
 
             <div class="flex gap-2">
               <Icon name="lucide:mail" class="w-6 h-6 text-primary" />
               <a target="_blank" href="mailto:ee17172@gmail.com" class="text-text lg:hover:text-pimary">
-                {{ userStore.userInfo?.email }}
+                {{ authStore.user?.email }}
               </a>
             </div>
 
@@ -165,8 +161,8 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
               <span class="py-1 px-2 rounded-xl max-w-[280px] text-fluid-p text-text bg-bg">
                 Member since
                 {{
-                  userStore.userInfo?.created_at
-                    ? formatDate(userStore.userInfo?.created_at)
+                  authStore.user?.created_at
+                    ? formatDate(authStore.user?.created_at)
                     : '-'
                 }}
               </span>
@@ -176,13 +172,13 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
 
               <Icon name="lucide:link" class="text-primary" />
 
-              <a target="_blank" :href="userStore.userInfo?.avatar_url ?? DEFAULT_AVATAR"
+              <a target="_blank" :href="authStore.user?.avatar_url ?? DEFAULT_AVATAR"
                 class="max-w-100 text-fluid-xs text-center self-center truncate lg:hover:text-pimary cursor-pointer transition-colors">
                 Avatar URL
                 <span class="text-primary mx-1">
                   {{
-                    userStore.userInfo?.avatar_url
-                      ? userStore.userInfo?.avatar_url
+                    authStore.user?.avatar_url
+                      ? authStore.user?.avatar_url
                       : DEFAULT_AVATAR
                   }}
                 </span>
@@ -229,7 +225,7 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
 
         <!-- شبكة عرض الصور القديمة -->
         <div class="grid grid-cols-3 gap-fluid max-h-[300px] overflow-y-auto p-1">
-          <div v-for="(url, index) in userStore.userInfo?.avatar_history" :key="index"
+          <div v-for="(url, index) in authStore.user?.avatar_history" :key="index"
             class="relative aspect-square rounded-full overflow-hidden border border-primary/30 group cursor-pointer shadow-sm hover:border-primary/30 transition-all duration-300"
             @click="handleSelectHistory(url)">
             <img :src="url" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"

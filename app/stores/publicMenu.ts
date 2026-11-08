@@ -23,14 +23,19 @@ export const usePublicMenuStore = defineStore('publicMenu', () => {
     isLoading.value = true
     error.value = null
     try {
-      const res: any = await $fetch(`${config.public.apiBase}/api/public/menu/${encodeURIComponent(slug)}`)
+      const res: any = await $fetch(`${config.public.apiBase}/public/menu/${encodeURIComponent(slug)}`)
 
+      if (!res || !res.success ) return false
+      
       const info = res.data.restaurant
+
       info.currency = CURRENCY_LABELS[info.currency] ?? info.currency
       restaurant.value = info
       categories.value = res.data.categories ?? []
       offers.value = res.data.offers ?? []
       loadedSlug = slug
+
+      return res
     } catch (e: any) {
       const status = e?.status || e?.statusCode || e?.response?.status
       if (status === 404) {

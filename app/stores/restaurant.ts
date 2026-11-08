@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import { useRestaurantService } from "~/services/restaurantService";
-import { useNotificationStore } from "~/stores/notification";
+import type { RestaurantResponse } from '@/types/dataType/restaurantType'
+import type { UpdateRestaurantType } from '@/schemas/restaurantSchema/restaurantSchema'
 
 export const useRestaurantStore = defineStore("restaurant", () => {
   const restaurantService = useRestaurantService();
   const notiStore = useNotificationStore();
 
-  const restaurant = ref({});
+  const restaurant = ref<RestaurantResponse | null>(null);
   const isLoading = ref(false);
   const errorMessage = ref("");
   const successMessage = ref("");

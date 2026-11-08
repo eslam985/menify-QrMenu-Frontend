@@ -1,8 +1,11 @@
 <!-- app/components/dashboard/restaurant/RestaurantForm.vue -->
 <script setup lang="ts">
+import { RolesList } from '~/stores/auth'
+
 definePageMeta({
   layout: 'dashboard',
-  middleware: 'auth'
+  middleware: 'auth',
+  requiredRole: RolesList.Editor,
 })
 
 import { useForm, type FormField } from '~/composables/useForm'
@@ -43,12 +46,15 @@ const handleRestaurantSubmit = async () => {
 }
 
 onMounted(async () => {
-  // resetForm()
 
   restaurantStore.isLoading = true
+
   try {
     // جلب بيانات المطعم الحالية من السيرفر
-    await restaurantStore.fetchRestaurant()
+    if (!restaurantStore.restaurant || Object.keys(restaurantStore.restaurant).length < 1) {
+      await restaurantStore.fetchRestaurant()
+    }
+    
     const restaurantData = restaurantStore.restaurant as Record<string, any>
 
     if (restaurantData) {
@@ -77,7 +83,7 @@ onUnmounted(() => {
 
   <div v-else-if="restaurantStore.restaurant"
     class="max-w-6xl mx-auto w-full my-fluid p-section-fluid bg-card rounded-card shadow-soft border border-primary/5">
-    <!-- استدعاء الفورم الموحد في سطر واحد وبدون أي Props أو تعقيد -->
+
     <UiBaseForm />
   </div>
 </template>

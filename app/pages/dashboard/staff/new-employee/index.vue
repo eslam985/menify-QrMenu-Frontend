@@ -9,5 +9,5 @@ definePageMeta({
 </script>
 
 <template>
-  <DashboardStaffEmployeeInviteForm />
+  <DashboardStaffEmployeeModel />
 </template>

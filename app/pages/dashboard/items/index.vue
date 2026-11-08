@@ -14,11 +14,17 @@ definePageMeta({
 const itemStore = useItemStore()
 const categoryStore = useCategoryStore()
 
+const loadItemsData = async () => {
+  const categoryPromise =
+    categoryStore.categoriesCount < 1 ? categoryStore.fetchCategories() : Promise.resolve()
+
+  await Promise.all([categoryPromise, itemStore.fetchItems()])
+}
+
 onMounted(async () => {
-  await Promise.all([
-    categoryStore.fetchCategories(),
-    itemStore.fetchItems()
-  ])
+  if (itemStore.items?.length < 1) {
+    loadItemsData()
+  }
 })
 </script>
 

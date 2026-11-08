@@ -7,13 +7,14 @@ const staffStore = useStaffStore()
 const authStore = useAuthStore()
 
 const { searchQuery } = useCategorySearch()
-const { openModal } = useCategoryModal()
 const { setTableConfig } = useTable()
 const DEFAULT_AVATAR: string =
   'https://res.cloudinary.com/dbahqgo8j/image/upload/blogger/iaeclevshfanh5j6x9ew.webp'
-  
+
 onMounted(async () => {
-  await staffStore.getStaff()
+  if (staffStore.staff?.length < 1) {
+    await staffStore.getStaff()
+  }
 })
 
 const filteredEmployee = computed(() => {
@@ -80,18 +81,27 @@ const role = (role: string): 'Admin' | 'Editor' | 'User' | 'N/A' => {
       <span class="text-fluid-xs text-text/60 md:hover:text-primary">{{ formatDate(row.created_at) }}</span>
     </template>
 
-    <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end gap-2">
-        <button type="button" @click="openModal(row)"
+        <template #cell-actions="{ row }">
+      <!-- لو الصف يخص الأدمن الحالي، نمنع ظهور أزرار التعديل والحذف -->
+      <div v-if="row.id === authStore.user?.id || row.roles === '5150'" class="flex items-center justify-center">
+        <span class="px-3 py-1 rounded-full bg-bg text-success text-xs font-semibold border border-primary/10">
+          Admin
+        </span>
+      </div>
+
+      <!-- لباقي الموظفين، تظهر الأزرار بشكل طبيعي للأدمن -->
+      <div v-else-if="authStore.isAdmin" class="flex items-center justify-center gap-2">
+        <NuxtLink :to="`/dashboard/staff/edit-employee/${row.id}`"
           class="px-3 py-1.5 rounded-xl border bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary font-medium text-xs transition-all active:scale-95 cursor-pointer">
           تعديل
-        </button>
+        </NuxtLink>
 
-        <button v-if="authStore.isAdmin" type="button" @click="handleDelete(row.id)" :disabled="staffStore.isLoading"
+        <button type="button" @click="handleDelete(row.id)" :disabled="staffStore.isLoading"
           class="px-3 py-1.5 rounded-xl border bg-red-500/5 border-red-500/20 hover:bg-red-500/10 text-red-500 font-medium text-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
           حذف
         </button>
       </div>
     </template>
+
   </UiBaseTable>
 </template>

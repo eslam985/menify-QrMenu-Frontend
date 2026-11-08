@@ -1,5 +1,6 @@
 <!-- app/pages/dashboard/index.vue -->
 <script setup lang="ts">
+import { RolesList } from '~/stores/auth'
 
 definePageMeta({
   layout: 'dashboard',
@@ -7,16 +8,24 @@ definePageMeta({
 })
 
 const restaurantStore = useRestaurantStore()
-const categories = useCategoryStore()
+const categoryStore = useCategoryStore()
+const offerStore = useOfferStore()
+const staffStore = useStaffStore()
 const authStore = useAuthStore()
 
 const subscription_ends_at = computed(() => restaurantStore.subscription_ends_at)
+const offersIsNotActiveCount = computed(() => offerStore.offersIsNotActiveCount)
+const offersIsActiveCount = computed(() => offerStore.offersIsActiveCount)
 const restaurantStatus = computed(() => restaurantStore.restaurantStatus)
-const categoriesCount = computed(() => categories.categoriesCount)
-const items_count = computed(() => categories.items_count)
-// عدد الاقسام
+const categoriesCount = computed(() => categoryStore.categoriesCount)
+const items_count = computed(() => categoryStore.items_count)
+const editorsCount = computed(() => staffStore.editorsCount)
+const offersCount = computed(() => offerStore.offersCount)
+const adminsCount = computed(() => staffStore.adminsCount)
+const usersCount = computed(() => staffStore.usersCount)
+const staffCount = computed(() => staffStore.staffCount)
 const joinIn = computed(() => restaurantStore.joinIn)
-// تاريخ الانضمام
+const isAdmin = computed(() => authStore.isAdmin)
 
 
 const getRoleLabel = (role: number | null) => {
@@ -29,9 +38,35 @@ const getRoleLabel = (role: number | null) => {
 }
 
 onMounted(async () => {
-  await categories.fetchCategories()
-  await restaurantStore.fetchRestaurant()
+  const keysRestaurantCount = restaurantStore.restaurant ? Object.keys(restaurantStore.restaurant)?.length : null
+
+  if (keysRestaurantCount && keysRestaurantCount < 1 || !keysRestaurantCount) await restaurantStore.fetchRestaurant()
+  if (categoriesCount.value < 1) await categoryStore.fetchCategories()
+  if (offersCount.value < 1) await offerStore.fetchOffers()
+  if (staffCount.value < 1 && isAdmin.value) await staffStore.getStaff() // 👈 أضفنا .value هنا
 })
+
+// 🌟 حولناها لـ computed عشان الأرقام تتحدث لايف وفلترنا الكروت حسب الصلاحية
+const visibleCards = computed(() => {
+  const allCards = [
+    { value: formatDate(joinIn.value ?? 'N/A'), label: `تاريخ انضمام ${authStore.user?.restaurant_name || ''}`, class: 'text-text/80', show: true },
+    { value: getRoleLabel(authStore.userRole), label: 'صلاحية الحساب', class: 'text-text', show: true },
+    { value: restaurantStatus.value ?? 'N/A', label: 'حالة النظام والاشتراك', class: 'text-success', show: true },
+    { value: formatDate(subscription_ends_at.value ?? 'لم يتم التحديد بعد'), label: 'تاريخ انتهاء الاشتراك', class: 'text-success/80', show: true },
+    { value: categoriesCount.value, label: 'اجمالي التصنيفات', show: true },
+    { value: items_count.value, label: 'اجمالي الاصناف', show: true },
+    { value: offersCount.value, label: 'اجمالي العروض', show: true },
+    { value: offersIsActiveCount.value, label: 'اجمالي العروض النشطة', show: true },
+    { value: offersIsNotActiveCount.value, label: 'اجمالي العروض الغير نشطة', show: true },
+    { value: staffCount.value, label: 'اجمالي الاعضاء', show: isAdmin.value },
+    { value: adminsCount.value, label: 'اجمالي المشرفون', show: isAdmin.value },
+    { value: editorsCount.value, label: 'اجمالي المحررين', show: isAdmin.value },
+    { value: usersCount.value, label: 'اجمالي المستخدمين (ذو الادني صلاحية)', show: isAdmin.value },
+  ]
+
+  return allCards.filter((card) => card.show)
+})
+
 </script>
 
 <template>
@@ -41,52 +76,19 @@ onMounted(async () => {
         👋</h1>
       <p class="text-xs text-text/60 mt-1">نظرة عامة على لوحة تحكم
         {{ authStore.user?.restaurant_name || 'مشرف المطعم' }} وإدارته بكفاءة</p>
-
     </div>
 
     <!-- Quick Cards -->
-    <div class=" grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-fluid mb-section-fluid">
-
-      <div class="p-fluid bg-card rounded-2xl border border-primary/10 shadow-soft">
-        <h3 class="text-fluid-sm font-bold text-text/60 mb-2">تاريخ الانضمام </h3>
-        <p class="text-fluid-p font-black text-primary/50">
-          {{ formatDate(joinIn ?? 'N/A') }}
-        </p>
-      </div>
-
-      <div class="p-fluid bg-card rounded-2xl border border-primary/10 shadow-soft">
-        <h3 class="text-fluid-sm font-bold text-text/60 mb-2">صلاحية الحساب</h3>
-        <p class="text-fluid-p font-black text-primary">
-          {{ getRoleLabel(authStore.userRole) }}
-        </p>
-      </div>
-
-      <div class="p-fluid bg-card rounded-2xl border border-primary/10 shadow-soft">
-        <h3 class="text-fluid-sm font-bold text-text/60 mb-2">حالة النظام والاشتراك</h3>
-        <p class="text-fluid-p font-black text-green-600">{{ restaurantStatus }}</p>
-      </div>
-
-      <div class="p-fluid bg-card rounded-2xl border border-primary/10 shadow-soft">
-        <h3 class="text-fluid-sm font-bold text-text/60 mb-2">تاريخ انتهاء الاشتراك</h3>
-        <p class="text-fluid-p font-black text-green-600">
-          {{ formatDate(subscription_ends_at ?? 'لم يتم التحديد بعد') }}
-        </p>
-      </div>
-
-      <div class="p-fluid bg-card rounded-2xl border border-primary/10 shadow-soft">
-        <h3 class="text-fluid-sm font-bold text-text/60 mb-2"> اجمالي التصنيفات</h3>
-        <p class="text-fluid-p font-black text-primary">
-          {{ categoriesCount }}
-        </p>
-      </div>
-
-      <div class="p-fluid bg-card rounded-2xl border border-primary/10 shadow-soft">
-        <h3 class="text-fluid-sm font-bold text-text/60 mb-2"> اجمالي الاصناف</h3>
-        <p class="text-fluid-p font-black text-primary">
-          {{ items_count }}
+    <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-fluid mb-section-fluid">
+      <div v-for="(con, index) in visibleCards" :key="index"
+        class="p-fluid bg-card rounded-2xl border border-primary/10 shadow-soft">
+        <h3 class="text-fluid-sm font-bold text-text/60 mb-2">{{ con.label }}</h3>
+        <p class="text-fluid-p font-black text-primary" :class="con.class">
+          {{ con.value }}
         </p>
       </div>
     </div>
+
 
     <MenuQRCodeGenerator />
   </div>

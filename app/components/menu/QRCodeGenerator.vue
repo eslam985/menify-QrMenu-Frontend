@@ -63,7 +63,7 @@ watch(slug, () => {
 <template>
   <div v-if="slug"
     class="flex flex-col items-center justify-center p-fluid mb-section-fluid rounded-xl shadow-soft border border-primary/10 gap-fluid">
-    <h3 class="text-(length:--text-fluid-h3) font-bold text-text/80">QR كود المنيو الخاص بك</h3>
+    <h3 class="text-(length:--text-fluid-h3) font-bold text-text">QR كود المنيو الخاص بك</h3>
 
     <div class="p-4 bg-card rounded-2xl shadow-md">
       <img v-if="qrCodeUrl" :src="qrCodeUrl" alt="Restaurant QR Code" class="w-48 h-48 object-contain" />

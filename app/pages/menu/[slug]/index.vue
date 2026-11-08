@@ -14,7 +14,9 @@ const slug = computed(() => {
   return (Array.isArray(s) ? s[0] : s) ?? ''
 })
 
-onMounted(() => publicMenuStore.fetchMenu(slug.value))
+onMounted(async () => {
+  await publicMenuStore.fetchMenu(slug.value)
+})
 watch(slug, (s) => publicMenuStore.fetchMenu(s)) // fires only when navigating to ANOTHER restaurant
 onUnmounted(() => publicMenuStore.clearMenu())
 

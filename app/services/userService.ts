@@ -1,18 +1,27 @@
 // Menify/frontend/app/services/userService.ts
+import type { UserProfileResponse, UserResponse, SessionResponse, SetAndUpdateAvatarUrlResponse } from '@/types/userType/userType' 
+import type { UpdateUserByIdType, ChangePasswordType, GetSessionsQueryType,  } from '@/schemas/userSchema/userSchema'
+
+import type { SetAvatarFromHistoryType } from "@/schemas/userSchema/avatarSchema.js";
+
+import { DEFAULT_AVATAR } from '@/utils/constants'
+
 export const useUserService = () => {
   const { apiFetch } = useApi();
 
   return {
     async findUserById() {
-      const res = await apiFetch("/user", {
+
+      const res = await apiFetch<BaseApiResponse<UserProfileResponse | null>>("/user", {
         method: "get",
       });
 
       return res;
     },
 
-    async updateUserInfo(body: { username?: string; email?: string }) {
-      const res = await apiFetch("/user", {
+    async updateUserInfo(body: UpdateUserByIdType['body']) {
+
+      const res = await apiFetch<BaseApiResponse<UserResponse | null>>("/user", {
         method: "patch",
         body,
       });
@@ -20,8 +29,9 @@ export const useUserService = () => {
       return res;
     },
 
-    async changePassword( body: { currentPassword: string; newPassword: string; } ) {
-      const res = await apiFetch("/user/password", {
+    async changePassword( body: ChangePasswordType['body'] ) {
+
+      const res = await apiFetch<BaseApiResponse>("/user/password", {
         method: "patch",
         body,
       });
@@ -29,8 +39,9 @@ export const useUserService = () => {
       return res;
     },
 
-    async getSessionsByUserId(query: unknown) {
-      const res = await apiFetch("/user/sessions", {
+    async getSessionsByUserId(query: GetSessionsQueryType['query']) {
+
+      const res = await apiFetch<BaseApiResponse<SessionResponse[]>>("/user/sessions", {
         method: "get",
         query,
       });
@@ -39,7 +50,8 @@ export const useUserService = () => {
     },
 
     async removeSessionById(sessionId: string) {
-      const res = await apiFetch(`/user/sessions/${sessionId}`, {
+
+      const res = await apiFetch<BaseApiResponse>(`/user/sessions/${sessionId}`, {
         method: "delete",
         sessionId,
       });
@@ -48,7 +60,8 @@ export const useUserService = () => {
     },
 
     async uploadAvatar(body: FormData) {
-      const res = await apiFetch("/avatar", {
+
+      const res = await apiFetch<BaseApiResponse<SetAndUpdateAvatarUrlResponse | null>>("/avatar", {
         method: "post",
         body,
       });
@@ -57,7 +70,8 @@ export const useUserService = () => {
     },
 
     async deleteAvatar() {
-      const res = await apiFetch("/avatar", {
+
+      const res = await apiFetch<BaseApiResponse<{ avatar_url: typeof DEFAULT_AVATAR }>>("/avatar", {
         method: "delete",
       });
 
@@ -65,9 +79,10 @@ export const useUserService = () => {
     },
 
     async setAvatarFromHistory(chosenAvatarUrl: string) {
-      const res = await apiFetch("/avatar/previous", {
+
+      const res = await apiFetch<BaseApiResponse<SetAndUpdateAvatarUrlResponse>>("/avatar/previous", {
         method: "patch",
-        body: { chosenAvatarUrl },
+        body: chosenAvatarUrl,
       });
 
       return res;

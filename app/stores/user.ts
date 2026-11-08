@@ -1,24 +1,24 @@
 // Menify/frontend/app/stores/user.ts
 import { defineStore } from "pinia";
 import { useUserService } from "@/services/userService";
+import type { UserProfileResponse, UserResponse, SessionResponse, SetAndUpdateAvatarUrlResponse } from '@/types/userType/userType' 
+import type { UpdateUserByIdType, ChangePasswordType, GetSessionsQueryType,  } from '@/schemas/userSchema/userSchema'
 
+import type { SetAvatarFromHistoryType } from "@/schemas/userSchema/avatarSchema.js";
+
+import { DEFAULT_AVATAR } from '@/utils/constants'
 export const useUserStore = defineStore("user", () => {
   const notiStore = useNotificationStore();
-  const confirmStore = useConfirmStore()
+  const confirmStore = useConfirmStore();
   const userService = useUserService();
-  
+  const authStore = useAuthStore()
+
   const successMessage = ref("");
   const errorMessage = ref("");
   const isLoading = ref(false);
-  const sessions = ref([]);
-  const userInfo = ref<{
-    avatar_url?: string;
-    avatar_history?: string[];
-    roles?: unknown;
-    username?: string;
-    email?: string;
-    created_at?: string
-  }>({});
+
+  const sessions = ref<Record<string, any>[]>([]);
+
 
   async function findUserById() {
     isLoading.value = true;
@@ -29,7 +29,9 @@ export const useUserStore = defineStore("user", () => {
 
       if (!res || !res.success) return false;
 
-      userInfo.value = res.data;
+      if (authStore.user && res.data) {
+        authStore.user = { ...authStore.user, ...res.data };
+      }
 
       return res.data;
     } catch (err) {
@@ -43,6 +45,7 @@ export const useUserStore = defineStore("user", () => {
       isLoading.value = false;
     }
   }
+
   async function updateUserInfo(body: { username?: string; email?: string }) {
     isLoading.value = true;
     successMessage.value = "";
@@ -56,7 +59,9 @@ export const useUserStore = defineStore("user", () => {
 
       notiStore.show(successMessage.value, "success");
 
-      userInfo.value = res.data;
+      if (authStore.user && res.data) {
+        authStore.user = { ...authStore.user, ...res.data };
+      }
 
       return res.data;
     } catch (err) {
@@ -99,7 +104,7 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
-  async function getSessionsByUserId(query: unknown) {
+  async function getSessionsByUserId(query: GetSessionsQueryType['query']) {
     isLoading.value = true;
     successMessage.value = "";
     errorMessage.value = "";
@@ -107,10 +112,6 @@ export const useUserStore = defineStore("user", () => {
       const res = await userService.getSessionsByUserId(query);
 
       if (!res || !res.success) return false;
-
-      successMessage.value = res.message;
-
-      notiStore.show(successMessage.value, "success");
 
       sessions.value = res.data;
 
@@ -128,15 +129,16 @@ export const useUserStore = defineStore("user", () => {
   }
 
   async function removeSessionById(sessionId: string) {
-
     isLoading.value = true;
     successMessage.value = "";
     errorMessage.value = "";
-    
+
     try {
-      const isConfirmed = await  confirmStore.ask('هل انت متأكد من حذف هذة الجلسة ؟');
-      if (!isConfirmed) return false
-      
+      const isConfirmed = await confirmStore.ask(
+        "هل انت متأكد من حذف هذة الجلسة ؟",
+      );
+      if (!isConfirmed) return false;
+
       const res = await userService.removeSessionById(sessionId);
 
       if (!res || !res.success) return false;
@@ -145,6 +147,12 @@ export const useUserStore = defineStore("user", () => {
 
       notiStore.show(successMessage.value, "success");
 
+      const index = sessions.value.findIndex((s) => s.id === sessionId);
+
+      if (index !== -1) {
+        sessions.value = sessions.value.splice(index, 1)
+      }
+      
       return res.success;
     } catch (err) {
       const error = err as { data?: { message?: string } };
@@ -165,13 +173,15 @@ export const useUserStore = defineStore("user", () => {
     try {
       const res = await userService.uploadAvatar(body);
 
-      if (!res || !res.success) return false;
+      if (!res || !res.success || !res.data) return false;
 
       successMessage.value = res.message;
       notiStore.show(successMessage.value, "success");
 
-      userInfo.value.avatar_url = res.data.avatar_url;
-      userInfo.value.avatar_history = res.data.avatar_history;
+      if (authStore.user) {
+        authStore.user.avatar_url = res.data.avatar_url;
+        authStore.user.avatar_history = res.data.avatar_history;
+      }
 
       return res.success;
     } catch (err) {
@@ -187,13 +197,14 @@ export const useUserStore = defineStore("user", () => {
   }
 
   async function deleteAvatar() {
+      const isConfirmed = await confirmStore.ask(
+        "هل انت متأكد من حذف هذة الصورة ؟",
+      );
+      if (!isConfirmed) return false;    
     isLoading.value = true;
     successMessage.value = "";
     errorMessage.value = "";
     try {
-
-      const isConfirmed = await  confirmStore.ask('هل انت متأكد من حذف هذة الصورة ؟');
-      if (!isConfirmed) return false
 
       const res = await userService.deleteAvatar();
 
@@ -202,8 +213,8 @@ export const useUserStore = defineStore("user", () => {
       successMessage.value = res.message;
       notiStore.show(successMessage.value, "success");
 
-      userInfo.value.avatar_url = res.data.avatar_url;
-
+      if (authStore.user) authStore.user.avatar_url = res.data.avatar_url;
+      
       return res.success;
     } catch (err) {
       const error = err as { data?: { message?: string } };
@@ -229,9 +240,11 @@ export const useUserStore = defineStore("user", () => {
       successMessage.value = res.message;
       notiStore.show(successMessage.value, "success");
 
-      userInfo.value.avatar_url = res.data.avatar_url;
-      userInfo.value.avatar_history = res.data.avatar_history;
-
+      if (authStore.user) {
+        authStore.user.avatar_url = res.data.avatar_url;
+        authStore.user.avatar_history = res.data.avatar_history;
+      }
+      
       return res.success;
     } catch (err) {
       const error = err as { data?: { message?: string } };
@@ -249,7 +262,6 @@ export const useUserStore = defineStore("user", () => {
     isLoading,
     successMessage,
     errorMessage,
-    userInfo,
     sessions,
     findUserById,
     updateUserInfo,

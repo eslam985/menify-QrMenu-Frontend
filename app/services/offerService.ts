@@ -1,49 +1,79 @@
 // app/services/offerService.ts
+import type { OfferResponse } from "@/types/dataType/offerType";
+import type {
+  ListOffersType,
+  CreateOfferType,
+  UpdateOfferType,
+} from "@/schemas/offerSchema/offerSchema";
+
 export const useOfferService = () => {
-  const { apiFetch } = useApi()
+  const { apiFetch } = useApi();
 
   return {
-    async getOffers(params?: Record<string, any>) {
-      return await apiFetch<{ success: boolean; data: any[] }>('/offers', {
+    async getOffers(params?: ListOffersType['query']) {
+
+      const res = await apiFetch<BaseApiResponse<OfferResponse[]>>("/offers", {
         params,
-      })
+      });
+
+      return res;
     },
 
     async getOfferById(id: string) {
-      return await apiFetch<{ success: boolean; data: any }>(`/offers/${id}`)
+
+      const res = await apiFetch<BaseApiResponse<OfferResponse | null>>(
+        `/offers/${id}`,
+      );
+
+      return res;
     },
 
-    async createOffer(body: Record<string, any>) {
-      return await apiFetch('/offers', {
-        method: 'POST',
+    async createOffer(body: CreateOfferType["body"]) {
+
+      const res = await apiFetch<BaseApiResponse<OfferResponse>>("/offers", {
+        method: "POST",
         body,
-      })
+      });
+
+      return res;
     },
 
-    async updateOffer(id: string, body: Record<string, any>) {
-      return await apiFetch(`/offers/${id}`, {
-        method: 'PATCH',
-        body,
-      })
+    async updateOffer(id: string, body: UpdateOfferType["body"]) {
+
+      const res = await apiFetch<BaseApiResponse<OfferResponse | null>>(
+        `/offers/${id}`,
+        { method: "PATCH", body,},
+      );
+
+      return res;
     },
 
     async deleteOffer(id: string) {
-      return await apiFetch(`/offers/${id}`, {
-        method: 'DELETE',
-      })
+      
+      const res = await apiFetch<BaseApiResponse<{ id: string | null } | null>>(`/offers/${id}`, {
+        method: "DELETE",
+      });
+
+      return res;
     },
 
     async uploadImage(id: string, formData: FormData) {
-      return await apiFetch(`/offers/${id}/image`, {
-        method: 'POST',
+
+      const res = await apiFetch<BaseApiResponse<OfferResponse | null>>(`/offers/${id}/image`, {
+        method: "POST",
         body: formData,
-      })
+      });
+
+      return res
     },
 
     async deleteImage(id: string) {
-      return await apiFetch(`/offers/${id}/image`, {
-        method: 'DELETE',
-      })
+
+      const res = await apiFetch<BaseApiResponse<OfferResponse | null>>(`/offers/${id}/image`, {
+        method: "DELETE",
+      });
+
+      return res  
     },
-  }
-}
+  };
+};

@@ -21,8 +21,13 @@ const handleLogin = async () => {
   loading.value = true
   errorMessage.value = ''
 
+  const paylod = {
+    email: form.email.trim(),
+    password: form.password
+  }
+
   try {
-    await authStore.login(form.email.trim(), form.password)
+    await authStore.login(paylod)
     await navigateTo(safeRedirect())
   } catch (err: any) {
     if (authStore.subscriptionInactive) {

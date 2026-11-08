@@ -6,7 +6,7 @@ export interface FormField {
   value: any;
   label: string;
   required: boolean;
-  type: "text" | "tel" | "password" | "file" | "textarea" | "select";
+  type: "text" | "tel" | "password" | "file" | "textarea" | "select" | 'number' | 'email';
   colspan: string;
   options?: { label: string; value: string }[];
 }

@@ -58,14 +58,6 @@ const itemFieldsConfig = computed<FormField[]>(() => [
     colspan: 'col-span-1 sm:col-span-1.5'
   },
   {
-    column: 'display_order',
-    value: 0,
-    label: 'ترتيب العرض',
-    required: false,
-    type: 'text',
-    colspan: 'col-span-1 sm:col-span-1.5'
-  },
-  {
     column: 'description',
     value: '',
     label: 'الوصف',
@@ -83,12 +75,18 @@ const handleSubmit = async () => {
   // بناء الكائن النهائي مع تحويل الأرقام بدقة للباك إند
   const payload = {
     category_id: formDataPayload.value.category_id,
-    title: formDataPayload.value.title,
-    description: formDataPayload.value.description,
+    title: formDataPayload.value.title.trim(),
+    description: formDataPayload.value.description.trim(),
     price: Number(formDataPayload.value.price || 0),
-    display_order: Number(formDataPayload.value.display_order || 0),
     is_available: isAvailable.value,
   }
+
+  if (payload.price < 1) {
+    const notiStore = useNotificationStore()
+    notiStore.show(`سعر  '  ${payload.title ?? 'الصنف'}  '  لا يجب ان يكون 0`, 'error')
+    return
+  }
+
 
   try {
     let itemId = editingItem.value?.id
@@ -96,6 +94,7 @@ const handleSubmit = async () => {
     if (editingItem.value) {
       await itemStore.updateItem(editingItem.value.id, payload)
     } else {
+
       const newItem = await itemStore.addItem(payload)
       if (newItem && newItem.id) {
         itemId = newItem.id
@@ -118,6 +117,7 @@ const handleSubmit = async () => {
 
 // 5. مراقبة تفتح وغلق المودال لشحن البيانات أو تفريغها نقياً
 watch([isOpen, editingItem], ([open, item]) => {
+
   if (!open) {
     resetForm()
     imagePreview.value = null
@@ -129,6 +129,7 @@ watch([isOpen, editingItem], ([open, item]) => {
     isAvailable.value = item.is_available ?? true
     imagePreview.value = item.image_url || null
     selectedFile.value = null
+
     setFormConfig(itemFieldsConfig.value, handleSubmit, {
       title: item.title || '',
       category_id: item.category_id || '',
@@ -136,10 +137,12 @@ watch([isOpen, editingItem], ([open, item]) => {
       description: item.description || '',
       display_order: item.display_order ?? 0
     })
+
   } else {
     isAvailable.value = true
     imagePreview.value = null
     selectedFile.value = null
+
     setFormConfig(itemFieldsConfig.value, handleSubmit, {
       category_id: categoryStore.categories[0]?.id || '',
     })
@@ -163,27 +166,32 @@ watch([isOpen, editingItem], ([open, item]) => {
 
         <!-- استدعاء فورم النظام العام وتمرير كل المحتويات في مكانها الهندسي السليم -->
         <UiBaseForm>
-          
+
           <!-- أولاً: حقن الحقول الخاصة (الصورة والـ Checkbox) لتظهر قبل الأزرار -->
           <template #extra-fields>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-fluid items-start mt-2">
-              
+
               <!-- حقل الصورة المطور -->
               <div class="flex flex-col gap-1.5 text-right">
                 <label class="block text-fluid-xs font-medium text-primary">صورة الصنف</label>
                 <div class="flex items-center gap-3">
-                  <div v-if="imagePreview" class="relative w-14 h-14 rounded-xl overflow-hidden border border-primary/20 shrink-0">
+                  <div v-if="imagePreview"
+                    class="relative w-14 h-14 rounded-xl overflow-hidden border border-primary/20 shrink-0">
                     <img :src="imagePreview" class="w-full h-full object-cover" />
-                    <button type="button" @click="{ imagePreview = null; selectedFile = null; }" class="absolute inset-0 bg-black/40 text-white flex items-center justify-center text-sm font-bold opacity-0 hover:opacity-100 transition-opacity">×</button>
+                    <button type="button" @click="{ imagePreview = null; selectedFile = null; }"
+                      class="absolute inset-0 bg-black/40 text-white flex items-center justify-center text-sm font-bold opacity-0 hover:opacity-100 transition-opacity">×</button>
                   </div>
-                  <input type="file" @change="handleFileChange" accept="image/*" class="w-full p-2 rounded-xl bg-bg border border-primary/10 text-text/80 text-fluid-xs cursor-pointer file:ml-2 file:py-0.5 file:px-2.5 file:rounded-md file:border-0 file:text-fluid-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                  <input type="file" @change="handleFileChange" accept="image/*"
+                    class="w-full p-2 rounded-xl bg-bg border border-primary/10 text-text/80 text-fluid-xs cursor-pointer file:ml-2 file:py-0.5 file:px-2.5 file:rounded-md file:border-0 file:text-fluid-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
                 </div>
               </div>
 
               <!-- حقل الـ Checkbox الخاص بالإتاحة -->
               <div class="flex items-center gap-2 pt-6 text-right">
-                <input v-model="isAvailable" type="checkbox" id="is_available" class="w-4 h-4 accent-primary rounded border-primary/20 text-primary cursor-pointer" />
-                <label for="is_available" class="text-fluid-xs font-bold text-text cursor-pointer select-none">الصنف متاح للطلب حالياً</label>
+                <input v-model="isAvailable" type="checkbox" id="is_available"
+                  class="w-4 h-4 accent-primary rounded border-primary/20 text-primary cursor-pointer" />
+                <label for="is_available" class="text-fluid-xs font-bold text-text cursor-pointer select-none">الصنف
+                  متاح للطلب حالياً</label>
               </div>
 
             </div>
@@ -191,7 +199,8 @@ watch([isOpen, editingItem], ([open, item]) => {
 
           <!-- ثانياً: حقن زر الإلغاء بجانب زر الحفظ في نهاية الفورم تماماً -->
           <template #actions>
-            <button type="button" @click="closeModal" class="px-5 py-2.5 rounded-xl bg-bg border border-primary/10 text-text font-bold text-xs cursor-pointer transition-colors hover:bg-primary/5">
+            <button type="button" @click="closeModal"
+              class="px-5 py-2.5 rounded-xl bg-bg border border-primary/10 text-text font-bold text-xs cursor-pointer transition-colors hover:bg-primary/5">
               إلغاء
             </button>
           </template>

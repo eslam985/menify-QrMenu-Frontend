@@ -7,12 +7,15 @@ const publicMenuStore = usePublicMenuStore()
 // دالة حساب السعر الأصلي تلقائياً من محتويات العرض (سعر القطعة × الكمية) لو لم يأتِ جاهزاً
 const getOriginalTotal = (offer: any) => {
   if (offer.original_total) return offer.original_total
+
   if (!offer.items || !offer.items.length) return 0
+
   return offer.items.reduce((sum: number, item: any) => {
     const unitPrice = item.unit_price || 0
     const qty = item.quantity || 0
     return sum + (unitPrice * qty)
   }, 0)
+  
 }
 </script>
 
@@ -38,7 +41,7 @@ const getOriginalTotal = (offer: any) => {
         class="bg-card rounded-3xl border border-primary/20 p-fluid shadow-xl flex flex-col justify-between relative overflow-hidden group hover:border-primary/50 transition-all duration-300 shrink-0 w-[90%] sm:w-[480px] md:w-[520px] snap-start">
 
         <!-- شارات أقصى اليمين واليسار (التوفير وحالة التوفر) -->
-        <div class="absolute top-4 md:top-6 left-6 z-10 flex flex-col items-end gap-1.5">
+        <div class="absolute top-2 md:top-6 left-2 z-10 flex flex-col items-end gap-1.5">
           <!-- شارة التوفير -->
           <div v-if="offer.savings && offer.savings > 0"
             class="bg-green-500 text-white text-fluid-xs font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1">
@@ -69,7 +72,7 @@ const getOriginalTotal = (offer: any) => {
           <!-- العنوان والوصف -->
           <div class="mb-fluid flex justify-between gap-fluid flex-wrap">
             <div class="w-full">
-              <h3 class="text-fluid-h3 font-bold text-primary mb-fluid tracking-wide">{{ offer.title }}</h3>
+              <h3 class="text-fluid-h3 font-bold text-primary mb-8 tracking-wide">{{ offer.title }}</h3>
               <p v-if="offer.description" class="text-fluid-sm text-text/70 leading-relaxed">
                 {{ offer.description }}
               </p>
@@ -118,7 +121,7 @@ const getOriginalTotal = (offer: any) => {
                     <!-- عرض السعر الإجمالي للبند لو متوفر السعر الفردي -->
                     <span v-if="item.unit_price" class="text-fluid-xs text-text/60">
                       الإجمالي: <strong class="text-primary font-bold">{{ formatPrice(item.unit_price * item.quantity)
-                        }} ج.م</strong>
+                      }} ج.م</strong>
                       <span class="text-text/40">
                         ({{ formatPrice(item.unit_price) }} للقطعة)
                       </span>
@@ -134,7 +137,7 @@ const getOriginalTotal = (offer: any) => {
                   <span :class="[
                     'w-2.5 h-2.5 rounded-full',
                     item.is_available ? 'bg-emerald-500' : 'bg-red-500'
-                  ]" :title="item.is_available ? 'البند متوفر' : 'البند غير متوفر حالياً'"></span>
+                  ]" :title="item.is_available ? 'متوفر' : ' غير متوفر حالياً'"> </span>
                 </div>
               </li>
             </ul>
@@ -165,7 +168,8 @@ const getOriginalTotal = (offer: any) => {
           </div>
 
           <!-- footer البطاقة: سعر العرض الخاص بجوار السعر الأصلي المشطوب (المحسوب تلقائياً) -->
-          <div v-if=" offer.offer_price !== null && offer.offer_price !== undefined"  class="pt-4 border-t border-primary/10 mt-auto flex flex-col gap-2">
+          <div v-if="offer.offer_price !== null && offer.offer_price !== undefined"
+            class="pt-4 border-t border-primary/10 mt-auto flex flex-col gap-2">
             <div class="flex items-center justify-between">
               <span class="text-fluid-xs text-text/50 font-bold block mb-0.5">سعر العرض الخاص</span>
               <div class="flex items-baseline gap-2.5">

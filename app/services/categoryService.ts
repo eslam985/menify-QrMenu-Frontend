@@ -1,27 +1,44 @@
 // app/services/categoryService.ts
+
+import type { CategoryResponse, DeleteCategoryResult } from '@/types/dataType/categoryType'
+import type { CreateCategoryType, UpdateCategoryType } from '@/schemas/categorySchema/categorySchema'
+
 export const useCategoryService = () => {
   const { apiFetch } = useApi()
 
   return {
     async getCategories() {
-      return await apiFetch<{ success: boolean; data: any[] }>('/categories')
+
+      const res = await apiFetch<BaseApiResponse<CategoryResponse[]>>('/categories') 
+
+      return res
     },
-    async createCategory(body: { name: string; section?: string; display_order?: number }) {
-      return await apiFetch('/categories', {
+
+    async createCategory(body: CreateCategoryType) {
+      const res = await apiFetch<BaseApiResponse<CategoryResponse>>('/categories', {
         method: 'POST',
         body,
       })
+
+      return res
     },
+
     async deleteCategory(id: string) {
-      return await apiFetch(`/categories/${id}`, {
+      const res = await apiFetch<BaseApiResponse<DeleteCategoryResult>>(`/categories/${id}`, {
         method: 'DELETE',
       })
+
+      return res
     },
-    async updateCategory(id: string, body: { name: string; section?: string; display_order?: number }) {
-      return await apiFetch(`/categories/${id}`, {
-        method: 'patch', // أو PATCH حسب الـ API لديك، وغالباً PUT
+
+    async updateCategory(id: string, body: UpdateCategoryType) {
+      const res = await apiFetch<BaseApiResponse<CategoryResponse | null>>(`/categories/${id}`, {
+        method: 'patch',
         body,
       })
-    },
+
+      return res
+    }
+
   }
 }

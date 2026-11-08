@@ -1,31 +1,24 @@
 // app/stores/item.ts
 import { defineStore } from 'pinia'
 import { useItemService } from '~/services/itemService'
-import { useNotificationStore } from '~/stores/notification'
-import { useConfirmStore } from '~/stores/confirm'
-import { useAuthStore } from '~/stores/auth'
 
-export interface MenuItem {
-  id: string
-  restaurant_id: string
-  category_id: string
-  title: string
-  description?: string | null
-  price: number
-  image_url?: string | null
-  is_available: boolean
-  created_at: string
-  updated_at: string
-  display_order: number
-}
-
+import type {
+  ListMenuItemsType,
+  CreateMenuItemType,
+  UpdateMenuItemType,
+  SetAvailabilityType,
+  MenuItemIdType,
+  ReorderMenuItemsType,
+  
+} from "@/schemas/menuItemSchema/menuItemSchema.js";
+import type { MenuItemResponse, DeleteMenuItemResult } from "@/types/dataType/menuItemType";
 export const useItemStore = defineStore('item', () => {
   const notiStore = useNotificationStore()
   const itemService = useItemService()
   const confirmStore = useConfirmStore()
   const authStore = useAuthStore()
 
-  const items = ref<MenuItem[]>([])
+  const items = ref<MenuItemResponse[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
@@ -63,12 +56,18 @@ export const useItemStore = defineStore('item', () => {
       return false
     }
 
+    if (body.price < 1) {
+      notiStore.show(`سعر  '  ${body.title ?? 'الصنف'}  '  لا يجب ان يكون 0`, 'error')
+      return false
+    }
+
     if (isLoading.value) return false
 
     isLoading.value = true
     try {
       const res = await itemService.createItem(body)
-      if (!res.success) {
+
+      if (!res.success || !res.data) {
         notiStore.show(res.message || 'فشل إضافة الصنف', 'error')
         return false
       }
@@ -86,7 +85,7 @@ export const useItemStore = defineStore('item', () => {
   }
 
   // تعديل صنف
-  async function updateItem(id: string, body: Partial<MenuItem>) {
+  async function updateItem(id: string, body: UpdateMenuItemType["body"]) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show('هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!', 'error')
       return false
@@ -96,15 +95,12 @@ export const useItemStore = defineStore('item', () => {
 
     isLoading.value = true
     try {
-      const res = await itemService.updateItem(id, {
-        ...body,
-        description: body.description ?? undefined,
-        image_url: body.image_url ?? undefined,
-      })
+      const res = await itemService.updateItem(id, body)
+
       const index = items.value.findIndex((i) => i.id === id)
-      if (index !== -1 && res.data) {
-        items.value[index] = res.data
-      }
+
+      if (index !== -1 && res.data) items.value[index] = res.data
+      
       notiStore.show(res.message || 'تم تحديث الصنف بنجاح!', 'success')
       return true
     } catch (err: any) {

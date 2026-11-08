@@ -10,6 +10,7 @@ const { setFormConfig, formDataPayload, isSubmitting, resetForm } = formInstance
 provide('current_form_instance', formInstance)
 
 const userStore = useUserStore()
+const authStore = useAuthStore()
 
 // 1. تحديد هيكل الحقول المطلوب تعديلها للمستخدم
 const profileFieldsConfig: FormField[] = [
@@ -50,9 +51,7 @@ onMounted(async () => {
 
   userStore.isLoading = true
   try {
-    // جلب بيانات المستخدم الحالية لضمان حداثة الحقول
-    await userStore.findUserById()
-    const currentInfo = userStore.userInfo as Record<string, any>
+    const currentInfo = authStore.user as Record<string, any>
 
     if (currentInfo) {
       // شحن الـ Composable بالهيكل وتغذية الحقول بالقيم الحالية مع ربط دالة الحفظ

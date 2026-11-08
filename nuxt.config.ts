@@ -4,11 +4,11 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   modules: [
     "@pinia/nuxt",
-    "nuxt-zod",
     "@nuxt/icon/module",
     "@nuxtjs/color-mode",
   ],
   compatibilityDate: "2025-07-15",
+  telemetry: false,
   devtools: { enabled: true },
   spaLoadingTemplate: true,            // a loader instead of a blank screen while the SPA boots
   runtimeConfig: {
@@ -31,12 +31,12 @@ export default defineNuxtConfig({
     mode: "css",
     cssLayer: "base",
   },
-  nuxtZod: {
-    zodVersion: "v4",
-  },
   router: {
     options: {
       scrollBehaviorType: 'smooth'
     }
-  }
+  },
+  pinia: {
+    storesDirs: ['stores'],
+  },
 });

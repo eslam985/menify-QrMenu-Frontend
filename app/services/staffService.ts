@@ -1,16 +1,21 @@
+import type { StaffResponse } from '@/types/dataType/staffType'
+import type { CreateStaffType, UpdateStaffRoleType } from '@/schemas/staffSchema/staffSchema' 
+
 export const useStaffService = () => {
   const { apiFetch } = useApi();
 
   async function getStaff() {
-    const res = await apiFetch("/staff", {
+
+    const res = await apiFetch<BaseApiResponse<StaffResponse[]>>("/staff", {
       method: "get",
     });
 
     return res;
   }
 
-  async function createStaff(body: Record<string, any>) {
-    const res = await apiFetch("/staff", {
+  async function createStaff(body: CreateStaffType['body']) {
+
+    const res = await apiFetch<BaseApiResponse<StaffResponse>>("/staff", {
       method: "post",
       body,
     });
@@ -18,17 +23,20 @@ export const useStaffService = () => {
     return res;
   }
 
-  async function updateStaffRole(staffId: string, roles: string) {
-    const res = await apiFetch(`/staff/${staffId}`, {
-      method: "patch",
-      roles,
+  async function updateStaffRole(staffId: string, roles: UpdateStaffRoleType['body']) {
+
+    const res = await apiFetch<BaseApiResponse<StaffResponse>>(`/staff/${staffId}`, {
+      method: "PATCH",
+      body: { roles },
     });
 
     return res;
   }
 
+
   async function deleteStaff(staffId: string) {
-    const res = await apiFetch(`/staff/${staffId}`, {
+
+    const res = await apiFetch<BaseApiResponse<{ id: string }>>(`/staff/${staffId}`, {
       method: "delete",
     });
 

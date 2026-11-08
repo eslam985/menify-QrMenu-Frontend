@@ -15,7 +15,6 @@
     "@pinia/nuxt": "^1.0.3",
     "@tailwindcss/vite": "^4.3.3",
     "nuxt": "^4.6.3",
-    "nuxt-zod": "^1.6.2",
     "pinia": "^4.1.0",
     "qrcode": "^1.5.4",
     "tailwindcss": "^4.3.3",

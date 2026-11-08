@@ -1,30 +1,45 @@
 // /app/services/restaurantService.ts
+import type { RestaurantResponse } from '@/types/dataType/restaurantType'
+import type { UpdateRestaurantType } from '@/schemas/restaurantSchema/restaurantSchema'
+
 export const useRestaurantService = () => {
   const { apiFetch } = useApi();
 
   return {
     async getRestaurant() {
-      return await apiFetch<{message: string, success: boolean; data: any[] }>('/restaurant')
+
+      const res = await apiFetch<BaseApiResponse<RestaurantResponse | null>>('/restaurant')
+
+      return res  
     },
 
-    async updateRestaurant(body: any) {
-      return await apiFetch("/restaurant", {
+    async updateRestaurant(body: UpdateRestaurantType['body']) {
+
+      const res = await apiFetch<BaseApiResponse<RestaurantResponse | null>>("/restaurant", {
         method: "patch",
         body,
       });
+
+      return res  
     },
 
     async uploadLogo(formData: FormData) {
-      return await apiFetch("/restaurant/logo", {
+      
+      const res = await apiFetch<BaseApiResponse<RestaurantResponse | null>>("/restaurant/logo", {
         method: "POST",
         body: formData,
       });
+
+      return res  
     },
 
     async deleteLogo() {
-      return await apiFetch("/restaurant/logo", {
+
+      const res = await apiFetch<BaseApiResponse<RestaurantResponse | null>>("/restaurant/logo", {
         method: "delete",
       });
+
+      return res  
     },
   };
 };

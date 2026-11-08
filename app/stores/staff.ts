@@ -1,18 +1,33 @@
 // Menify/frontend/app/stores/staff.ts
 import { defineStore } from "pinia";
 import { useStaffService } from "@/services/staffService";
+import type { StaffResponse } from '@/types/dataType/staffType'
+import type { CreateStaffType, UpdateStaffRoleType } from '@/schemas/staffSchema/staffSchema' 
 
 export const useStaffStore = defineStore("staff", () => {
   const notiStore = useNotificationStore();
   const confirmStore = useConfirmStore();
   const staffService = useStaffService();
 
-  const staff = ref<Record<string, any>[]>([]);
+  const staff = ref<StaffResponse[]>([]);
   const successMessage = ref("");
   const errorMessage = ref("");
   const isLoading = ref(false);
 
   const staffCount = computed(() => staff.value.length);
+  const adminsCount = computed(()=> staff.value.filter((u)=> u.roles === '5150').length) 
+  const editorsCount = computed(()=> staff.value.filter((u)=> u.roles === '1984').length) 
+  const usersCount = computed(()=> staff.value.filter((u)=> u.roles === '2001').length) 
+
+  function getEmployeeById(id: string) {
+    if (!id) return false;
+
+    const result = staff.value.find((emp) => emp.id === id);
+
+    if (!result) return false;
+
+    return result;
+  }
 
   async function getStaff() {
     if (isLoading.value) return false;
@@ -26,7 +41,6 @@ export const useStaffStore = defineStore("staff", () => {
       if (!res || !res.success) return false;
 
       staff.value = res.data;
-      console.log("res.data: ", res.data);
       return res.data;
     } catch (err) {
       const error = err as { data?: { message?: string } };
@@ -40,7 +54,7 @@ export const useStaffStore = defineStore("staff", () => {
     }
   }
 
-  async function createStaff(body: Record<string, any>) {
+  async function createStaff(body: CreateStaffType['body']) {
     if (isLoading.value || Object.keys(body).length < 1) return false;
 
     isLoading.value = true;
@@ -69,14 +83,14 @@ export const useStaffStore = defineStore("staff", () => {
     }
   }
 
-  async function updateStaffRole(staffId: string, role: string) {
-    if (isLoading.value || !staffId || !role) return false;
+  async function updateStaffRole(staffId: string, roles: UpdateStaffRoleType['body']) {
+    if (isLoading.value || !staffId || !roles) return false;
 
     isLoading.value = true;
     successMessage.value = "";
     errorMessage.value = "";
     try {
-      const res = await staffService.updateStaffRole(staffId, role);
+      const res = await staffService.updateStaffRole(staffId, roles);
 
       if (!res || !res.success) return false;
 
@@ -140,6 +154,10 @@ export const useStaffStore = defineStore("staff", () => {
     errorMessage,
     staff,
     staffCount,
+    adminsCount,
+    editorsCount,
+    usersCount,
+    getEmployeeById,
     getStaff,
     createStaff,
     updateStaffRole,

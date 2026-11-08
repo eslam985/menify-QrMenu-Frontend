@@ -54,11 +54,7 @@ const sessionTableColumns = [
 
 // 4. دالة إنهاء وطرد الجلسة
 const handleRevokeSession = async (sessionId: string) => {
-  const isSuccess = await userStore.removeSessionById(sessionId);
-  if (isSuccess) {
-    // تحديث الجدول وإعادة جلب الجلسات تلقائياً
-    await userStore.getSessionsByUserId({})
-  }
+  await userStore.removeSessionById(sessionId);
 }
 
 // شحن وتغذية الـ useTable بالبيانات والأعمدة ديناميكياً
@@ -66,9 +62,7 @@ watchEffect(() => {
   setTableConfig(sessionTableColumns, sessions.value, isLoading.value)
 })
 
-onMounted(async () => {
-  await userStore.getSessionsByUserId({})
-})
+
 </script>
 
 <template>

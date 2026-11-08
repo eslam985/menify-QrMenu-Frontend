@@ -28,7 +28,9 @@ const filteredItems = computed(() => {
   }
 
   if (searchQuery.value) {
+    
     const query = searchQuery.value.toLowerCase().trim()
+
     result = result.filter((item) => {
       const category = categoryStore.categories.find((c) => c.id === item.category_id)
 

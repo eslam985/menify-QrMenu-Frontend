@@ -1,30 +1,12 @@
 // app/stores/auth.ts
 import { defineStore } from 'pinia'
+import { useAuthService } from '@/services/authService' 
+
+import type { UserProfileResponse } from '@/types/userType/userType'
+import type { LoginUserType } from "@/schemas/userSchema/userSchema";
 
 export const RolesList = { Admin: 5150, Editor: 1984, User: 2001 } as const
 
-export interface BaseApiResponse<T = null> {
-    success: boolean
-    message: string
-    data: T
-}
-
-export interface Profile extends BaseApiResponse {
-  accessToken?: string
-  userId?: string
-  created_at?:string
-  updated_at?: string
-  id: string
-  restaurant_id: string
-  username: string
-  email: string
-  roles: string
-  avatar_url: string
-  avatar_history: string[]
-  restaurant_name: string
-  restaurant_slug: string
-  restaurant_logo_url: string | null
-}
 
 // دوال مساعدة للتعامل مع الكوكي على جهة المتصفح بأمان تام دون استخدام useCookie داخل الستور
 const COOKIE_NAME = 'menify_has_session'
@@ -49,10 +31,9 @@ function removeSessionCookie() {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const config = useRuntimeConfig() // top of setup, not after an await
-  const apiBase = () => config.public.apiBase
+  const authService = useAuthService()
 
-  const user = ref<Profile | null>(null)
+  const user = ref<UserProfileResponse | null>(null)
   const accessToken = ref<string | null>(null) // memory only, never localStorage
   const isInitialized = ref(false)
   const subscriptionInactive = ref(false)
@@ -83,22 +64,17 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function loadProfile() {
-
-    if(!accessToken.value) return false
-    
+    if (!accessToken.value) return false
     isLoading.value = true 
     try {
-      const res = await $fetch<{ success: boolean; data: Profile }>(`${apiBase()}/user`, {
-        headers: { Authorization: `Bearer ${accessToken.value}` },
-        credentials: 'include',
-      })
-      
-      // إذا فشل الطلب، نخرج ولكن الـ finally ستضمن تحويل isLoading إلى false
-      if (!res || !res.success) return false
+      const res = await authService.findUserById(accessToken.value)
+      const { data,  success}  =  res 
 
-      user.value = res.data
+      if (!success || !data ) return false
+
+      user.value = data
       
-      return res.data
+      return data
     } catch (err: any) {
       console.error(err)
       const status = err?.status || err?.statusCode || err?.response?.status
@@ -108,7 +84,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
       return false
     } finally {
-      isLoading.value = false // 🌟 تضمن عودتها false دائماً مهما حدث داخل الـ try
+      isLoading.value = false
     }
   }
 
@@ -116,26 +92,24 @@ export const useAuthStore = defineStore('auth', () => {
 
   /** Called after a successful login (the profile comes from GET /user: it has the restaurant info) */
     /** Called after a successful login (the profile comes from GET /user: it has the restaurant info) */
-  async function login(email: string, password: string) {
-    const res = await $fetch<{ data: { accessToken: string } }>(`${apiBase()}/auth/login`, {
-      method: 'POST',
-      body: { email, password },
-      credentials: 'include',
-    })
-
-    accessToken.value = res.data.accessToken
+  async function login(body: LoginUserType['body']) {
+    console.log('body from login: ', body)
+    if (typeof body !== 'object' || Object.keys(body)?.length < 2) return false
+    
     isLoading.value = true
     try {
-      const profile = await loadProfile()
+      const res = await authService.login(body)
 
-      if (!profile) return false
+      const { data,  success }  = res 
 
-      if (user.value) {
-        user.value.accessToken = res.data.accessToken
-      }
+      if (!data || !success) return false
+
+      accessToken.value = data.accessToken ?? null
+
+      user.value = data
 
       setSessionCookie()
-      return profile
+      return data
     } catch (err: any) {
       const status = err?.status || err?.statusCode || err?.response?.status
       const errorData = err?.data || err?.response?._data
@@ -154,7 +128,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function logout() {
     isLoading.value = true
     try {
-      await $fetch(`${apiBase()}/auth/logout`, { method: 'POST', credentials: 'include' })
+      await authService.logout()
 
     } catch (err){
       /* even if the request fails, clear locally */
@@ -172,7 +146,7 @@ export const useAuthStore = defineStore('auth', () => {
   // Restores the session after a page reload: refresh cookie -> new access token -> profile.
   // One shared promise, so the middleware and any other caller never run two refreshes at once
   // (the backend rotates the token on every refresh).
-  let initPromise: Promise<void> | null = null
+  let initPromise: Promise<void> | null= null
   function init(): Promise<void> {
     if (isInitialized.value) return Promise.resolve()
 
@@ -186,17 +160,15 @@ export const useAuthStore = defineStore('auth', () => {
     initPromise ??= (async () => {
       isLoading.value = true
       try {
-        const r = await $fetch<{success: boolean, data: string }>(`${apiBase()}/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include',
-          timeout: 5000, // تقليل المهلة إلى 5 ثوانٍ لسرعة الاستجابة
-        })
-
+        const r = await authService.init()
+        console.log('r from store init: ', r)
         if (!r || !r.success) return
 
         accessToken.value = r.data
-        await loadProfile()
         setSessionCookie()
+        const res = await loadProfile()
+
+        if (!res) return
       } catch (err: any) {
         // إذا كان خطأ Timeout أو فشل اتصال تام، نقوم بتنظيف الجلسة بصمت دون رمي أخطاء
         const status = err?.status || err?.statusCode || err?.response?.status

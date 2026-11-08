@@ -11,7 +11,7 @@
     <div class="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden">
       <DashboardHeader />
 
-      <main class="flex-1 p-fluid overflow-y-auto">
+      <main class="flex-1 px-fluid overflow-y-auto">
         <CommonNotificationAlert />
         <slot />
       </main>

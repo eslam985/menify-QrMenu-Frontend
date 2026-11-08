@@ -12,7 +12,9 @@ definePageMeta({
 const offerStore = useOfferStore()
 
 onMounted(async () => {
-  await offerStore.fetchOffers()
+  if (offerStore.offers?.length < 1) {
+    await offerStore.fetchOffers()
+  }
 })
 </script>
 

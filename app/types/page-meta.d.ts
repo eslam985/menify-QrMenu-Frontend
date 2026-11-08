@@ -1,6 +1,10 @@
-declare module '#app' {
+// app/types/page-meta.d.ts
+import "nuxt/app";
+
+declare module "#app" {
   interface PageMeta {
-    requiredRole?: number
+    requiredRole?: number;
   }
 }
-export {}
+
+export {};

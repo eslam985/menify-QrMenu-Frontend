@@ -1,11 +1,18 @@
 <script setup lang="ts">
-
 definePageMeta({
   layout: 'dashboard',
   middleware: 'auth'
 })
 
+const userStore = useUserStore()
+
+onMounted(async () => {
+  if (userStore.sessions?.length < 1) {
+    await userStore.getSessionsByUserId({})
+  }
+})
 </script>
+
 
 
 <!-- app/pages/dashboard/profile/index.vue -->
