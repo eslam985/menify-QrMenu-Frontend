@@ -26,7 +26,7 @@ export interface UserProfileResponse extends UserResponse {
   restaurant_name: string;
   restaurant_slug: string;
   restaurant_logo_url: string | null;
-  accessToken?: string
+  accessToken?: string;
 }
 export interface UserRequest {
   username: string;
@@ -59,7 +59,7 @@ export interface FindUserByEmailResponse extends UserResponse {
 export interface SessionResponse {
   id: string;
   user_id: string;
-  family_id: string;   // new
+  family_id: string; // new
   user_agent: string | null;
   ip_address: string | null;
   expires_at: string;
@@ -91,7 +91,7 @@ export interface FindUserPasswordWithIdResponse {
 
 export interface DecodedToken {
   userId: string;
-  sid: string; 
+  sid: string;
 }
 
 export interface AuthContextResponse {

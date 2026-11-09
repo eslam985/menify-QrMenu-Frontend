@@ -1,7 +1,6 @@
+import type { RestaurantResponse } from "@/types/dataType/restaurantType";
 import { defineStore } from "pinia";
 import { useRestaurantService } from "~/services/restaurantService";
-import type { RestaurantResponse } from '@/types/dataType/restaurantType'
-import type { UpdateRestaurantType } from '@/schemas/restaurantSchema/restaurantSchema'
 
 export const useRestaurantStore = defineStore("restaurant", () => {
   const restaurantService = useRestaurantService();
@@ -38,18 +37,7 @@ export const useRestaurantStore = defineStore("restaurant", () => {
       successMessage.value = res.message;
       restaurant.value = res.data;
       return res.data;
-    } catch (err: any) {
-      // 🌟 إذا كان الخطأ هو توقف الاشتراك، اتركه يصعد ولا تكبته
-      const status = err?.status || err?.statusCode || err?.response?.status;
-      const errorData = err?.data || err?.response?._data;
-      if (status === 403 && errorData?.code === "SUBSCRIPTION_INACTIVE") {
-        throw err;
-      }
-
-      errorMessage.value = errorData?.message || err?.message;
-      const msg = errorMessage.value || "فشل تحميل البيانات";
-      notiStore.show(msg, "error");
-      console.error(err);
+    } catch (err: unknown) {
       return false;
     } finally {
       isLoading.value = false;
@@ -70,12 +58,7 @@ export const useRestaurantStore = defineStore("restaurant", () => {
 
       restaurant.value = res.data;
       return res.data;
-    } catch (err: any) {
-      const errorData = err?.data || err?.response?._data;
-      errorMessage.value = errorData?.message || err?.message;
-      const msg = errorMessage.value || "فشل تعديل البيانات";
-      notiStore.show(msg, "error");
-      console.error(err);
+    } catch (err: unknown) {
       return false;
     } finally {
       isLoading.value = false;
@@ -95,12 +78,7 @@ export const useRestaurantStore = defineStore("restaurant", () => {
 
       notiStore.show(res.message || "تم رفع صورة الصنف بنجاح!", "success");
       return res;
-    } catch (err: any) {
-      const errorData = err?.data || err?.response?._data;
-      errorMessage.value = errorData?.message || err?.message;
-      const msg = errorMessage.value || "فشل تعديل البيانات";
-      notiStore.show(msg, "error");
-      console.error(err);
+    } catch (err: unknown) {
       return false;
     } finally {
       isLoading.value = false;
@@ -120,12 +98,7 @@ export const useRestaurantStore = defineStore("restaurant", () => {
 
       notiStore.show(res.message || "تم حذف الصورة نجاح", "success");
       return res;
-    } catch (err: any) {
-      const errorData = err?.data || err?.response?._data;
-      errorMessage.value = errorData?.message || err?.message;
-      const msg = errorMessage.value || "فشل الحذف";
-      notiStore.show(msg, "error");
-      console.error(err);
+    } catch (err: unknown) {
       return false;
     } finally {
       isLoading.value = false;

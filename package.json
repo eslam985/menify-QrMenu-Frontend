@@ -7,7 +7,10 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "type-check": "nuxt typecheck",
+    "type-check:watch": "vue-tsc --noEmit --watch -p .nuxt/tsconfig.app.json",
+    "format": "prettier --write \"app/**/*.{vue,ts,css}\" \"nuxt.config.ts\""
   },
   "dependencies": {
     "@nuxt/icon": "^2.6.2",
@@ -23,6 +26,10 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/qrcode": "^1.5.6"
+    "@types/qrcode": "^1.5.6",
+    "prettier": "^3.9.10",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "typescript": "^6.0.3",
+    "vue-tsc": "^3.3.14"
   }
 }

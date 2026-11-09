@@ -13,14 +13,17 @@ const matchRegex = (input: string, regx: RegExp): boolean => regx.test(input);
 
 /** Latin-only slug that matches the DB CHECK: ^[a-z0-9]+(-[a-z0-9]+)*$ */
 const slugify = (str: string): string => {
+  // 1. حماية تامة ضد البيانات الفارغة أو الخاطئة
   if (!str || typeof str !== "string") return "";
+
   return str
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "") // strip Latin diacritics (é -> e)
+    .replace(/[\u0300-\u036f]/g, "") // إزالة علامات النطق اللاتينية
     .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+    .replace(/[^a-z0-9]+/g, "-") // استبدال أي رموز مسافات بـ شرطة واحدة
+    .replace(/^-+|-+$/g, "") // تنظيف الشُرط الزائدة من الأطراف
+    .slice(0, 60); // 🌟 ضمان ألا يزيد الرابط عن 60 حرفاً لتوافق قاعدة البيانات
 };
 
 export { usernameRe, phoneRe, UrlRe, numIntRe, slugify, matchRegex };

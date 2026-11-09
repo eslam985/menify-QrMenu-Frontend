@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 const createIdParamSchema = (paramName = "id") => {
-
   return z.object({
     params: z.object({
       [paramName]: z.coerce
@@ -10,7 +9,6 @@ const createIdParamSchema = (paramName = "id") => {
         .positive(`الـ ${paramName} يجب أن يكون رقماً موجباً`),
     }),
   });
-  
 };
 
 const deleteManyIdsSchema = z.object({

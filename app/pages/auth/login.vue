@@ -1,94 +1,115 @@
+<!-- app/pages/auth/login.vue -->
 <script setup lang="ts">
-import { useAuthStore } from '~/stores/auth'
+import { useForm, type FormField } from "~/composables/useForm";
+import type { LoginUserType } from "@/schemas/userSchema/userSchema";
 
-definePageMeta({ middleware: 'guest' })
+definePageMeta({ middleware: "guest" });
 
-const authStore = useAuthStore()
-const route = useRoute()
+const authStore = useAuthStore();
+const route = useRoute();
 
-const form = reactive({ email: '', password: '' })
-const loading = ref(false)
-const errorMessage = ref('')
+const formInstance = useForm();
+const { setFormConfig, formDataPayload, resetForm } = formInstance;
 
-// Same-site paths only: prevents an open redirect (?redirect=https://evil.com)
+provide("current_form_instance", formInstance);
+
+// 1. تحديد هيكل الحقول القياسي لفورم تسجيل الدخول
+const loginFieldsConfig: FormField[] = [
+  {
+    column: "email",
+    value: "",
+    label: "البريد الإلكتروني",
+    required: true,
+    type: "email",
+    colspan: "col-span-3",
+  },
+  {
+    column: "password",
+    value: "",
+    label: "كلمة المرور",
+    required: true,
+    type: "password",
+    colspan: "col-span-3",
+  },
+];
+
+// منع الـ Open Redirect بأمان تام
 const safeRedirect = (): string => {
-  const r = String(route.query.redirect ?? '')
-  return r.startsWith('/') && !r.startsWith('//') && !r.includes('\\') ? r : '/dashboard'
-}
+  const r = String(route.query.redirect ?? "");
+  return r.startsWith("/") && !r.startsWith("//") && !r.includes("\\")
+    ? r
+    : "/dashboard";
+};
 
-const handleLogin = async () => {
-  if (loading.value) return
-  loading.value = true
-  errorMessage.value = ''
+// دالة الحفظ والتحقق المركزية المربوطة بالـ Submit ديناميكياً
+const handleLoginSubmit = async () => {
+  if (authStore.isLoading) return;
 
-  const paylod = {
-    email: form.email.trim(),
-    password: form.password
+  const payload = formDataPayload.value;
+
+  const payloadLogin = {
+    email: String(payload.email).trim(),
+    password: String(payload.password),
+  };
+
+  // تمرير الكائن مع حقن النوع الصارم القادم مباشرة من السكيما الخاصة بالباك إند
+  const isSuccess = await authStore.login(
+    payloadLogin as LoginUserType["body"],
+  );
+
+  if (isSuccess) {
+    resetForm();
+    await navigateTo(safeRedirect());
+  } else if (authStore.subscriptionInactive) {
+    await navigateTo("/subscription-inactive");
   }
+};
 
-  try {
-    await authStore.login(paylod)
-    await navigateTo(safeRedirect())
-  } catch (err: any) {
-    if (authStore.subscriptionInactive) {
-      await navigateTo('/subscription-inactive')
-      return
-    }
-
-    const status = err?.response?.status
-    const isLoginRequest = String(err?.response?.url ?? '').includes('/auth/login')
-
-    if (status === 401 && isLoginRequest) {
-      errorMessage.value = 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
-    } else if (status === 401) {
-      errorMessage.value = 'تعذّر تحميل بيانات الحساب، حاول تسجيل الدخول مرة أخرى'
-    } else {
-      errorMessage.value = getApiError(err, 'فشل تسجيل الدخول، حاول مرة أخرى')
-    }
-  } finally {
-    loading.value = false
-  }
-}
+onMounted(() => {
+  resetForm();
+  authStore.resetState();
+  setFormConfig(loginFieldsConfig, handleLoginSubmit);
+});
 </script>
 
 <template>
-  <div class="w-full 2xl:max-w-[90%] mx-auto min-h-[80vh] flex items-center justify-center px-4">
-    <div class="max-w-md w-full p-8 bg-card rounded-2xl border border-primary/10 shadow-soft text-right">
+  <div
+    class="mx-auto flex min-h-[80vh] w-full items-center justify-center px-4 2xl:max-w-[90%]"
+  >
+    <div
+      class="bg-card border-primary/10 shadow-soft w-full max-w-md rounded-2xl border p-8 text-right"
+    >
       <div class="mb-6">
-        <h1 class="text-2xl font-bold text-primary">تسجيل الدخول</h1>
-        <p class="text-xs text-text/60 mt-1">أدخل بيانات الحساب للوصول إلى لوحة التحكم</p>
-      </div>
-
-      <form @submit.prevent="handleLogin" class="flex flex-col gap-4">
-        <div>
-          <label class="block text-sm text-text/80 mb-1">البريد الإلكتروني</label>
-          <input v-model="form.email" type="email" dir="ltr" autocomplete="email" placeholder="name@example.com"
-            class="w-full p-3.5 rounded-xl bg-bg border border-primary/10 text-text focus:outline-none focus:border-primary transition"
-            required />
-        </div>
-
-        <div>
-          <label class="block text-sm text-text/80 mb-1">كلمة المرور</label>
-          <input v-model="form.password" type="password" dir="ltr" autocomplete="current-password"
-            placeholder="••••••••"
-            class="w-full p-3.5 rounded-xl bg-bg border border-primary/10 text-text focus:outline-none focus:border-primary transition"
-            required />
-        </div>
-
-        <p v-if="errorMessage" class="text-red-500 text-sm bg-red-500/10 p-3 rounded-xl">
-          {{ errorMessage }}
+        <h1 class="text-primary text-2xl font-bold">تسجيل الدخول</h1>
+        <p class="text-text/60 mt-1 text-xs">
+          أدخل بيانات الحساب للوصول الآمن إلى لوحة التحكم
         </p>
-
-        <button type="submit" :disabled="loading"
-          class="w-full py-3.5 rounded-xl bg-primary text-white font-bold mt-2 cursor-pointer hover:opacity-90 transition disabled:opacity-50">
-          {{ loading ? 'جاري التحقق...' : 'تسجيل الدخول' }}
-        </button>
-      </form>
-
-      <div class="mt-6 text-center text-xs text-text/60">
-        ليس لديك مطعم مسجل؟
-        <nuxt-link to="/auth/register" class="text-primary font-bold hover:underline">إنشاء مطعم جديد</nuxt-link>
       </div>
+
+      <!-- 🌟 تشغيل الفورم المركزي الموحد لنظام Menify -->
+      <UiBaseForm>
+        <template #extra-fields>
+          <!-- حقن رسالة الخطأ والروابط الإرشادية قبل أزرار الحفظ -->
+          <div class="gap-fluid mt-2 flex flex-col">
+            <p
+              v-if="authStore.errorMessage"
+              class="rounded-xl bg-red-500/10 p-3 text-sm text-red-500"
+            >
+              {{ authStore.errorMessage }}
+            </p>
+
+            <div class="text-text/60 mt-2 text-center text-xs">
+              ليس لديك مطعم مسجل؟
+              <NuxtLink
+                to="/auth/register"
+                class="text-primary font-bold hover:underline"
+              >
+                إنشاء مطعم جديد
+              </NuxtLink>
+            </div>
+          </div>
+        </template>
+      </UiBaseForm>
     </div>
   </div>
 </template>

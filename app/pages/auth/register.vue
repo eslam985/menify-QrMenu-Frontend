@@ -1,202 +1,188 @@
+<!-- app/pages/auth/register.vue -->
 <script setup lang="ts">
-import { useAuthStore } from '~/stores/auth'
+import type { RegisterRestaurantType } from "@/schemas/userSchema/userSchema";
+import { useForm, type FormField } from "~/composables/useForm";
 
-definePageMeta({ middleware: 'guest' })
+definePageMeta({ middleware: "guest" });
 
-const authStore = useAuthStore()
-const { apiFetch } = useApi()
+const authStore = useAuthStore();
+const formInstance = useForm();
+const { setFormConfig, formDataPayload, resetForm } = formInstance;
 
-const form = reactive({
-  inviteCode: '',
-  restaurantName: '',
-  slug: '',
-  username: '',
-  email: '',
-  password: '',
-})
+provide("current_form_instance", formInstance);
 
-const loading = ref(false)
-const errorMessage = ref('')
-const registered = ref(false)
+// 1. هيكل الحقول الموحد القياسي المتوافق مع سكيما الباك إند
+const registerFieldsConfig: FormField[] = [
+  {
+    column: "inviteCode",
+    value: "",
+    label: "كود الدعوة",
+    required: true,
+    type: "text",
+    colspan: "col-span-3 md:col-span-1",
+  },
+  {
+    column: "restaurantName",
+    value: "",
+    label: "اسم المطعم",
+    required: true,
+    type: "text",
+    colspan: "col-span-3 md:col-span-1",
+  },
+  {
+    column: "slug",
+    value: "",
+    label: "رابط المطعم (Slug) — أحرف وأرقام وشرطات فقط",
+    required: true,
+    type: "text",
+    colspan: "col-span-3 md:col-span-1",
+  },
+  {
+    column: "username",
+    value: "",
+    label: "اسم المسؤول (المشرف)",
+    required: true,
+    type: "text",
+    colspan: "col-span-3 md:col-span-1",
+  },
+  {
+    column: "email",
+    value: "",
+    label: "البريد الإلكتروني للوجن",
+    required: true,
+    type: "email",
+    colspan: "col-span-3 md:col-span-1",
+  },
+  {
+    column: "password",
+    value: "",
+    label: "كلمة المرور (8 أحرف على الأقل)",
+    required: true,
+    type: "password",
+    colspan: "col-span-3 md:col-span-1",
+  },
+];
 
-// Latin-only slug, same rule as the backend: ^[a-z0-9]+(-[a-z0-9]+)*$
-const slugify = (s: string): string =>
-  s.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60)
+// دالة الحفظ المركزية المربوطة بالـ Submit
+const handleRegisterSubmit = async () => {
+  if (authStore.isLoading) return;
 
-// Follow the restaurant name until the user edits the slug by hand
-const slugTouched = ref(false)
-watch(() => form.restaurantName, (name) => {
-  if (!slugTouched.value) form.slug = slugify(name)
-})
-const onSlugInput = () => {
-  slugTouched.value = true
-  form.slug = form.slug.toLowerCase().replace(/[^a-z0-9-]/g, '') // drop invalid characters while typing
-}
-const onSlugBlur = () => { form.slug = slugify(form.slug) }     // full cleanup when leaving the field
+  const payload = formDataPayload.value;
 
-const registerError = (err: any): string => {
-  const status = err?.response?.status
-  const msg = String(err?.data?.message ?? '')
-  if (status === 403) return 'كود الدعوة غير صالح أو منتهي الصلاحية'
-  if (status === 409) {
-    if (msg.includes('Slug')) return 'رابط المطعم مستخدم بالفعل، اختر رابطاً آخر'
-    if (msg.includes('Email')) return 'هذا البريد الإلكتروني مسجّل بالفعل'
-    return 'بيانات مكررة، راجع الحقول'
-  }
-  return getApiError(err, 'فشل التسجيل، راجع البيانات وحاول مرة أخرى')
-}
+  // تنسيق الحقول لتطابق تماماً بنية الـ payloadRegister النظيف
+  const payloadRegister = {
+    inviteCode: String(payload.inviteCode).trim(),
+    restaurantName: String(payload.restaurantName).trim(),
+    slug: String(payload.slug),
+    username: String(payload.username).trim(),
+    email: String(payload.email).trim(),
+    password: String(payload.password),
+  };
 
-const handleRegister = async () => {
-  if (loading.value) return
-  loading.value = true
-  errorMessage.value = ''
+  const isSuccess = await authStore.register(
+    payloadRegister as RegisterRestaurantType["body"],
+  );
 
-  const payload = {
-    inviteCode: form.inviteCode.trim(),
-    restaurantName: form.restaurantName.trim(),
-    slug: form.slug,
-    username: form.username.trim(),
-    email: form.email.trim(),
-    password: form.password,
-  }
-
-  try {
-    await apiFetch('/api/auth/register', { method: 'POST', body: payload })
-    registered.value = true
-
-    // Straight into the dashboard: no need to type the credentials again
+  if (isSuccess) {
+    resetForm();
     try {
-      await authStore.login(payload.email, payload.password)
-      await navigateTo('/dashboard')
+      await authStore.login({
+        email: payloadRegister.email,
+        password: payloadRegister.password,
+      });
+      await navigateTo("/dashboard");
     } catch {
-      await navigateTo('/auth/login')
+      await navigateTo("/auth/login");
     }
-  } catch (err: any) {
-    errorMessage.value = registerError(err)
-  } finally {
-    loading.value = false
   }
-}
+};
+
+// 2. مراقبة حية لإنشاء الـ Slug تلقائياً من اسم المطعم داخل المصفوفة
+const slugTouched = ref(false);
+
+onMounted(() => {
+  authStore.resetState();
+  resetForm();
+  setFormConfig(registerFieldsConfig, handleRegisterSubmit);
+
+  // العثور على الحقول داخل الـ Ref للتحكم في قيمها حياً
+  const nameField = formInstance.fields.value.find(
+    (f) => f.column === "restaurantName",
+  );
+  const slugField = formInstance.fields.value.find((f) => f.column === "slug");
+
+  if (nameField && slugField) {
+    // مراقبة اسم المطعم وتوليد الـ Slug تلقائياً طالما لم يكتبه المستخدم بيده
+    watch(
+      () => nameField.value,
+      (newName) => {
+        if (!slugTouched.value) {
+          slugField.value = slugify(String(newName));
+        }
+      },
+    );
+  }
+});
 </script>
 
 <template>
-  <div dir="rtl" class="w-full 2xl:max-w-[90%] mx-auto min-h-[85vh] flex items-center justify-center px-4 py-8">
-    <div class="max-w-lg w-full p-8 bg-card rounded-2xl border border-primary/10 shadow-soft text-right">
+  <div
+    dir="rtl"
+    class="my-section-fluid mx-auto flex min-h-[85vh] w-full items-center justify-center 2xl:max-w-[90%]"
+  >
+    <div
+      class="bg-card border-primary/10 shadow-soft p-section-fluid rounded-2xl border text-right"
+    >
       <div class="mb-6">
-        <h1 class="text-2xl font-bold text-primary">تسجيل مطعم جديد</h1>
-        <p class="text-xs text-text/60 mt-1">أدخل كود الدعوة الذي حصلت عليه وبيانات المطعم الأساسية</p>
+        <h1 class="text-primary text-2xl font-bold">تسجيل مطعم جديد</h1>
+        <p class="text-text/60 mt-1 text-xs">
+          أدخل كود الدعوة الذي حصلت عليه وبيانات المطعم الأساسية لإطلاق لوحة
+          التحكم
+        </p>
       </div>
 
-      <form @submit.prevent="handleRegister" class="flex flex-col gap-4">
-        <div>
-          <label class="block text-sm text-text/80 mb-1">كود الدعوة</label>
-          <input
-            v-model="form.inviteCode"
-            type="text"
-            autocomplete="off"
-            placeholder="الصق كود الدعوة هنا"
-            class="w-full p-3.5 rounded-xl bg-bg border border-primary/10 text-text focus:outline-none focus:border-primary transition"
-            required
-          />
-        </div>
+      <!-- 🌟 رسم وحقن الفورم بالكامل عبر المكون الموحد لـ Menify -->
+      <UiBaseForm>
+        <template #extra-fields>
+          <!-- عرض الرابط المباشر لايف ليفهمه العميل بوضوح قبل الحفظ -->
+          <div class="mt-1 text-right" dir="rtl">
+            <p class="text-text/60 text-xs">
+              رابط المنيو الخاص بك سيكون:
+              <span class="text-primary mt-1 block font-bold" dir="ltr">
+                /menu/{{
+                  formInstance.fields.value.find((f) => f.column === "slug")
+                    ?.value || "your-restaurant"
+                }}
+              </span>
+            </p>
+            <p
+              v-if="authStore.errorMessage"
+              class="mt-4 rounded-xl bg-red-500/10 p-3 text-sm text-red-500"
+            >
+              {{ authStore.errorMessage }}
+            </p>
+          </div>
+          <!-- حقن رسالة الخطأ والروابط الإرشادية قبل أزرار الحفظ -->
+          <div class="gap-fluid mt-2 flex flex-col">
+            <p
+              v-if="authStore.errorMessage"
+              class="rounded-xl bg-red-500/10 p-3 text-sm text-red-500"
+            >
+              {{ authStore.errorMessage }}
+            </p>
 
-        <div>
-          <label class="block text-sm text-text/80 mb-1">اسم المطعم</label>
-          <input
-            v-model="form.restaurantName"
-            type="text"
-            maxlength="150"
-            placeholder="مطعم الباشا"
-            class="w-full p-3.5 rounded-xl bg-bg border border-primary/10 text-text focus:outline-none focus:border-primary transition"
-            required
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm text-text/80 mb-1">رابط المطعم (Slug)</label>
-          <input
-            v-model="form.slug"
-            @input="onSlugInput"
-            @blur="onSlugBlur"
-            type="text"
-            dir="ltr"
-            minlength="3"
-            maxlength="60"
-            autocomplete="off"
-            placeholder="el-basha-cafe"
-            class="w-full p-3.5 rounded-xl bg-bg border border-primary/10 text-text focus:outline-none focus:border-primary transition"
-            required
-          />
-          <p class="text-xs text-text/60 mt-1" dir="ltr">
-            /menu/<span class="font-bold text-primary">{{ form.slug || 'your-restaurant' }}</span>
-          </p>
-          <p class="text-fluid-xs text-primary mt-1">
-            ⚠️ أحرف إنجليزية صغيرة وأرقام وشرطات فقط. هذا الرابط سيُطبع داخل الـ QR.
-          </p>
-        </div>
-
-        <div>
-          <label class="block text-sm text-text/80 mb-1">اسم المسؤول</label>
-          <input
-            v-model="form.username"
-            type="text"
-            minlength="3"
-            maxlength="30"
-            autocomplete="username"
-            placeholder="eslam"
-            class="w-full p-3.5 rounded-xl bg-bg border border-primary/10 text-text focus:outline-none focus:border-primary transition"
-            required
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm text-text/80 mb-1">البريد الإلكتروني</label>
-          <input
-            v-model="form.email"
-            type="email"
-            dir="ltr"
-            autocomplete="email"
-            placeholder="admin@example.com"
-            class="w-full p-3.5 rounded-xl bg-bg border border-primary/10 text-text focus:outline-none focus:border-primary transition"
-            required
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm text-text/80 mb-1">كلمة المرور</label>
-          <input
-            v-model="form.password"
-            type="password"
-            dir="ltr"
-            minlength="8"
-            autocomplete="new-password"
-            placeholder="8 أحرف على الأقل"
-            class="w-full p-3.5 rounded-xl bg-bg border border-primary/10 text-text focus:outline-none focus:border-primary transition"
-            required
-          />
-        </div>
-
-        <p v-if="errorMessage" class="text-red-500 text-sm bg-red-500/10 p-3 rounded-xl">
-          {{ errorMessage }}
-        </p>
-        <p v-if="registered" class="text-green-600 text-sm bg-green-500/10 p-3 rounded-xl">
-          تم إنشاء المطعم بنجاح! جاري تحويلك إلى لوحة التحكم...
-        </p>
-
-        <button
-          type="submit"
-          :disabled="loading || registered"
-          class="w-full py-3.5 rounded-xl bg-primary text-white font-bold mt-2 cursor-pointer hover:opacity-90 transition disabled:opacity-50"
-        >
-          {{ loading ? 'جاري إنشاء الحساب...' : 'إتمام التسجيل' }}
-        </button>
-      </form>
-
-      <div class="mt-6 text-center text-xs text-text/60">
-        لديك حساب بالفعل؟
-        <nuxt-link to="/auth/login" class="text-primary font-bold hover:underline">تسجيل الدخول</nuxt-link>
-      </div>
+            <div class="text-text/60 mt-2 text-center text-xs">
+              لديك مطعم مسجل؟
+              <NuxtLink
+                to="/auth/login"
+                class="text-primary font-bold hover:underline"
+              >
+                سجل دخولك من هنا
+              </NuxtLink>
+            </div>
+          </div>
+        </template>
+      </UiBaseForm>
     </div>
   </div>
 </template>

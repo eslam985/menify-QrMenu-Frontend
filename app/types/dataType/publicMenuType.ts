@@ -50,6 +50,6 @@ export interface PublicOffer {
 
 export interface PublicMenuResponse {
   restaurant: PublicRestaurantInfo;
-  offers: PublicOffer[];            // new: only offers live right now
+  offers: PublicOffer[]; // new: only offers live right now
   categories: PublicMenuCategory[];
 }

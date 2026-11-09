@@ -17,10 +17,9 @@ export interface PaginationResponse {
   totalPage: number;
 }
 
-
 export interface BaseApiResponse<T = null> {
-    success: boolean
-    message: string
-    data: T
-    pagination?: PaginationResponse
+  success: boolean;
+  message: string;
+  data: T;
+  pagination?: PaginationResponse;
 }

@@ -28,7 +28,9 @@ const priceField = z
   });
 
 const categoryIdField = z.uuid("معرّف التصنيف غير صالح");
-const isAvailableField = z.boolean({ error: "حالة التوفر يجب أن تكون true أو false" });
+const isAvailableField = z.boolean({
+  error: "حالة التوفر يجب أن تكون true أو false",
+});
 
 const itemIdParams = z.object({
   itemId: z.uuid("معرّف الصنف غير صالح"),
@@ -42,7 +44,9 @@ const listMenuItemsSchema = z.object({
   query: z.strictObject({
     category_id: categoryIdField.optional(),
     is_available: z
-      .enum(["true", "false"], { error: "is_available يجب أن تكون true أو false" })
+      .enum(["true", "false"], {
+        error: "is_available يجب أن تكون true أو false",
+      })
       .transform((v) => v === "true")
       .optional(),
   }),

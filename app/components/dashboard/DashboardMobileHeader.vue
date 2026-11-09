@@ -1,18 +1,22 @@
 <!-- app/components/dashboard/DashboardMobileHeader.vue -->
 <script setup lang="ts">
-import { useDashboardLayout } from '~/composables/useDashboardLayout'
-const authStore = useAuthStore()
-const { toggleMobile } = useDashboardLayout()
+import { useDashboardLayout } from "~/composables/useDashboardLayout";
+const authStore = useAuthStore();
+const { toggleMobile } = useDashboardLayout();
 </script>
 
 <template>
-  <header class="md:hidden flex items-center justify-between p-4 bg-card border-b border-primary/10 shrink-0">
-    <button 
-      @click="toggleMobile" 
-      class="p-2 rounded-xl bg-primary/10 text-primary font-bold text-sm focus:outline-none flex items-center gap-2 cursor-pointer"
+  <header
+    class="bg-card border-primary/10 flex shrink-0 items-center justify-between border-b p-4 md:hidden"
+  >
+    <button
+      @click="toggleMobile"
+      class="bg-primary/10 text-primary flex cursor-pointer items-center gap-2 rounded-xl p-2 text-sm font-bold focus:outline-none"
     >
       <span>☰ القائمة</span>
     </button>
-    <span class="font-bold text-primary text-sm">{{ authStore.user?.restaurant_name + ' ' + 'Dashboard' }}</span>
+    <span class="text-primary text-sm font-bold">{{
+      authStore.user?.restaurant_name + " " + "Dashboard"
+    }}</span>
   </header>
 </template>

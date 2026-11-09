@@ -1,14 +1,42 @@
 // app/composables/useForm.ts
 
-// 1. تحديد واجهة الحقل البرمجية لدعم الأنواع المختلفة بما فيها حقول الـ Password والمستندات
-export interface FormField {
+import { ref, computed, type Ref } from "vue";
+
+// 1. واجهة الحقل الموحدة القياسية الصارمة
+export interface FormField<T = unknown> {
   column: string;
-  value: any;
+  value: T;
   label: string;
   required: boolean;
-  type: "text" | "tel" | "password" | "file" | "textarea" | "select" | 'number' | 'email';
+  type:
+    | "text"
+    | "tel"
+    | "password"
+    | "file"
+    | "textarea"
+    | "select"
+    | "number"
+    | "email";
   colspan: string;
-  options?: { label: string; value: string }[];
+  options?: { label: string; value: string | number }[]; // دعم String و number للـ select
+}
+
+// 2. واجهة الـ Instance الكاملة والجاهزة للـ Inject
+export interface FormInstance {
+  fields: Ref<FormField[]>;
+  isLoading: Ref<boolean>;
+  isSubmitting: Ref<boolean>;
+  workingHours: Ref<Record<string, { open: string; close: string } | null>>;
+  setFormConfig: (
+    configFields: FormField[],
+    submitAction: () => Promise<void> | void,
+    initialData?: Record<string, unknown>,
+  ) => void;
+  setWorkingHoursConfig: (hoursData: Record<string, unknown>) => void;
+  toggleDay: (day: string, checked: boolean) => void;
+  formDataPayload: ComputedRef<Record<string, unknown>>;
+  resetForm: () => void;
+  onSubmitHandler: Ref<() => Promise<void> | void>;
 }
 
 export const useForm = () => {
@@ -18,16 +46,23 @@ export const useForm = () => {
   const isSubmitting = ref<boolean>(false);
   const onSubmitHandler = ref<() => Promise<void> | void>(() => {});
 
-  const workingHours = ref<Record<string, { open: string; close: string } | null>>({
-    sat: null, sun: null, mon: null, tue: null, wed: null, thu: null, fri: null,
+  const workingHours = ref<
+    Record<string, { open: string; close: string } | null>
+  >({
+    sat: null,
+    sun: null,
+    mon: null,
+    tue: null,
+    wed: null,
+    thu: null,
+    fri: null,
   });
-
 
   // دالة تهيئة وتعبئة الفورم بالهيكل والبيانات القادمة من الـ Store
   const setFormConfig = (
     configFields: FormField[],
     submitAction: () => Promise<void> | void,
-    initialData?: Record<string, any>,
+    initialData?: Record<string, unknown>,
   ) => {
     fields.value = configFields.map((field) => {
       // إذا كانت هناك بيانات ابتدائية، نغذي قيمة الحقل بها، وإلا نتركها كما هي أو فارغة
@@ -41,10 +76,11 @@ export const useForm = () => {
   };
 
   // دالة خاصة بتعبئة مواعيد العمل للفورمات التي تستخدمها
-  const setWorkingHoursConfig = (hoursData: Record<string, any>) => {
+  const setWorkingHoursConfig = (hoursData: Record<string, unknown>) => {
     Object.keys(workingHours.value).forEach((day) => {
-      const dayData = hoursData[day];
-      
+      const dayData = hoursData[day] as
+        { open?: string; close?: string } | undefined;
+
       if (dayData) {
         workingHours.value[day] = {
           open: dayData.open || "09:00",
@@ -71,7 +107,7 @@ export const useForm = () => {
         acc[field.column] = field.value;
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, unknown>,
     );
 
     // إذا كانت هناك مواعيد عمل مفعّلة ومملوءة، ندمجها في الـ Payload
@@ -84,20 +120,26 @@ export const useForm = () => {
   });
 
   // دالة لتفريغ بيانات وفورمات الـ Composable تماماً عند الخروج من الصفحة (Cleanup)
-    // دالة لتفريغ بيانات وفورمات الـ Composable تماماً عند الخروج من الصفحة (Cleanup)
-const resetForm = () => {
-  // بدلاً من حذف المصفوفة، نمر على الحقول ونفرغ قيمها فقط مع الحفاظ على الهيكل
-  fields.value = fields.value.map((field) => ({
-    ...field,
-    value: field.type === 'select' ? (field.options?.[0]?.value ?? "") : "" // تصفير القيمة بناءً على نوع الحقل
-  }));
-  
-  isLoading.value = false;
-  isSubmitting.value = false;
-  workingHours.value = { sat: null, sun: null, mon: null, tue: null, wed: null, thu: null, fri: null };
-};
+  // دالة لتفريغ بيانات وفورمات الـ Composable تماماً عند الخروج من الصفحة (Cleanup)
+  const resetForm = () => {
+    // بدلاً من حذف المصفوفة، نمر على الحقول ونفرغ قيمها فقط مع الحفاظ على الهيكل
+    fields.value = fields.value.map((field) => ({
+      ...field,
+      value: field.type === "select" ? (field.options?.[0]?.value ?? "") : "", // تصفير القيمة بناءً على نوع الحقل
+    }));
 
-
+    isLoading.value = false;
+    isSubmitting.value = false;
+    workingHours.value = {
+      sat: null,
+      sun: null,
+      mon: null,
+      tue: null,
+      wed: null,
+      thu: null,
+      fri: null,
+    };
+  };
 
   return {
     fields,

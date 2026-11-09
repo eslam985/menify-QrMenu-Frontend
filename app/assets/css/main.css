@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 :root {
   --bg: #f5f5f5;
@@ -13,7 +13,6 @@
   --card: #0a0a0a;
   --text: #cccccc;
   --primary: #ff9f5a;
-
 }
 
 @theme {
@@ -30,15 +29,15 @@
 
 /* padding */
 @utility p-fluid {
-  padding: clamp(0.70rem, 2vw, 1rem);
+  padding: clamp(0.7rem, 2vw, 1rem);
 }
 
 @utility px-fluid {
-  padding-inline: clamp(0.70rem, 2vw, 1rem);
+  padding-inline: clamp(0.7rem, 2vw, 1rem);
 }
 
 @utility py-fluid {
-  padding-block: clamp(0.70rem, 2vw, 1rem);
+  padding-block: clamp(0.7rem, 2vw, 1rem);
 }
 
 @utility p-section-fluid {
@@ -47,24 +46,23 @@
 
 /* Margin */
 @utility m-fluid {
-  margin: clamp(0.70rem, 2vw, 1rem);
+  margin: clamp(0.7rem, 2vw, 1rem);
 }
 
-
 @utility mx-fluid {
-  margin-inline: clamp(0.70rem, 2vw, 1rem);
+  margin-inline: clamp(0.7rem, 2vw, 1rem);
 }
 
 @utility my-fluid {
-  margin-block: clamp(0.70rem, 2vw, 1rem);
+  margin-block: clamp(0.7rem, 2vw, 1rem);
 }
 
 @utility mb-fluid {
-  margin-bottom: clamp(0.70rem, 2vw, 1rem);
+  margin-bottom: clamp(0.7rem, 2vw, 1rem);
 }
 
 @utility mt-fluid {
-  margin-top: clamp(0.70rem, 2vw, 1rem);
+  margin-top: clamp(0.7rem, 2vw, 1rem);
 }
 
 @utility m-section-fluid {
@@ -82,7 +80,7 @@
 /* gap */
 
 @utility gap-fluid {
-  gap: clamp(0.70rem, 2vw, 1rem);
+  gap: clamp(0.7rem, 2vw, 1rem);
 }
 
 @utility gap-section {
@@ -91,16 +89,15 @@
 
 @layer components {
   .btn-primary {
-    @apply cursor-pointer text-primary bg-bg px-fluid py-1.5 rounded-lg text-fluid-p shadow-md active:scale-95 transition-all border border-primary/30 md:hover:text-primary/70 md:hover:bg-card
+    @apply text-primary bg-bg px-fluid text-fluid-p border-primary/30 md:hover:text-primary/70 md:hover:bg-card cursor-pointer rounded-lg border py-1.5 shadow-md transition-all active:scale-95;
   }
 
   .btn-danger {
-    @apply cursor-pointer px-fluid py-1.5 rounded-lg text-fluid-p text-danger active:scale-95 transition-all shadow-md bg-bg border border-danger/10 md:hover:text-danger/70 md:hover:bg-card
+    @apply px-fluid text-fluid-p text-danger bg-bg border-danger/10 md:hover:text-danger/70 md:hover:bg-card cursor-pointer rounded-lg border py-1.5 shadow-md transition-all active:scale-95;
   }
 }
 
 @theme {
-
   /* ===== أحجام خطوط مرنة → text-fluid-h1 ... ===== */
   --text-fluid-h1: clamp(2rem, 6vw, 5rem);
   --text-fluid-h1--line-height: 1.05;
@@ -195,7 +192,6 @@
   }
 
   @keyframes float {
-
     0%,
     100% {
       transform: translateY(0) rotate(6deg);
@@ -217,7 +213,6 @@
   }
 
   @keyframes pulse-glow {
-
     0%,
     100% {
       box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
@@ -227,6 +222,4 @@
       box-shadow: 0 0 0 12px transparent;
     }
   }
-
-
 }

@@ -1,8 +1,11 @@
 // Menify/frontend/app/stores/staff.ts
 import { defineStore } from "pinia";
 import { useStaffService } from "@/services/staffService";
-import type { StaffResponse } from '@/types/dataType/staffType'
-import type { CreateStaffType, UpdateStaffRoleType } from '@/schemas/staffSchema/staffSchema' 
+import type { StaffResponse } from "@/types/dataType/staffType";
+import type {
+  CreateStaffType,
+  UpdateStaffRoleType,
+} from "@/schemas/staffSchema/staffSchema";
 
 export const useStaffStore = defineStore("staff", () => {
   const notiStore = useNotificationStore();
@@ -15,9 +18,15 @@ export const useStaffStore = defineStore("staff", () => {
   const isLoading = ref(false);
 
   const staffCount = computed(() => staff.value.length);
-  const adminsCount = computed(()=> staff.value.filter((u)=> u.roles === '5150').length) 
-  const editorsCount = computed(()=> staff.value.filter((u)=> u.roles === '1984').length) 
-  const usersCount = computed(()=> staff.value.filter((u)=> u.roles === '2001').length) 
+  const adminsCount = computed(
+    () => staff.value.filter((u) => u.roles === "5150").length,
+  );
+  const editorsCount = computed(
+    () => staff.value.filter((u) => u.roles === "1984").length,
+  );
+  const usersCount = computed(
+    () => staff.value.filter((u) => u.roles === "2001").length,
+  );
 
   function getEmployeeById(id: string) {
     if (!id) return false;
@@ -54,7 +63,7 @@ export const useStaffStore = defineStore("staff", () => {
     }
   }
 
-  async function createStaff(body: CreateStaffType['body']) {
+  async function createStaff(body: CreateStaffType["body"]) {
     if (isLoading.value || Object.keys(body).length < 1) return false;
 
     isLoading.value = true;
@@ -83,7 +92,10 @@ export const useStaffStore = defineStore("staff", () => {
     }
   }
 
-  async function updateStaffRole(staffId: string, roles: UpdateStaffRoleType['body']) {
+  async function updateStaffRole(
+    staffId: string,
+    roles: UpdateStaffRoleType["body"],
+  ) {
     if (isLoading.value || !staffId || !roles) return false;
 
     isLoading.value = true;

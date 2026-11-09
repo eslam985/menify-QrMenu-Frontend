@@ -1,71 +1,82 @@
 <!-- app/components/dashboard/categories/CategoryTable.vue -->
 <script setup lang="ts">
-import { useCategorySearch } from '~/composables/useCategorySearch'
-import { useCategoryStore } from '~/stores/category'
-import { useTable } from '~/composables/useTable'
-import { useAuthStore } from '~/stores/auth'
+import { useCategorySearch } from "~/composables/useCategorySearch";
+import { useTable } from "~/composables/useTable";
 
-const categoryStore = useCategoryStore()
-const authStore = useAuthStore()
+const categoryStore = useCategoryStore();
+const authStore = useAuthStore();
 
-const { searchQuery } = useCategorySearch()
-const { openModal } = useCategoryModal()
-const { setTableConfig } = useTable()
+const { searchQuery } = useCategorySearch();
+const { openModal } = useCategoryModal();
+const { setTableConfig } = useTable();
 
 const filteredCategories = computed(() => {
+  if (!searchQuery.value) return categoryStore.categories;
 
-  if (!searchQuery.value) return categoryStore.categories
-
-  const query = searchQuery.value.toLowerCase().trim()
+  const query = searchQuery.value.toLowerCase().trim();
 
   return categoryStore.categories.filter(
     (cat) =>
       cat.name.toLowerCase().includes(query) ||
-      cat.section.toLowerCase().includes(query)
-  )
-})
+      cat.section.toLowerCase().includes(query),
+  );
+});
 
 // تحديث إعدادات الجدول في الـ Composable عند تغير البيانات
 const tableColumns = [
-  { key: 'name', label: 'اسم التصنيف' },
-  { key: 'section', label: 'القسم (Section)' },
-  { key: 'items_count', label: 'عدد الأصناف' },
-  { key: 'display_order', label: 'الترتيب' },
-  { key: 'updated_at', label: 'آخر تحديث' },
-  { key: 'created_at', label: 'تاريخ الانشاء' },
-  { key: 'actions', label: 'الإجراءات' },
-]
+  { key: "name", label: "اسم التصنيف" },
+  { key: "section", label: "القسم (Section)" },
+  { key: "items_count", label: "عدد الأصناف" },
+  { key: "display_order", label: "الترتيب" },
+  { key: "updated_at", label: "آخر تحديث" },
+  { key: "created_at", label: "تاريخ الانشاء" },
+  { key: "actions", label: "الإجراءات" },
+];
 
 watchEffect(() => {
-  setTableConfig(tableColumns, filteredCategories.value, categoryStore.isLoading)
-})
+  setTableConfig(
+    tableColumns,
+    filteredCategories.value,
+    categoryStore.isLoading,
+  );
+});
 
 const handleDelete = async (categoryId: string) => {
-  if (!categoryId) return
-  await categoryStore.removeCategory(categoryId)
-}
-
-
+  if (!categoryId) return;
+  await categoryStore.removeCategory(categoryId);
+};
 </script>
 
 <template>
   <UiBaseTable>
-    <template #cell-updated_at="{ row }">
-      <span class="text-fluid-xs text-text/60 md:hover:text-primary">{{ formatDate(row.updated_at) }}</span>
+    <template #cell-updated_at="{ value }">
+      <span class="text-fluid-xs text-text/60 md:hover:text-primary">{{
+        formatDate(String(value ?? ""))
+      }}</span>
     </template>
-    <template #cell-created_at="{ row }">
-      <span class="text-fluid-xs text-text/60 md:hover:text-primary">{{ formatDate(row.created_at) }}</span>
+    <template #cell-created_at="{ value }">
+      <span class="text-fluid-xs text-text/60 md:hover:text-primary">{{
+        formatDate(String(value ?? ""))
+      }}</span>
     </template>
 
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end gap-2">
-        <button type="button" @click="openModal(row)"
-          class="px-3 py-1.5 rounded-xl border bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary font-medium text-xs transition-all active:scale-95 cursor-pointer">
+        <button
+          type="button"
+          @click="openModal(row)"
+          class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary cursor-pointer rounded-xl border px-3 py-1.5 text-xs font-medium transition-all active:scale-95"
+        >
           تعديل
         </button>
 
-        <button v-if="authStore.isAdmin" type="button" @click="handleDelete(row.id)" :disabled="categoryStore.isLoading"
-          class="px-3 py-1.5 rounded-xl border bg-red-500/5 border-red-500/20 hover:bg-red-500/10 text-red-500 font-medium text-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
+        <button
+          v-if="authStore.isAdmin"
+          type="button"
+          @click="handleDelete(row.id as string)"
+          :disabled="categoryStore.isLoading"
+          class="cursor-pointer rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-1.5 text-xs font-medium text-red-500 transition-all hover:bg-red-500/10 active:scale-95 disabled:opacity-50"
+        >
           حذف
         </button>
       </div>

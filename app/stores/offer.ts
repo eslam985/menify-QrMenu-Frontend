@@ -1,13 +1,12 @@
 // app/stores/offer.ts
-import { defineStore } from "pinia";
-import { useOfferService } from "~/services/offerService";
-import type { OfferResponse } from "@/types/dataType/offerType";
 import type {
-  ListOffersType,
   CreateOfferType,
+  ListOffersType,
   UpdateOfferType,
 } from "@/schemas/offerSchema/offerSchema";
-
+import type { OfferResponse } from "@/types/dataType/offerType";
+import { defineStore } from "pinia";
+import { useOfferService } from "~/services/offerService";
 
 export const useOfferStore = defineStore("offer", () => {
   const notiStore = useNotificationStore();
@@ -20,23 +19,25 @@ export const useOfferStore = defineStore("offer", () => {
   const error = ref<string | null>(null);
 
   const offersCount = computed(() => offers.value?.length);
-  const offersIsActiveCount = computed(() => offers.value.filter((offer) => offer.is_active).length);
-  const offersIsNotActiveCount = computed(() => offers.value.filter((offer) => !offer.is_active).length);
+  const offersIsActiveCount = computed(
+    () => offers.value.filter((offer) => offer.is_active).length,
+  );
+  const offersIsNotActiveCount = computed(
+    () => offers.value.filter((offer) => !offer.is_active).length,
+  );
 
   // جلب قائمة العروض
-  async function fetchOffers(params?: ListOffersType['query']) {
+  async function fetchOffers(params?: ListOffersType["query"]) {
     isLoading.value = true;
     error.value = null;
     try {
       const res = await offerService.getOffers(params);
 
-      if (!res) return;
+      if (!res || !res.success) return;
 
       offers.value = res.data || [];
-    } catch (err: any) {
-      error.value = err?.data?.message || "فشل تحميل العروض";
-      notiStore.show(error.value!, "error");
-      console.error(err);
+      return res.data;
+    } catch (err: unknown) {
       return false;
     } finally {
       isLoading.value = false;
@@ -69,9 +70,7 @@ export const useOfferStore = defineStore("offer", () => {
         "success",
       );
       return true;
-    } catch (err: any) {
-      notiStore.show(err?.data?.message || "فشل إضافة العرض", "error");
-      console.error(err);
+    } catch (err: unknown) {
       return false;
     } finally {
       isLoading.value = false;
@@ -99,9 +98,7 @@ export const useOfferStore = defineStore("offer", () => {
       }
       notiStore.show(res.message || "تم تحديث العرض بنجاح!", "success");
       return true;
-    } catch (err: any) {
-      notiStore.show(err?.data?.message || "فشل تحديث العرض", "error");
-      console.error(err);
+    } catch (err: unknown) {
       return false;
     } finally {
       isLoading.value = false;
@@ -128,9 +125,7 @@ export const useOfferStore = defineStore("offer", () => {
       offers.value = offers.value.filter((o) => o.id !== id);
       notiStore.show("تم حذف العرض بنجاح!", "success");
       return true;
-    } catch (err: any) {
-      notiStore.show(err?.data?.message || "فشل حذف العرض", "error");
-      console.error(err);
+    } catch (err: unknown) {
       return false;
     } finally {
       isLoading.value = false;

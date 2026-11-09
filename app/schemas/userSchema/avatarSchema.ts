@@ -31,5 +31,7 @@ const setAvatarFromHistorySchema = z.object({
 
 export { uploadAvatarSchema, setAvatarFromHistorySchema };
 
-export type SetAvatarFromHistoryType = z.infer<typeof setAvatarFromHistorySchema>
-export type UploadAvatarType = z.infer<typeof uploadAvatarSchema>
+export type SetAvatarFromHistoryType = z.infer<
+  typeof setAvatarFromHistorySchema
+>;
+export type UploadAvatarType = z.infer<typeof uploadAvatarSchema>;

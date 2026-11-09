@@ -1,40 +1,51 @@
 <!-- app/components/dashboard/DashboardHeader.vue -->
 <script setup lang="ts">
-import { useDashboardLayout } from '~/composables/useDashboardLayout'
-import { useAuthStore } from '~/stores/auth'
+import { useDashboardLayout } from "~/composables/useDashboardLayout";
 
-const { toggleMobile } = useDashboardLayout()
-const authStore = useAuthStore()
+const { toggleMobile } = useDashboardLayout();
+const authStore = useAuthStore();
 </script>
 
 <template>
   <header
-    class="w-full mb-section-fluid border-b border-primary/15 p-fluid flex items-center justify-between bg-card shrink-0 sticky top-0 z-30 shadow-xs">
+    class="mb-section-fluid border-primary/15 p-fluid bg-card sticky top-0 z-30 flex w-full shrink-0 items-center justify-between border-b shadow-xs"
+  >
     <!-- يمين الهيدر: زر القائمة للموبايل + الشعار والعنوان -->
     <div class="flex items-center gap-4">
-      <button @click="toggleMobile"
-        class="md:hidden p-2.5 rounded-xl bg-primary/10 text-primary font-bold text-sm focus:outline-none flex items-center justify-center cursor-pointer hover:bg-primary/20 transition"
-        aria-label="فتح القائمة">
+      <button
+        @click="toggleMobile"
+        class="bg-primary/10 text-primary hover:bg-primary/20 flex cursor-pointer items-center justify-center rounded-xl p-2.5 text-sm font-bold transition focus:outline-none md:hidden"
+        aria-label="فتح القائمة"
+      >
         ☰
       </button>
 
       <div class="flex items-center gap-3">
         <div
-          class="w-9 h-9 rounded-xl bg-bg text-primary flex items-center justify-center font-black text-lg shadow-glow">
+          class="bg-bg text-primary shadow-glow flex h-9 w-9 items-center justify-center rounded-xl text-lg font-black"
+        >
           M
         </div>
         <div>
-          <h2 class="text-sm font-bold text-primary">{{ authStore.user?.restaurant_name + ' ' + 'Dashboard' }}</h2>
-          <p class="text-[10px] text-text/60">لوحة التحكم الإدارية</p>
+          <h2 class="text-primary text-sm font-bold">
+            {{ authStore.user?.restaurant_name + " " + "Dashboard" }}
+          </h2>
+          <p class="text-text/60 text-[10px]">لوحة التحكم الإدارية</p>
         </div>
       </div>
     </div>
 
     <!-- يسار الهيدر: تبديل الثيم + معلومات المشرف -->
     <div class="flex items-center gap-3">
-      <div class="hidden sm:flex flex-col items-end">
-        <NuxtLink to="/dashboard/profile" class="text-xs font-bold text-primary">{{ authStore.user?.username || 'المشرف' }}</NuxtLink>
-        <span class="text-[10px] text-text/60">{{ authStore.user?.email || '' }}</span>
+      <div class="hidden flex-col items-end sm:flex">
+        <NuxtLink
+          to="/dashboard/profile"
+          class="text-primary text-xs font-bold"
+          >{{ authStore.user?.username || "المشرف" }}</NuxtLink
+        >
+        <span class="text-text/60 text-[10px]">{{
+          authStore.user?.email || ""
+        }}</span>
       </div>
 
       <ClientOnly>

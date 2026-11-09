@@ -4,14 +4,16 @@ export interface MenuItemResponse {
   category_id: string;
   title: string;
   description: string | null;
-  price: number;            // NUMERIC(10,2) is cast with price::float8 in the SELECT
+  price: number; // NUMERIC(10,2) is cast with price::float8 in the SELECT
   image_url: string | null;
   is_available: boolean;
   display_order: number;
   created_at: string;
   updated_at: string;
 }
-
+export interface CartItem extends MenuItemResponse {
+  quantity: number;
+}
 /** Input of MenuItem.create. restaurantId always comes from req.restaurantId */
 export interface CreateMenuItemInput {
   restaurantId: string;

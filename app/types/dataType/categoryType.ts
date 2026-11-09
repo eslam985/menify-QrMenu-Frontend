@@ -1,10 +1,11 @@
 /** Category as returned to the client (restaurant_id is intentionally not exposed) */
-export type CategorySection = "food" | "drinks" | "desserts" | "shisha" | "other";
+export type CategorySection =
+  "food" | "drinks" | "desserts" | "shisha" | "other";
 
 export interface CategoryResponse {
   id: string;
   name: string;
-  section: CategorySection;  
+  section: CategorySection;
   display_order: number;
   created_at: string;
   updated_at: string;
@@ -13,17 +14,17 @@ export interface CategoryResponse {
 export interface CreateCategoryInput {
   restaurantId: string;
   name: string;
-  section: CategorySection;   // new (the schema default guarantees it)
+  section: CategorySection; // new (the schema default guarantees it)
   displayOrder?: number | undefined;
 }
 
 export interface UpdateCategoryInput {
   name?: string | undefined;
-  section?: CategorySection | undefined; 
+  section?: CategorySection | undefined;
   display_order?: number | undefined;
 }
 
-/** List item: includes how many menu items the category holds (used for the delete confirmation) */
+/** List item: includes how ma ny menu items the category holds (used for the delete confirmation) */
 export interface CategoryWithCountResponse extends CategoryResponse {
   items_count: number;
 }

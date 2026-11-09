@@ -1,55 +1,75 @@
 <!-- app/components/ui/BaseTable.vue -->
-<script setup lang="ts">
-import { useTable } from '~/composables/useTable'
+<script setup lang="ts" generic="T extends Record<string, unknown>">
+import { useTable } from "~/composables/useTable";
 
-const { columns, rows, isLoading, sortBy, sortOrder, handleSort, handleRowClick } = useTable()
+const {
+  columns,
+  rows,
+  isLoading,
+  sortBy,
+  sortOrder,
+  handleSort,
+  handleRowClick,
+} = useTable();
 
-// تعريف الـ slots ليتعرف عليها المحرر فوراً
 defineSlots<{
-  [key: string]: (props: { value: any; row: any }) => any
-}>()
+  [key: string]: (props: { value: unknown; row: T }) => unknown;
+}>();
 </script>
 
 <template>
-  <div class="w-full 2xl:max-w-[90%] mx-auto bg-card border border-primary/30 rounded-2xl shadow-soft overflow-hidden">
+  <div
+    class="bg-card border-primary/30 shadow-soft mx-auto w-full overflow-hidden rounded-2xl border 2xl:max-w-[90%]"
+  >
     <!-- loading -->
-    <div v-if="isLoading" class="p-8 text-center text-text font-medium">
+    <div v-if="isLoading" class="text-text p-8 text-center font-medium">
       loading...
     </div>
 
     <!-- table -->
     <div v-else-if="rows && rows.length > 0" class="w-full overflow-x-auto">
-      <table class="w-full text-fluid-xs whitespace-nowrap">
-        <thead class="bg-bg border-b border-primary/30 text-primary">
+      <table class="text-fluid-xs w-full whitespace-nowrap">
+        <thead class="bg-bg border-primary/30 text-primary border-b">
           <tr>
             <th
               v-for="col in columns"
               :key="col.key"
               @click="col.sortable && handleSort(col.key)"
               :class="[
-                'p-fluid text-center select-none text-primary md:hover:text-text text-fluid-p ',
-                col.sortable ? 'cursor-pointer hover:bg-primary/30 transition-colors' : '',
+                'p-fluid text-primary md:hover:text-text text-fluid-p text-center select-none',
+                col.sortable
+                  ? 'hover:bg-primary/30 cursor-pointer transition-colors'
+                  : '',
               ]"
             >
-              <div class="flex items-center gap-1 justify-center">
+              <div class="flex items-center justify-center gap-1">
                 <span>{{ col.label }}</span>
                 <span v-if="col.sortable && sortBy === col.key">
-                  {{ sortOrder === 'ASC' ? '▲' : '▼' }}
+                  {{ sortOrder === "ASC" ? "▲" : "▼" }}
                 </span>
               </div>
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-primary/30 bg-card text-text">
+        <tbody class="divide-primary/30 bg-card text-text divide-y">
           <tr
             v-for="(row, index) in rows"
-            :key="row.id || index"
+            :key="String(row.id ?? index)"
             @click="handleRowClick(row)"
-            class="hover:bg-bg transition-colors text-text text-fluid-p cursor-pointer"
+            class="hover:bg-bg text-text text-fluid-p cursor-pointer transition-colors"
           >
-            <td v-for="col in columns" :key="col.key" class="p-fluid text-center md:hover:text-primary">
-              <slot :name="`cell-${col.key}`" :value="row[col.key]" :row="row">
-                {{ row[col.key] ?? '-' }}
+            <td
+              v-for="col in columns"
+              :key="col.key"
+              class="p-fluid md:hover:text-primary text-center"
+            >
+              <!-- 🌟 الحل هنا: نقوم بعمل كاست آمن للـ row المستلمة من المجموع المحلي إلى النوع T الخارجي -->
+              <slot
+                :name="`cell-${col.key}`"
+                :value="row[col.key]"
+                :row="row as T"
+              >
+                {{ row[col.key] ?? "-" }}
               </slot>
             </td>
           </tr>
@@ -58,8 +78,11 @@ defineSlots<{
     </div>
 
     <!-- no data -->
-    <div v-else class="text-fluid-xs text-text py-12 text-center bg-primary/5 space-y-3">
-      <p class="font-semibold text-main">No data</p>
+    <div
+      v-else
+      class="text-fluid-xs text-text bg-primary/5 space-y-3 py-12 text-center"
+    >
+      <p class="text-main font-semibold">No data</p>
       <p class="text-text">جرب اضافة بيانات اولا</p>
     </div>
   </div>

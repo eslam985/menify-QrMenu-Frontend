@@ -1,16 +1,16 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'dashboard',
-  middleware: ['auth']
-})
+  layout: "dashboard",
+  middleware: ["auth"],
+});
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 onMounted(async () => {
   if (!authStore.restaurantSlug) {
-    await authStore.loadProfile()
+    await authStore.loadProfile();
   }
-})
+});
 </script>
 
 <template>

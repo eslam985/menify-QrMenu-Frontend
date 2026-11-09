@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { usernameRe } from "@/utils/regex.js";
 
-
 // ---------------------------------------------------------------
 // Reusable fields
 // ---------------------------------------------------------------
@@ -17,7 +16,10 @@ const usernameField = z
   .trim()
   .min(3)
   .max(30)
-  .regex(usernameRe, "اسم المستخدم: حروف وأرقام، ويمكن فاصل واحد (مسافة . _ -) بين الكلمات");
+  .regex(
+    usernameRe,
+    "اسم المستخدم: حروف وأرقام، ويمكن فاصل واحد (مسافة . _ -) بين الكلمات",
+  );
 
 // Passwords are NOT trimmed. bcrypt only uses the first 72 BYTES.
 const newPasswordField = z
@@ -29,9 +31,22 @@ const newPasswordField = z
   );
 
 const RESERVED_SLUGS = [
-  "admin", "api", "app", "login", "logout", "register",
-  "menu", "dashboard", "www", "static", "assets", "health",
-  "undefined", "null", "none", "test",
+  "admin",
+  "api",
+  "app",
+  "login",
+  "logout",
+  "register",
+  "menu",
+  "dashboard",
+  "www",
+  "static",
+  "assets",
+  "health",
+  "undefined",
+  "null",
+  "none",
+  "test",
 ];
 
 // Must match the DB CHECK: ^[a-z0-9]+(-[a-z0-9]+)*$
@@ -41,7 +56,10 @@ const slugField = z
   .toLowerCase()
   .min(3, "الرابط يجب أن يكون 3 أحرف على الأقل")
   .max(60)
-  .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "الرابط: أحرف إنجليزية صغيرة وأرقام وشرطات فقط")
+  .regex(
+    /^[a-z0-9]+(-[a-z0-9]+)*$/,
+    "الرابط: أحرف إنجليزية صغيرة وأرقام وشرطات فقط",
+  )
   .refine((s) => !RESERVED_SLUGS.includes(s), "هذا الرابط محجوز");
 
 // ---------------------------------------------------------------
@@ -50,15 +68,18 @@ const slugField = z
 // ---------------------------------------------------------------
 const registerRestaurantSchema = z.object({
   body: z.strictObject({
-      inviteCode: z.string({ error: "كود الدعوة مطلوب" }).trim().min(16).max(200),
-    restaurantName: z.string({ error: "اسم المطعم مطلوب" }).trim().min(2).max(150),
+    inviteCode: z.string({ error: "كود الدعوة مطلوب" }).trim().min(16).max(200),
+    restaurantName: z
+      .string({ error: "اسم المطعم مطلوب" })
+      .trim()
+      .min(2)
+      .max(150),
     slug: slugField,
     username: usernameField,
     email: emailField,
     password: newPasswordField,
   }),
 });
-
 
 // ---------------------------------------------------------------
 // Update own profile: ONLY username / email (no roles, no avatar)
@@ -99,11 +120,16 @@ const deleteSessionByIdSchema = z.object({
   }),
 });
 
-
 const getSessionsQuerySchema = z.object({
   query: z.object({
     sortBy: z
-      .enum(["user_agent", "ip_address", "expires_at", "created_at", "updated_at"])
+      .enum([
+        "user_agent",
+        "ip_address",
+        "expires_at",
+        "created_at",
+        "updated_at",
+      ])
       .optional(),
     sortOrder: z.enum(["ASC", "DESC"]).optional(),
   }),
@@ -118,7 +144,7 @@ export {
   getSessionsQuerySchema,
   emailField,
   usernameField,
-  newPasswordField
+  newPasswordField,
 };
 
 export type RegisterRestaurantType = z.infer<typeof registerRestaurantSchema>;

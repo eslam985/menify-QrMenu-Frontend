@@ -1,64 +1,98 @@
 // app/stores/publicMenu.ts
-import { defineStore } from 'pinia'
+import { usePublicMenuService } from "@/services/publicMenuService";
+import type {
+  PublicMenuCategory,
+  PublicOffer,
+  PublicRestaurantInfo,
+} from "@/types/dataType/publicMenuType";
+import { handleGlobalError } from "@/utils/apiError";
+import { defineStore } from "pinia";
 
-const CURRENCY_LABELS: Record<string, string> = { EGP: 'ج.م', SAR: 'ر.س', AED: 'د.إ', USD: '$', EUR: '€' }
+const CURRENCY_LABELS: Record<string, string> = {
+  EGP: "ج.م",
+  SAR: "ر.س",
+  AED: "د.إ",
+  USD: "$",
+  EUR: "€",
+};
 
-export const usePublicMenuStore = defineStore('publicMenu', () => {
-  const config = useRuntimeConfig()
+export const usePublicMenuStore = defineStore("publicMenu", () => {
+  const publicMenuService = usePublicMenuService();
 
-  const restaurant = ref<any>(null)
-  const categories = ref<any[]>([])
-  const offers = ref<any[]>([])
-  const isLoading = ref(false)
-  const isLoaded = ref(false)
-  const error = ref<any>(null)
+  const restaurant = ref<PublicRestaurantInfo | null>(null);
+  const categories = ref<PublicMenuCategory[]>([]);
+  const offers = ref<PublicOffer[]>([]);
+  const isLoading = ref(false);
+  const isLoaded = ref(false);
+  const error = ref<unknown>(null);
 
-  let loadedSlug: string | null = null
-  const categoriesCount = computed(()=> categories.value?.length)
+  let loadedSlug: string | null = null;
+  const categoriesCount = computed(() => categories.value?.length);
 
   async function fetchMenu(slug: string) {
-    if (!slug || isLoading.value) return                       // guard: no slug / already running
-    if (loadedSlug === slug && restaurant.value) return        // guard: already loaded, no refetch
+    if (!slug || isLoading.value) return; // guard: no slug / already running
+    if (loadedSlug === slug && restaurant.value) return; // guard: already loaded, no refetch
 
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
     try {
-      const res: any = await $fetch(`${config.public.apiBase}/public/menu/${encodeURIComponent(slug)}`)
+      const res = await publicMenuService.fetchMenu(slug);
 
-      if (!res || !res.success ) return false
-      
-      const info = res.data.restaurant
+      if (!res) return false;
 
-      info.currency = CURRENCY_LABELS[info.currency] ?? info.currency
-      restaurant.value = info
-      categories.value = res.data.categories ?? []
-      offers.value = res.data.offers ?? []
-      loadedSlug = slug
+      const { success, data } = res;
 
-      return res
-    } catch (e: any) {
-      const status = e?.status || e?.statusCode || e?.response?.status
+      if (!success || !data) return false;
+
+      const info = data.restaurant;
+
+      info.currency = CURRENCY_LABELS[info.currency] ?? info.currency;
+      restaurant.value = info;
+      categories.value = data.categories ?? [];
+      offers.value = data.offers ?? [];
+      loadedSlug = slug;
+
+      return res;
+    } catch (e: unknown) {
+      // 🌟 نستخدم الدالة الموحدة ونكتم الإشعار المنبثق لزبائن المنيو العام (showNotification = false)
+      const { status, message } = handleGlobalError(
+        e,
+        "حدث خطأ أثناء تحميل بيانات المنيو.",
+        false,
+      );
+
       if (status === 404) {
-        error.value = 'عذراً، هذا المطعم غير موجود أو تم إيقاف الرابط.'
+        error.value = "عذراً، هذا المطعم غير موجود أو تم إيقاف الرابط.";
       } else {
-        error.value = e?.data?.message || 'حدث خطأ أثناء تحميل بيانات المنيو.'
+        error.value = message;
       }
-      console.error(e)
+
+      return false;
     } finally {
-      isLoading.value = false
-      isLoaded.value = true
+      isLoading.value = false;
+      isLoaded.value = true;
     }
   }
 
   function clearMenu() {
-    restaurant.value = null
-    categories.value = []
-    offers.value = []
-    error.value = null
-    isLoading.value = false
-    isLoaded.value = false
-    loadedSlug = null
+    restaurant.value = null;
+    categories.value = [];
+    offers.value = [];
+    error.value = null;
+    isLoading.value = false;
+    isLoaded.value = false;
+    loadedSlug = null;
   }
 
-  return { restaurant, categories, offers, isLoading, isLoaded, error, categoriesCount, fetchMenu, clearMenu, }
-})
+  return {
+    restaurant,
+    categories,
+    offers,
+    isLoading,
+    isLoaded,
+    error,
+    categoriesCount,
+    fetchMenu,
+    clearMenu,
+  };
+});

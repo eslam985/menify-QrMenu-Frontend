@@ -1,179 +1,251 @@
 <script setup lang="ts">
-const userStore = useUserStore()
-const authStore = useAuthStore()
+const userStore = useUserStore();
+const authStore = useAuthStore();
 
-const selectedFile = ref<File | null>(null)
-const avatarPreview = ref<string | null>(null)
-const isDropdownOpen = ref<boolean>(false)
-const isModalOpen = ref<boolean>(false)
+const selectedFile = ref<File | null>(null);
+const avatarPreview = ref<string | null>(null);
+const isDropdownOpen = ref<boolean>(false);
+const isModalOpen = ref<boolean>(false);
 const DEFAULT_AVATAR: string =
-  'https://res.cloudinary.com/dbahqgo8j/image/upload/blogger/iaeclevshfanh5j6x9ew.webp'
+  "https://res.cloudinary.com/dbahqgo8j/image/upload/blogger/iaeclevshfanh5j6x9ew.webp";
 
 const handleFileChange = (event: Event) => {
-  if (!event) return
-  const file: File | undefined = (event.target as HTMLInputElement | null)?.files?.[0]
-  if (!file) return
+  if (!event) return;
+  const file: File | undefined = (event.target as HTMLInputElement | null)
+    ?.files?.[0];
+  if (!file) return;
 
-  selectedFile.value = file
+  selectedFile.value = file;
 
-  avatarPreview.value = URL.createObjectURL(file)
-}
+  avatarPreview.value = URL.createObjectURL(file);
+};
 
 const handleUpload = async (): Promise<void | null> => {
-  if (!selectedFile.value) return null
+  if (!selectedFile.value) return null;
 
-  const formData: FormData = new FormData()
-  formData.append('profileImage', selectedFile.value)
+  const formData: FormData = new FormData();
+  formData.append("profileImage", selectedFile.value);
 
-  await userStore.uploadAvatar(formData)
+  await userStore.uploadAvatar(formData);
 
-  selectedFile.value = null
-}
+  selectedFile.value = null;
+};
 
 const handleDelete = async () => {
-  await userStore.deleteAvatar()
-}
+  await userStore.deleteAvatar();
+};
 
 const handleSelectHistory = async (url: string): Promise<null | undefined> => {
-  const isSuccess = await userStore.setAvatarFromHistory(url)
+  const isSuccess = await userStore.setAvatarFromHistory(url);
 
   if (!isSuccess) {
-    return null
+    return null;
   } else {
-    isModalOpen.value = false
-    await userStore.findUserById()
+    isModalOpen.value = false;
+    await userStore.findUserById();
   }
 
-  return null
-}
+  return null;
+};
 
-const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
-  authStore.user?.roles === '5150'
-    ? 'Admin'
-    : authStore.user?.roles === '1984'
-      ? 'Editor'
-      : authStore.user?.roles === '2001'
-        ? 'User'
-        : 'N/A'
+const role = (): "Admin" | "Editor" | "User" | "N/A" =>
+  authStore.user?.roles === "5150"
+    ? "Admin"
+    : authStore.user?.roles === "1984"
+      ? "Editor"
+      : authStore.user?.roles === "2001"
+        ? "User"
+        : "N/A";
 </script>
 
 <template>
   <section dir="ltr">
-    <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
-      class="space-y-6 mb-section-fluid w-full min-w-0 overflow-x-hidden">
-
-      <h2 dir="rtl" class="text-fluid-h2 mb-fluid text-text md:hover:text-primary">البيانات الأساسية</h2>
+    <div
+      @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
+      class="mb-section-fluid w-full min-w-0 space-y-6 overflow-x-hidden"
+    >
+      <h2
+        dir="rtl"
+        class="text-fluid-h2 mb-fluid text-text md:hover:text-primary"
+      >
+        البيانات الأساسية
+      </h2>
 
       <!-- container -->
-      <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
-        class="flex flex-col md:flex-row gap-fluid border border-primary/20 lg:gap-8 justify-between p-section-fluid bg-card shadow rounded-3xl">
-        <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
-          class="md:max-w-[60%] grid grid-cols-1 sm:flex sm:flex-wrap gap-fluid lg:gap-8">
-          <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
-            class="flex flex-col items-center sm:items-start gap-fluid">
+      <div
+        @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
+        class="gap-fluid border-primary/20 p-section-fluid bg-card flex flex-col justify-between rounded-3xl border shadow md:flex-row lg:gap-8"
+      >
+        <div
+          @click.self="
+            isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen
+          "
+          class="gap-fluid grid grid-cols-1 sm:flex sm:flex-wrap md:max-w-[60%] lg:gap-8"
+        >
+          <div
+            @click.self="
+              isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen
+            "
+            class="gap-fluid flex flex-col items-center sm:items-start"
+          >
             <!-- حاوية الصورة والأيقونة معاً -->
-            <div class="relative w-26 h-26 md:w-32 md:h-32 group">
+            <div class="group relative h-26 w-26 md:h-32 md:w-32">
               <!-- Avatar -->
-              <label class="block w-full h-full rounded-full overflow-hidden cursor-pointer">
+              <label
+                class="block h-full w-full cursor-pointer overflow-hidden rounded-full"
+              >
                 <!-- الـ src هنا ذكي: يعرض المعاينة المؤقتة أولاً، وإذا لم توجد يعرض صورة المستخدم الفعلية أو صورة افتراضية -->
-                <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" :src="avatarPreview ||
-                  authStore.user?.avatar_url ||
-                  DEFAULT_AVATAR
-                  " alt="profile" fetchpriority="high" loading="eager" decoding="async" />
+                <img
+                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  :src="
+                    avatarPreview ||
+                    authStore.user?.avatar_url ||
+                    DEFAULT_AVATAR
+                  "
+                  alt="profile"
+                  fetchpriority="high"
+                  loading="eager"
+                  decoding="async"
+                />
 
                 <!-- ربط حدث التغيير بالـ input -->
-                <input type="file" accept="image/*" class="hidden" @change="handleFileChange" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="hidden"
+                  @change="handleFileChange"
+                />
               </label>
 
               <!-- زر الكاميرا مثبت بدقة على حافة الصورة -->
               <!-- زر الكاميرا مدمج معه القائمة المنبثقة (Dropdown) -->
               <div class="absolute inset-e-0 bottom-0 z-50">
-                <button type="button" @click="isDropdownOpen = !isDropdownOpen"
-                  class="text-text bg-bg shadow-md rounded-full p-1 md:p-2 cursor-pointer transition-transform duration-200 hover:scale-110 active:scale-95 border border-primary/10 flex items-center justify-center">
-                  <Icon name="lucide:camera" class="w-6 h-6 text-primary" />
+                <button
+                  type="button"
+                  @click="isDropdownOpen = !isDropdownOpen"
+                  class="text-text bg-bg border-primary/10 flex cursor-pointer items-center justify-center rounded-full border p-1 shadow-md transition-transform duration-200 hover:scale-110 active:scale-95 md:p-2"
+                >
+                  <Icon name="lucide:camera" class="text-primary h-6 w-6" />
                 </button>
 
                 <!-- القائمة المنبثقة لخيارات الصورة -->
                 <!-- التعديل الصحيح والمحمي 100% ضد انكماش الأيقونات -->
-                <div v-if="isDropdownOpen"
-                  class="absolute inset-e-0 top-full mt-2 z-100 min-w-[150px] bg-bg border border-primary/30 rounded-2xl shadow-xl p-2 flex flex-col md:flex-row-reverse gap-2 items-center justify-center animate-fade-in">
+                <div
+                  v-if="isDropdownOpen"
+                  class="bg-bg border-primary/30 animate-fade-in absolute inset-e-0 top-full z-100 mt-2 flex min-w-[150px] flex-col items-center justify-center gap-2 rounded-2xl border p-2 shadow-xl md:flex-row-reverse"
+                >
                   <!-- خيار 1: رفع صورة جديدة (مغلف داخل label) -->
                   <label
-                    class="w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer hover:bg-primary/10 text-text transition-colors duration-200">
-                    <Icon name="lucide:image-plus" class="w-6 h-6 text-primary" />
+                    class="hover:bg-primary/10 text-text flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl transition-colors duration-200"
+                  >
+                    <Icon
+                      name="lucide:image-plus"
+                      class="text-primary h-6 w-6"
+                    />
 
-                    <input type="file" accept="image/*" class="hidden" @change="
-                      (e) => {
-                        handleFileChange(e)
-                        isDropdownOpen = false
-                      }
-                    " />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      class="hidden"
+                      @change="
+                        (e) => {
+                          handleFileChange(e);
+                          isDropdownOpen = false;
+                        }
+                      "
+                    />
                   </label>
 
                   <!-- خيار 2: اختيار من الصور السابقة (قمنا بتغليفه داخل button أصيل) -->
-                  <button v-if="
-                    authStore.user?.avatar_history &&
-                    authStore.user?.avatar_history?.length > 0
-                  " type="button" @click="
-                    isModalOpen = true;
-                  isDropdownOpen = false;
-                  "
-                    class="w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer hover:bg-primary/10 text-text transition-colors duration-200">
-                    <Icon name="lucide:history" class="w-6 h-6 text-primary" />
-
+                  <button
+                    v-if="
+                      authStore.user?.avatar_history &&
+                      authStore.user?.avatar_history?.length > 0
+                    "
+                    type="button"
+                    @click="
+                      isModalOpen = true;
+                      isDropdownOpen = false;
+                    "
+                    class="hover:bg-primary/10 text-text flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl transition-colors duration-200"
+                  >
+                    <Icon name="lucide:history" class="text-primary h-6 w-6" />
                   </button>
 
                   <!-- خيار 3: حذف الصورة الحالية والعودة للافتراضية (قمنا بتغليفه داخل button أصيل) -->
-                  <button v-if="
-                    authStore.user?.avatar_url &&
-                    authStore.user?.avatar_url !==
-                    'https://cloudinary.com'
-                  " type="button" @click="handleDelete"
-                    class="w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer hover:bg-danger/10 text-danger transition-colors duration-200">
-                    <Icon name="lucide:trash-2" class="w-6 h-6" />
+                  <button
+                    v-if="
+                      authStore.user?.avatar_url &&
+                      authStore.user?.avatar_url !== 'https://cloudinary.com'
+                    "
+                    type="button"
+                    @click="handleDelete"
+                    class="hover:bg-danger/10 text-danger flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl transition-colors duration-200"
+                  >
+                    <Icon name="lucide:trash-2" class="h-6 w-6" />
                   </button>
                 </div>
               </div>
             </div>
 
             <!--  الزر الجديد يظهر فقط عند وجود صورة جديدة مجهزة للرفع -->
-            <button v-if="selectedFile" type="button" @click="handleUpload" :disabled="userStore.isLoading"
-              class="btn-primary">
-              {{ userStore.isLoading ? 'Uploading...' : 'Save Photo' }}
+            <button
+              v-if="selectedFile"
+              type="button"
+              @click="handleUpload"
+              :disabled="userStore.isLoading"
+              class="btn-primary"
+            >
+              {{ userStore.isLoading ? "Uploading..." : "Save Photo" }}
             </button>
           </div>
 
           <!-- info -->
-          <div @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
-            class=" flex flex-col gap-fluid">
-            <NuxtLink to="/dashboard/profile" class="text-fluid-h3 lg:hover:text-primary">{{
-              authStore.user?.username }}</NuxtLink>
+          <div
+            @click.self="
+              isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen
+            "
+            class="gap-fluid flex flex-col"
+          >
+            <NuxtLink
+              to="/dashboard/profile"
+              class="text-fluid-h3 lg:hover:text-primary"
+              >{{ authStore.user?.username }}</NuxtLink
+            >
 
             <div class="flex gap-2">
-              <Icon name="lucide:mail" class="w-6 h-6 text-primary" />
-              <a target="_blank" href="mailto:ee17172@gmail.com" class="text-text lg:hover:text-pimary">
+              <Icon name="lucide:mail" class="text-primary h-6 w-6" />
+              <a
+                target="_blank"
+                href="mailto:ee17172@gmail.com"
+                class="text-text lg:hover:text-pimary"
+              >
                 {{ authStore.user?.email }}
               </a>
             </div>
 
             <div class="flex gap-2">
-              <Icon name="lucide:calendar-days" class="w-6 h-6 text-primary" />
-              <span class="py-1 px-2 rounded-xl max-w-[280px] text-fluid-p text-text bg-bg">
+              <Icon name="lucide:calendar-days" class="text-primary h-6 w-6" />
+              <span
+                class="text-fluid-p text-text bg-bg max-w-[280px] rounded-xl px-2 py-1"
+              >
                 Member since
                 {{
                   authStore.user?.created_at
                     ? formatDate(authStore.user?.created_at)
-                    : '-'
+                    : "-"
                 }}
               </span>
             </div>
 
-            <div class="flex gap-fluid">
-
+            <div class="gap-fluid flex">
               <Icon name="lucide:link" class="text-primary" />
 
-              <a target="_blank" :href="authStore.user?.avatar_url ?? DEFAULT_AVATAR"
-                class="max-w-100 text-fluid-xs text-center self-center truncate lg:hover:text-pimary cursor-pointer transition-colors">
+              <a
+                target="_blank"
+                :href="authStore.user?.avatar_url ?? DEFAULT_AVATAR"
+                class="text-fluid-xs lg:hover:text-pimary max-w-100 cursor-pointer self-center truncate text-center transition-colors"
+              >
                 Avatar URL
                 <span class="text-primary mx-1">
                   {{
@@ -185,60 +257,88 @@ const role = (): 'Admin' | 'Editor' | 'User' | 'N/A' =>
               </a>
             </div>
           </div>
-
         </div>
 
         <!-- Right -->
-        <div class="grid grid-cols-3 md:flex md:flex-col self-center gap-2 md:gap-fluid">
+        <div
+          class="md:gap-fluid grid grid-cols-3 gap-2 self-center md:flex md:flex-col"
+        >
           <span
-            class="self-center text-nowrap text-fluid-xs px-3 py-1.5 rounded-full bg-success/10 text-success flex items-center justify-center gap-1">
-            <span class="w-2 h-2 bg-success text-center self-center rounded-full animate-pulse-glow"></span>
+            class="text-fluid-xs bg-success/10 text-success flex items-center justify-center gap-1 self-center rounded-full px-3 py-1.5 text-nowrap"
+          >
+            <span
+              class="bg-success animate-pulse-glow h-2 w-2 self-center rounded-full text-center"
+            ></span>
             Active
           </span>
           <span
-            class="self-center text-nowrap text-fluid-xs text-center px-3 py-1.5 rounded-full bg-bg text-primary transition-transform lg:hover:scale-105">
+            class="text-fluid-xs bg-bg text-primary self-center rounded-full px-3 py-1.5 text-center text-nowrap transition-transform lg:hover:scale-105"
+          >
             {{ role() }}
           </span>
           <p
-            class="self-center text-text/80 text-nowrap text-fluid-xs px-3 py-2 rounded-full bg-bg transition-transform lg:hover:scale-105">
-            Active Sessions <span class="text-primary">{{ userStore.sessions.length }}</span>
+            class="text-text/80 text-fluid-xs bg-bg self-center rounded-full px-3 py-2 text-nowrap transition-transform lg:hover:scale-105"
+          >
+            Active Sessions
+            <span class="text-primary">{{ userStore.sessions.length }}</span>
           </p>
         </div>
       </div>
     </div>
 
     <!-- نافذة عرض سجل الصور المرفوعة سابقاً (History Modal) -->
-    <div @click.self="isModalOpen = false" v-if="isModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-fluid">
+    <div
+      @click.self="isModalOpen = false"
+      v-if="isModalOpen"
+      class="p-fluid fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    >
       <div
-        class="bg-card border border-primary/30 rounded-3xl max-w-md w-full p-section-fluid shadow-2xl space-y-6 animate-fade-in">
+        class="bg-card border-primary/30 p-section-fluid animate-fade-in w-full max-w-md space-y-6 rounded-3xl border shadow-2xl"
+      >
         <!-- رأس النافذة -->
-        <div class="flex justify-between items-center border-b border-primary/30 pb-3">
+        <div
+          class="border-primary/30 flex items-center justify-between border-b pb-3"
+        >
           <div class="flex items-center gap-2">
-            <Icon name="lucide:rotate-ccw-clock" class="w-8 h-8 text-primary/80" />
+            <Icon
+              name="lucide:rotate-ccw-clock"
+              class="text-primary/80 h-8 w-8"
+            />
             <span class="text-fluid-h3">Photo History</span>
           </div>
-          <button @click="isModalOpen = false" class="flex btn-danger">
+          <button @click="isModalOpen = false" class="btn-danger flex">
             <Icon name="lucide:x" />
           </button>
         </div>
 
         <!-- شبكة عرض الصور القديمة -->
-        <div class="grid grid-cols-3 gap-fluid max-h-[300px] overflow-y-auto p-1">
-          <div v-for="(url, index) in authStore.user?.avatar_history" :key="index"
-            class="relative aspect-square rounded-full overflow-hidden border border-primary/30 group cursor-pointer shadow-sm hover:border-primary/30 transition-all duration-300"
-            @click="handleSelectHistory(url)">
-            <img :src="url" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-              alt="Previous avatar" />
+        <div
+          class="gap-fluid grid max-h-[300px] grid-cols-3 overflow-y-auto p-1"
+        >
+          <div
+            v-for="(url, index) in authStore.user?.avatar_history"
+            :key="index"
+            class="border-primary/30 group hover:border-primary/30 relative aspect-square cursor-pointer overflow-hidden rounded-full border shadow-sm transition-all duration-300"
+            @click="handleSelectHistory(url)"
+          >
+            <img
+              :src="url"
+              class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+              alt="Previous avatar"
+            />
             <div
-              class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <span class="text-text text-[10px] font-medium bg-bg px-2 py-0.5 rounded-full">Select</span>
+              class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+            >
+              <span
+                class="text-text bg-bg rounded-full px-2 py-0.5 text-[10px] font-medium"
+                >Select</span
+              >
             </div>
           </div>
         </div>
 
         <!-- تذييل النافذة -->
-        <div class="flex justify-end pt-3 border-t border-primary/30">
+        <div class="border-primary/30 flex justify-end border-t pt-3">
           <button type="button" @click="isModalOpen = false" class="btn-danger">
             Close
           </button>

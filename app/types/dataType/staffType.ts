@@ -16,7 +16,7 @@ export interface CreateStaffInput {
   restaurantId: string;
   username: string;
   email: string;
-  passwordHash: string;          // bcrypt hash, hashed in the controller
+  passwordHash: string; // bcrypt hash, hashed in the controller
   roles: Exclude<RolesType, "5150">;
 }
 

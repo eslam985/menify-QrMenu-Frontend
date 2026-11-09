@@ -1,202 +1,313 @@
 // app/stores/auth.ts
-import { defineStore } from 'pinia'
-import { useAuthService } from '@/services/authService' 
+import type {
+  LoginUserType,
+  RegisterRestaurantType,
+} from "@/schemas/userSchema/userSchema";
+import { useAuthService } from "@/services/authService";
+import type { UserProfileResponse } from "@/types/userType/userType";
+import { defineStore } from "pinia";
+import { handleGlobalError } from "~/utils/apiError";
 
-import type { UserProfileResponse } from '@/types/userType/userType'
-import type { LoginUserType } from "@/schemas/userSchema/userSchema";
-
-export const RolesList = { Admin: 5150, Editor: 1984, User: 2001 } as const
-
+export const RolesList = { Admin: 5150, Editor: 1984, User: 2001 } as const;
 
 // دوال مساعدة للتعامل مع الكوكي على جهة المتصفح بأمان تام دون استخدام useCookie داخل الستور
-const COOKIE_NAME = 'menify_has_session'
+const COOKIE_NAME = "menify_has_session";
 
-function getSessionCookie(): string | null {
-  if (!import.meta.client) return null
-  const value = `; ${document.cookie}`
-  const parts = value.split(`; ${COOKIE_NAME}=`)
-  if (parts.length === 2) return parts.pop()?.split(';').shift() || null
-  return null
-}
+export const useAuthStore = defineStore("auth", () => {
+  const authService = useAuthService();
+  const notiStore = useNotificationStore();
 
-function setSessionCookie() {
-  if (!import.meta.client) return
-  const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString()
-  document.cookie = `${COOKIE_NAME}=1; expires=${expires}; path=/; SameSite=Lax`
-}
+  const sessionCookie = useCookie<string | null>(COOKIE_NAME, {
+    maxAge: 30 * 24 * 60 * 60,
+    path: "/",
+    sameSite: "lax",
+  });
 
-function removeSessionCookie() {
-  if (!import.meta.client) return
-  document.cookie = `${COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`
-}
+  function getSessionCookie(): boolean {
+    return !!sessionCookie.value;
+  }
 
-export const useAuthStore = defineStore('auth', () => {
-  const authService = useAuthService()
+  function setSessionCookie() {
+    sessionCookie.value = "1";
+  }
 
-  const user = ref<UserProfileResponse | null>(null)
-  const accessToken = ref<string | null>(null) // memory only, never localStorage
-  const isInitialized = ref(false)
-  const subscriptionInactive = ref(false)
-  const isLoading = ref(false)
+  function removeSessionCookie() {
+    sessionCookie.value = null;
+  }
 
-  const userRole = computed(() => (user.value ? Number(user.value.roles) : null))
-  const restaurantId = computed(() => user.value?.restaurant_id ?? null)
-  const restaurantSlug = computed(() => user.value?.restaurant_slug ?? null)
-  const isAuthenticated = computed(() => !!accessToken.value && !!user.value)
-  const isAdmin = computed(() => userRole.value === RolesList.Admin)
+  const user = ref<UserProfileResponse | null>(null);
+  const accessToken = ref<string | null>(null); // memory only, never localStorage
+  const isInitialized = ref(false);
+  const subscriptionInactive = ref(false);
+  const isLoading = ref(false);
+  const errorMessage = ref("");
+  const successMessage = ref("");
+  const userRole = computed(() =>
+    user.value ? Number(user.value.roles) : null,
+  );
+
+  function resetState() {
+    isLoading.value = false;
+    errorMessage.value = "";
+    successMessage.value = "";
+  }
+
+  const restaurantId = computed(() => user.value?.restaurant_id ?? null);
+  const restaurantSlug = computed(() => user.value?.restaurant_slug ?? null);
+  const isAuthenticated = computed(() => !!accessToken.value && !!user.value);
+  const isAdmin = computed(() => userRole.value === RolesList.Admin);
   const isEditorAndAbove = computed(
-    () => userRole.value === RolesList.Editor || userRole.value === RolesList.Admin,
-  )
+    () =>
+      userRole.value === RolesList.Editor || userRole.value === RolesList.Admin,
+  );
 
   // Same rule as the backend verifyRoles: Admin > Editor > Viewer
   const hasRole = computed(() => (required: number): boolean => {
-    if (!userRole.value) return false
-    if (required === RolesList.Admin) return userRole.value === RolesList.Admin
-    if (required === RolesList.Editor) return isEditorAndAbove.value
-    return true
-  })
+    if (!userRole.value) return false;
+    if (required === RolesList.Admin) return userRole.value === RolesList.Admin;
+    if (required === RolesList.Editor) return isEditorAndAbove.value;
+    return true;
+  });
   function clearSession() {
-    user.value = null
-    accessToken.value = null
-    subscriptionInactive.value = false
-    isInitialized.value = true
-    removeSessionCookie()
+    user.value = null;
+    accessToken.value = null;
+    subscriptionInactive.value = false;
+    isInitialized.value = true;
+    removeSessionCookie();
   }
 
   async function loadProfile() {
-    if (!accessToken.value) return false
-    isLoading.value = true 
+    if (!accessToken.value) return false;
+    resetState();
     try {
-      const res = await authService.findUserById(accessToken.value)
-      const { data,  success}  =  res 
+      const res = await authService.findUserById(accessToken.value);
 
-      if (!success || !data ) return false
+      if (!res || !res.success || !res.data) return false;
 
-      user.value = data
-      
-      return data
-    } catch (err: any) {
-      console.error(err)
-      const status = err?.status || err?.statusCode || err?.response?.status
-      const errorData = err?.data || err?.response?._data
-      if (status === 403 && errorData?.code === 'SUBSCRIPTION_INACTIVE') {
-        subscriptionInactive.value = true
+      user.value = res.data;
+      return res.data;
+    } catch (err: unknown) {
+      // 🌟 نستخدم الدالة الموحدة مع تمرير false لمنع الـ Notification التلقائي هنا
+      const { status, code } = handleGlobalError(
+        err,
+        "فشل تحميل الملف الشخصي",
+        false,
+      );
+
+      // فحص حالة الحساب والاشتراك بنقاء تام
+      if (status === 403 && code === "SUBSCRIPTION_INACTIVE") {
+        subscriptionInactive.value = true;
       }
-      return false
-    } finally {
-      isLoading.value = false
+
+      return false;
     }
   }
 
+  // داخل app/stores/auth.ts
+  async function register(payload: RegisterRestaurantType["body"]) {
+    if (isLoading.value) return false;
 
+    resetState();
+    isLoading.value = true;
+    try {
+      const res = await authService.register(payload);
+
+      if (!res) return false;
+
+      const { success, data, message } = res;
+
+      if (!success || !data) return false;
+
+      successMessage.value = message;
+
+      return res.success;
+    } catch (err: unknown) {
+      const { status, message } = handleGlobalError(
+        err,
+        "فشل عملية التسجيل",
+        false,
+      );
+      // نرمي كائن الخطأ المصفى للأعلى عشان الصفحة تقرأ الـ status والـ message بنقاء
+      // 🌟 هنا نستقبل الكائن النظيف المصفى القادم من الـ Store وجاهز للعرض فوراً
+      if (status === 403) {
+        errorMessage.value = "كود الدعوة غير صالح أو منتهي الصلاحية";
+      } else if (status === 409) {
+        if (message.includes("Slug")) {
+          errorMessage.value = "رابط المطعم مستخدم بالفعل، اختر رابطاً آخر";
+        } else if (message.includes("Email")) {
+          errorMessage.value = "هذا البريد الإلكتروني مسجّل بالفعل";
+        } else {
+          errorMessage.value = "بيانات مكررة، راجع الحقول وحاول مجدداً";
+        }
+      } else {
+        errorMessage.value = message || "فشل عملية التسجيل، حاول مرة أخرى";
+      }
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   /** Called after a successful login (the profile comes from GET /user: it has the restaurant info) */
-    /** Called after a successful login (the profile comes from GET /user: it has the restaurant info) */
-  async function login(body: LoginUserType['body']) {
-    console.log('body from login: ', body)
-    if (typeof body !== 'object' || Object.keys(body)?.length < 2) return false
-    
-    isLoading.value = true
+  async function login(body: LoginUserType["body"]) {
+    const isNotValid =
+      typeof body !== "object" || Object.keys(body)?.length < 2;
+    if (isLoading.value || isNotValid) return false;
+
+    resetState();
+    isLoading.value = true;
     try {
-      const res = await authService.login(body)
+      const res = await authService.login(body);
 
-      const { data,  success }  = res 
+      if (!res) return false;
 
-      if (!data || !success) return false
+      const { data, success, message } = res;
 
-      accessToken.value = data.accessToken ?? null
+      if (!data || !success) return false;
 
-      user.value = data
+      successMessage.value = message;
+      accessToken.value = data.accessToken ?? null;
+      user.value = data;
 
-      setSessionCookie()
-      return data
-    } catch (err: any) {
-      const status = err?.status || err?.statusCode || err?.response?.status
-      const errorData = err?.data || err?.response?._data
-      const inactive = status === 403 && errorData?.code === 'SUBSCRIPTION_INACTIVE'
-      clearSession()
-      if (inactive) subscriptionInactive.value = true
-      console.error(err)
-      throw err
+      setSessionCookie();
+      await loadProfile();
+      return success;
+    } catch (err: unknown) {
+      const { status, code, message } = handleGlobalError(
+        err,
+        "فشل تسجيل الدخول",
+        false,
+      );
+
+      const inactive = status === 403 && code === "SUBSCRIPTION_INACTIVE";
+
+      clearSession();
+
+      if (inactive) {
+        subscriptionInactive.value = true;
+      } else {
+        errorMessage.value = message || "حدث خطأ اثناء تسجيل الدخول";
+        notiStore.show(errorMessage.value, "error");
+      }
+
+      throw false;
     } finally {
-      isLoading.value = false
-      isInitialized.value = true
+      isLoading.value = false;
+      isInitialized.value = true;
     }
   }
 
-
   async function logout() {
-    isLoading.value = true
-    try {
-      await authService.logout()
+    if (isLoading.value) return false;
+    resetState();
+    isLoading.value = true;
 
-    } catch (err){
+    try {
+      const res = await authService.logout();
+
+      if (!res) return false;
+
+      successMessage.value = res.message || "تم تسجيل الخروج بنجاح";
+      notiStore.show(successMessage.value, "success");
+      return res.success ?? true;
+    } catch (err) {
       /* even if the request fails, clear locally */
-      console.error(err)
+      console.error(err);
+      return false;
     } finally {
-      isLoading.value = false
-      clearSession()
+      isLoading.value = false;
+      clearSession();
       if (import.meta.client) {
-        window.location.href = '/auth/login'
+        window.location.href = "/auth/login";
       } else {
-        await navigateTo('/auth/login')
+        await navigateTo("/auth/login");
       }
     }
   }
   // Restores the session after a page reload: refresh cookie -> new access token -> profile.
   // One shared promise, so the middleware and any other caller never run two refreshes at once
   // (the backend rotates the token on every refresh).
-  let initPromise: Promise<void> | null= null
+  let initPromise: Promise<void> | null = null;
   function init(): Promise<void> {
-    if (isInitialized.value) return Promise.resolve()
-
-    if (import.meta.server) return Promise.resolve()
+    if (isInitialized.value) return Promise.resolve();
+    if (import.meta.server) return Promise.resolve();
 
     if (!getSessionCookie()) {
-      isInitialized.value = true
-      return Promise.resolve()
+      isInitialized.value = true;
+      return Promise.resolve();
     }
 
-    initPromise ??= (async () => {
-      isLoading.value = true
+    if (initPromise) return initPromise;
+
+    initPromise = (async () => {
+      isLoading.value = true;
       try {
-        const r = await authService.init()
-        console.log('r from store init: ', r)
-        if (!r || !r.success) return
+        const r = await authService.init();
+        if (!r || !r.success || !r.data) {
+          clearSession();
+          return;
+        }
 
-        accessToken.value = r.data
-        setSessionCookie()
-        const res = await loadProfile()
+        accessToken.value = r.data;
+        const res = await loadProfile();
 
-        if (!res) return
-      } catch (err: any) {
-        // إذا كان خطأ Timeout أو فشل اتصال تام، نقوم بتنظيف الجلسة بصمت دون رمي أخطاء
-        const status = err?.status || err?.statusCode || err?.response?.status
-        const errorData = err?.data || err?.response?._data
-        const inactive = status === 403 && errorData?.code === 'SUBSCRIPTION_INACTIVE'
-        
-        clearSession()
-        if (inactive) subscriptionInactive.value = true
+        if (!res) {
+          clearSession();
+          return;
+        }
+
+        // Only persist/refresh session cookie after full validation succeeds
+        setSessionCookie();
+      } catch (err: unknown) {
+        // 🌟 نستخدم الدالة الموحدة ونعطل الإشعار التلقائي تماماً (showNotification = false)
+        const { status, code } = handleGlobalError(
+          err,
+          "فشل تهيئة الجلسة",
+          false,
+        );
+        const inactive = status === 403 && code === "SUBSCRIPTION_INACTIVE";
+
+        clearSession();
+        if (inactive) {
+          subscriptionInactive.value = true;
+        }
       } finally {
-        isLoading.value = false
-        isInitialized.value = true
-        initPromise = null
+        isLoading.value = false;
+        isInitialized.value = true;
+        initPromise = null;
       }
     })().catch(() => {
       // 🌟 حماية نهائية تضمن عدم وصول أي Unhandled Rejection لـ Nuxt
-      clearSession()
-      isLoading.value = false
-      isInitialized.value = true
-      initPromise = null
-    })
-    
-    return initPromise
+      clearSession();
+      isLoading.value = false;
+      isInitialized.value = true;
+      initPromise = null;
+    });
+
+    return initPromise;
   }
 
   return {
-    user, accessToken, isInitialized, subscriptionInactive,isLoading,
-    userRole, restaurantId, restaurantSlug,
-    isAuthenticated, isAdmin, isEditorAndAbove, hasRole, 
-    login, logout, init, clearSession, loadProfile
-  }
-})
+    user,
+    accessToken,
+    isInitialized,
+    subscriptionInactive,
+    isLoading,
+    errorMessage,
+    successMessage,
+    userRole,
+    restaurantId,
+    restaurantSlug,
+    isAuthenticated,
+    isAdmin,
+    isEditorAndAbove,
+    hasRole,
+    resetState,
+    login,
+    logout,
+    init,
+    clearSession,
+    loadProfile,
+    register,
+  };
+});

@@ -1,8 +1,13 @@
 export type DayHours = { open: string; close: string } | null;
 
 export interface WorkingHours {
-  sat: DayHours; sun: DayHours; mon: DayHours; tue: DayHours;
-  wed: DayHours; thu: DayHours; fri: DayHours;
+  sat: DayHours;
+  sun: DayHours;
+  mon: DayHours;
+  tue: DayHours;
+  wed: DayHours;
+  thu: DayHours;
+  fri: DayHours;
 }
 
 export interface RestaurantResponse {
@@ -20,8 +25,8 @@ export interface RestaurantResponse {
   currency: string;
   timezone: string;
   working_hours: WorkingHours | null;
-  status: string;                       // read-only: the dashboard shows a warning when suspended
-  subscription_ends_at: string | null;  // read-only
+  status: string; // read-only: the dashboard shows a warning when suspended
+  subscription_ends_at: string | null; // read-only
   created_at: string;
 }
 

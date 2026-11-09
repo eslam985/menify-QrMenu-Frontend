@@ -1,22 +1,21 @@
 <!-- app/pages/dashboard/categories/index.vue -->
 <script setup lang="ts">
-import { useCategoryStore } from '~/stores/category'
-import CategoryHeader from '~/components/dashboard/categories/CategoryHeader.vue'
-import CategoryTable from '~/components/dashboard/categories/CategoryTable.vue'
-import CategoryModal from '~/components/dashboard/categories/CategoryModal.vue'
+import CategoryHeader from "~/components/dashboard/categories/CategoryHeader.vue";
+import CategoryTable from "~/components/dashboard/categories/CategoryTable.vue";
+import CategoryModal from "~/components/dashboard/categories/CategoryModal.vue";
 
 definePageMeta({
-  layout: 'dashboard',
-  middleware: ['auth'],
-})
+  layout: "dashboard",
+  middleware: ["auth"],
+});
 
-const categoryStore = useCategoryStore()
+const categoryStore = useCategoryStore();
 
 onMounted(async () => {
   if (categoryStore.categoriesCount < 1) {
-    await categoryStore.fetchCategories()
+    await categoryStore.fetchCategories();
   }
-})
+});
 </script>
 
 <template>
