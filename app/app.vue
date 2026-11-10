@@ -2,9 +2,11 @@
 <script setup lang="ts">
 const authStore = useAuthStore();
 
-if (import.meta.client) {
+// Kick off init once on client-side mount.
+// The store deduplicates concurrent calls so middleware can also call it safely.
+onMounted(() => {
   authStore.init();
-}
+});
 </script>
 
 <template>

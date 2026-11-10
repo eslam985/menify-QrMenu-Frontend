@@ -1,12 +1,10 @@
 <script setup lang="ts">
-const sampleRestaurants = [
-  { name: "Case Cafe", slug: "case-cafe-1", desc: "أفضل قهوة في المدينة" },
-  {
-    name: "Restaurant Lamera",
-    slug: "restaurant-lamera",
-    desc: "أشهى المأكولات والمشروبات",
-  },
-];
+const restaurantsStore = usePublicRestaurantsStore();
+const { restaurants, isLoading } = storeToRefs(restaurantsStore);
+
+onMounted(() => {
+  restaurantsStore.fetchRestaurants();
+});
 </script>
 
 <template>
@@ -14,11 +12,9 @@ const sampleRestaurants = [
     <main
       class="px-fluid p-section-fluid gap-section mx-auto my-auto flex w-full flex-col items-center text-center 2xl:max-w-[80%]"
     >
-      <div
-        class="p-fluid bg-bg border-primary/20 text-primary inline-flex items-center gap-2 rounded-full border py-1.5 text-start text-(length:--text-fluid-sm) font-bold"
-      >
-        (QR Code) منيو إلكتروني ذكي بالـباركوود لمطعمك
-        <Icon name="lucide:sparkles" class="h-4 w-4" />
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <img src="/imgs/hero.webp" alt="tabloz Hero Image" class="w-[400px] h-auto" />
+        <span class="sr-only">tabloz Demo Image</span>
       </div>
 
       <div class="flex max-w-3xl flex-col gap-4">
@@ -26,7 +22,7 @@ const sampleRestaurants = [
           class="text-(length:--text-fluid-h1) leading-tight font-black tracking-tighter"
         >
           ودّع المنيوهات الورقية، <br />
-          <span class="text-primary">وابدأ المستقبل مع Menify</span>
+          <span class="text-primary">وابدأ المستقبل مع tabloz</span>
         </h1>
         <p
           class="text-text/80 mx-auto max-w-2xl text-(length:--text-fluid-p) leading-relaxed"
@@ -49,17 +45,42 @@ const sampleRestaurants = [
         </div>
 
         <div class="gap-fluid grid grid-cols-1 sm:grid-cols-2">
+          <!-- Loading skeletons -->
+          <template v-if="isLoading">
+            <div
+              v-for="i in 2"
+              :key="i"
+              class="p-fluid bg-bg animate-pulse rounded-xl border border-white/5 shadow-sm"
+            >
+              <div class="flex items-center gap-3">
+                <div class="bg-primary/10 h-10 w-10 rounded-lg" />
+                <div class="flex-1 space-y-2">
+                  <div class="bg-primary/10 h-3 w-2/3 rounded" />
+                  <div class="bg-primary/5 h-2 w-1/2 rounded" />
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <!-- Restaurant cards -->
           <nuxt-link
-            v-for="res in sampleRestaurants"
+            v-for="res in restaurants"
+            v-else
             :key="res.slug"
             :to="`/menu/${res.slug}`"
             class="p-fluid bg-bg hover:border-primary group flex cursor-pointer items-center justify-between rounded-xl border border-white/5 shadow-sm transition"
           >
             <div class="flex items-center gap-3 text-right">
               <div
-                class="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-lg font-bold"
+                class="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-bold"
               >
-                <Icon name="lucide:store" class="h-5 w-5" />
+                <img
+                  v-if="res.logo_url"
+                  :src="res.logo_url"
+                  :alt="res.name"
+                  class="h-10 w-10 rounded-lg object-cover"
+                />
+                <Icon v-else name="lucide:store" class="h-5 w-5" />
               </div>
               <div>
                 <h4
@@ -67,7 +88,9 @@ const sampleRestaurants = [
                 >
                   {{ res.name }}
                 </h4>
-                <span class="text-text/60 text-xs">{{ res.desc }}</span>
+                <span class="text-text/60 text-xs">{{
+                  res.description ?? "تصفح القائمة الآن"
+                }}</span>
               </div>
             </div>
             <Icon
@@ -75,6 +98,14 @@ const sampleRestaurants = [
               class="text-text/40 group-hover:text-primary h-5 w-5 transition"
             />
           </nuxt-link>
+
+          <!-- Empty state -->
+          <p
+            v-if="!isLoading && restaurants.length === 0"
+            class="text-text/50 col-span-full py-4 text-center text-sm"
+          >
+            لا توجد مطاعم متاحة حالياً
+          </p>
         </div>
       </div>
 
@@ -121,7 +152,7 @@ const sampleRestaurants = [
               </ul>
             </div>
             <a
-              href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في الباقة الشهرية (أول شهر مجاناً) لبرنامج Menify"
+              href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في الباقة الشهرية (أول شهر مجاناً) لبرنامج tabloz"
               target="_blank"
               class="bg-primary block w-full cursor-pointer rounded-xl py-2.5 text-center text-sm font-bold text-white transition hover:opacity-90"
             >
@@ -162,7 +193,7 @@ const sampleRestaurants = [
               </ul>
             </div>
             <a
-              href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في باقة النصف سنوي (1200 ج) لبرنامج Menify"
+              href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في باقة النصف سنوي (1200 ج) لبرنامج tabloz"
               target="_blank"
               class="bg-primary block w-full cursor-pointer rounded-xl py-2.5 text-center text-sm font-bold text-white transition hover:opacity-90"
             >
@@ -204,7 +235,7 @@ const sampleRestaurants = [
               </ul>
             </div>
             <a
-              href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في الباقة السنوية (2700 ج) لبرنامج Menify"
+              href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في الباقة السنوية (2700 ج) لبرنامج tabloz"
               target="_blank"
               class="bg-primary block w-full cursor-pointer rounded-xl py-2.5 text-center text-sm font-bold text-white transition hover:opacity-90"
             >
@@ -267,3 +298,4 @@ const sampleRestaurants = [
     </main>
   </div>
 </template>
+

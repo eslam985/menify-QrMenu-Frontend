@@ -1,4 +1,4 @@
-<!-- /project_Full-stack/Menify/frontend/app/components/Header.vue -->
+<!-- /project_Full-stack/tabloz/frontend/app/components/Header.vue -->
 <template>
   <header
     class="border-primary/50 p-fluid mx-auto flex w-full items-center justify-between border-b 2xl:max-w-[80%]"
@@ -12,7 +12,7 @@
       <NuxtLink to="/">
         <span
           class="text-text md:hover:text-primary text-(length:--text-fluid-h3) font-black tracking-tight"
-          >Menify</span
+          >tabloz</span
         >
       </NuxtLink>
     </div>

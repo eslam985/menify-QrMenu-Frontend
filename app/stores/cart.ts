@@ -1,8 +1,8 @@
-import { defineStore } from "pinia";
 import type { CartItem } from "@/types/dataType/menuItemType";
+import { defineStore } from "pinia";
 
 export const useCartStore = defineStore("cart", () => {
-  const items = useCookie<CartItem[]>("menify_cart", {
+  const items = useCookie<CartItem[]>("tabloz_cart", {
     default: () => [],
     maxAge: 60 * 60 * 24,
   });

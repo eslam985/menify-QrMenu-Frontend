@@ -1,4 +1,4 @@
-<!-- /Menify/frontend/app/components/dashboard/staff/StaffHeader.vue -->
+<!-- /tabloz/frontend/app/components/dashboard/staff/StaffHeader.vue -->
 <script setup lang="ts">
 const staffStore = useStaffStore();
 const notiStore = useNotificationStore();

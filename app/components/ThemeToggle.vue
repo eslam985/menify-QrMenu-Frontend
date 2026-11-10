@@ -1,4 +1,4 @@
-<!-- project_Full-stack/Menify/frontend/app/components/ThemeToggle.vue -->
+<!-- project_Full-stack/tabloz/frontend/app/components/ThemeToggle.vue -->
 <script setup lang="ts">
 const colorMode = useColorMode();
 

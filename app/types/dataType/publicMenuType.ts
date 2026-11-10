@@ -53,3 +53,10 @@ export interface PublicMenuResponse {
   offers: PublicOffer[];
   categories: PublicMenuCategory[];
 }
+
+export interface PublicRestaurantListItem {
+  name: string;
+  slug: string;
+  description: string | null;
+  logo_url: string | null;
+}

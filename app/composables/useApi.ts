@@ -3,7 +3,10 @@ import { handleGlobalError } from "~/utils/apiError";
 let refreshPromise: Promise<string | null> | null = null;
 
 const refreshAccessToken = (apiBase: string): Promise<string | null> => {
-  refreshPromise ??= $fetch<{ data: string }>(`${apiBase}/auth/refresh`, {
+  // deduplicate concurrent refresh calls
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = $fetch<{ data: string }>(`${apiBase}/auth/refresh`, {
     method: "POST",
     credentials: "include",
   })

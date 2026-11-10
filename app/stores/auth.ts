@@ -9,7 +9,7 @@ import { handleGlobalError } from "~/utils/apiError";
 
 export const RolesList = { Admin: 5150, Editor: 1984, User: 2001 } as const;
 
-const COOKIE_NAME = "menify_has_session";
+const COOKIE_NAME = "tabloz_has_session";
 
 export const useAuthStore = defineStore("auth", () => {
   const authService = useAuthService();
@@ -219,14 +219,19 @@ export const useAuthStore = defineStore("auth", () => {
 
   let initPromise: Promise<void> | null = null;
   function init(): Promise<void> {
+    // already done — resolve immediately
     if (isInitialized.value) return Promise.resolve();
+
+    // never run on the server
     if (import.meta.server) return Promise.resolve();
 
+    // no session cookie → user is a guest, skip refresh
     if (!getSessionCookie()) {
       isInitialized.value = true;
       return Promise.resolve();
     }
 
+    // already in-flight — return the SAME promise so callers share it
     if (initPromise) return initPromise;
 
     initPromise = (async () => {
@@ -262,14 +267,10 @@ export const useAuthStore = defineStore("auth", () => {
       } finally {
         isLoading.value = false;
         isInitialized.value = true;
+        // clear AFTER the promise settles so concurrent callers still share it
         initPromise = null;
       }
-    })().catch(() => {
-      clearSession();
-      isLoading.value = false;
-      isInitialized.value = true;
-      initPromise = null;
-    });
+    })();
 
     return initPromise;
   }

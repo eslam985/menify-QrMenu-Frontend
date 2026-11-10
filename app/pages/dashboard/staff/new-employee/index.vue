@@ -1,4 +1,4 @@
-<!-- /Menify/frontend/app/pages/dashboard/staff/new-employee/index.vue -->
+<!-- /tabloz/frontend/app/pages/dashboard/staff/new-employee/index.vue -->
 <script setup lang="ts">
 definePageMeta({
   layout: "dashboard",
