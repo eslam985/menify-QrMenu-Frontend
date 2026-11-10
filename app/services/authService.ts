@@ -1,4 +1,3 @@
-// Menify/frontend/app/services/authService.ts
 import type {
   LoginUserType,
   RegisterRestaurantType,
@@ -10,7 +9,7 @@ import type {
 } from "@/types/userType/userType";
 
 export const useAuthService = () => {
-  const config = useRuntimeConfig(); // top of setup, not after an await
+  const config = useRuntimeConfig();
   const apiBase = () => config.public.apiBase;
 
   async function findUserById(accessToken: string) {
@@ -55,14 +54,13 @@ export const useAuthService = () => {
       {
         method: "POST",
         credentials: "include",
-        timeout: 5000, // تقليل المهلة إلى 5 ثوانٍ لسرعة الاستجابة
+        timeout: 5000,
       },
     );
 
     return res;
   }
 
-  // داخل app/services/authService.ts
   async function register(body: RegisterRestaurantType["body"]) {
     const res = await $fetch<
       Promise<

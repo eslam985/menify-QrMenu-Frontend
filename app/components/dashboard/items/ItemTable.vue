@@ -13,13 +13,11 @@ const categoryStore = useCategoryStore();
 const itemStore = useItemStore();
 const authStore = useAuthStore();
 
-// دالة لجلب اسم التصنيف بناءً على الـ category_id
 const getCategoryName = (categoryId: string) => {
   const cat = categoryStore.categories.find((c) => c.id === categoryId);
   return cat ? cat.name : "—";
 };
 
-// تصفية الأصناف بناءً على البحث والفلتر
 const filteredItems = computed(() => {
   let result = itemStore.items;
 
@@ -77,8 +75,6 @@ watchEffect(() => {
 
 <template>
   <UiBaseTable>
-    <!-- تخصيص عمود الصورة -->
-    <!-- تخصيص عمود الصورة -->
     <template #cell-image_url="{ row }">
       <div class="flex items-center justify-center">
         <img
@@ -96,13 +92,13 @@ watchEffect(() => {
         </div>
       </div>
     </template>
-    <!-- تخصيص عمود تاريخ الإضافة -->
+
     <template #cell-created_at="{ value }">
       <span class="text-text/60 text-xs">{{
         formatDate(String(value ?? ""))
       }}</span>
     </template>
-    <!-- تخصيص عمود التصنيف -->
+
     <template #cell-category="{ row }">
       <span
         class="bg-primary/10 text-primary rounded-lg px-2.5 py-1 text-xs font-semibold"
@@ -111,14 +107,12 @@ watchEffect(() => {
       </span>
     </template>
 
-    <!-- تخصيص عمود السعر -->
     <template #cell-price="{ row }">
       <span class="text-primary font-bold">
         {{ row.price + (publicMenuStore.restaurant?.currency ?? "ج.م") }}
       </span>
     </template>
 
-    <!-- تخصيص عمود التوفر (مع زر التبديل السريع) -->
     <template #cell-is_available="{ row }">
       <button
         @click="
@@ -138,14 +132,12 @@ watchEffect(() => {
       </button>
     </template>
 
-    <!-- تنسيق التاريخ -->
     <template #cell-updated_at="{ row }">
       <span class="text-text/60 text-xs">{{
         formatDate(row.updated_at as string)
       }}</span>
     </template>
 
-    <!-- أزرار الإجراءات (تعديل وحذف) -->
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-center gap-2">
         <button

@@ -1,13 +1,8 @@
-// app/utils/apiError.ts
-
-// app/utils/apiError.ts
 export const handleGlobalError = (
   err: unknown,
   fallbackMessage: string,
-  showNotification = true, // 👈 أضفنا هذا المعامل الاختياري هنا
+  showNotification = true,
 ): { status?: number; message: string; code?: string } => {
-  // 🌟 جعلناها تُعيد كائن شامل ومفيد
-
   const error = (typeof err === "object" && err !== null ? err : {}) as {
     status?: number;
     statusCode?: number;
@@ -40,7 +35,6 @@ export const handleGlobalError = (
     if (firstMessage) finalMsg = String(firstMessage);
   }
 
-  // 🌟 نطلق الإشعار فقط إذا كان الخيار مفعلاً (لم نقم بإلغائه في الحالات الخاصة)
   if (import.meta.client && showNotification) {
     const notiStore = useNotificationStore();
     notiStore.show(finalMsg, "error");
@@ -48,7 +42,6 @@ export const handleGlobalError = (
 
   console.error("[API Error]:", err);
 
-  // 🌟 نعيد كائن كامل لنستفيد منه في الـ Auth أو أي مكان آخر لفحص الـ status والـ code
   return {
     ...(status !== undefined && { status }),
     message: finalMsg,

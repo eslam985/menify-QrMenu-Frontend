@@ -48,7 +48,6 @@ const typeClasses = computed(() => {
         ✕
       </button>
 
-      <!-- شريط البروجرس المتحرك في الأسفل -->
       <div
         class="animate-progress absolute bottom-0 left-0 h-1 bg-current opacity-30"
         :class="{ paused: notificationStore.isPaused }"

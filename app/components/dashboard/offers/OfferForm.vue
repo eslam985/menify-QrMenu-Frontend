@@ -17,13 +17,11 @@ const itemStore = useItemStore();
 
 const isEditMode = computed(() => Boolean(props.offerId));
 
-// 1. تهيئة نسخة مستقلة من useForm وحقنها لـ UiBaseForm
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
   formInstance;
 provide("current_form_instance", formInstance);
 
-// 2. الحقول الخاصة خارج الحقول النصية القياسية
 const startsAt = ref("");
 const endsAt = ref("");
 const isActive = ref(true);
@@ -37,7 +35,6 @@ const items = ref<
   }[]
 >([]);
 
-// 3. هيكل الحقول القياسية لـ UiBaseForm
 const offerFieldsConfig: FormField[] = [
   {
     column: "title",
@@ -65,7 +62,6 @@ const offerFieldsConfig: FormField[] = [
   },
 ];
 
-// 4. دوال إدارة بنود العرض
 const addMenuItemToOffer = () => {
   items.value.push({ menu_item_id: "", selected_category_id: "", quantity: 1 });
 };
@@ -78,7 +74,6 @@ const removeItemFromOffer = (index: number) => {
   items.value.splice(index, 1);
 };
 
-// 5. دالة موحدة لتعبئة البيانات في وضع التعديل (منع التكرار - DRY)
 const populateOfferData = (offer: OfferResponse) => {
   startsAt.value = offer.starts_at
     ? new Date(offer.starts_at).toISOString().slice(0, 16)
@@ -96,7 +91,6 @@ const populateOfferData = (offer: OfferResponse) => {
   });
 };
 
-// 6. دالة الحفظ والإرسال
 const handleSubmit = async () => {
   errorMessage.value = "";
   isSubmitting.value = true;
@@ -148,7 +142,6 @@ const handleSubmit = async () => {
   }
 };
 
-// 7. التحميل الذكي مع الكاش عند الفتح
 onMounted(async () => {
   const tasks: Promise<unknown>[] = [];
 
@@ -175,7 +168,6 @@ onMounted(async () => {
 
 <template>
   <div class="mx-auto max-w-4xl pb-12">
-    <!-- الهيدر وزر العودة -->
     <div class="mb-6 flex items-center justify-between">
       <div>
         <h1 class="text-fluid-h3 text-primary font-bold">
@@ -193,15 +185,12 @@ onMounted(async () => {
       </NuxtLink>
     </div>
 
-    <!-- حاوية الفورم الموحد -->
     <div
       class="bg-card rounded-card border-primary/10 border p-6 shadow-lg md:p-8"
     >
       <UiBaseForm>
-        <!-- حقن التواريخ، حالة العرض، وبنود العرض قبل أزرار الحفظ -->
         <template #extra-fields>
           <div class="mt-2 flex flex-col gap-6">
-            <!-- تواريخ البداية والنهاية + حالة التفعيل -->
             <div class="grid grid-cols-1 items-end gap-4 md:grid-cols-3">
               <div>
                 <label
@@ -245,7 +234,6 @@ onMounted(async () => {
               </div>
             </div>
 
-            <!-- قسم بنود ومكونات العرض الذكي -->
             <div class="border-primary/10 border-t pt-6">
               <div
                 class="mb-4 flex flex-wrap items-center justify-between gap-3"
@@ -290,7 +278,6 @@ onMounted(async () => {
                   :key="index"
                   class="bg-bg border-primary/10 flex flex-col items-center gap-3 rounded-2xl border p-4 shadow-2xs md:flex-row"
                 >
-                  <!-- إذا كان صنف من المنيو -->
                   <template v-if="'menu_item_id' in item">
                     <div
                       class="grid w-full flex-1 grid-cols-1 gap-3 md:grid-cols-2"
@@ -332,7 +319,6 @@ onMounted(async () => {
                     </div>
                   </template>
 
-                  <!-- إذا كان نص مخصص -->
                   <template v-else>
                     <div class="w-full flex-1">
                       <input
@@ -345,7 +331,6 @@ onMounted(async () => {
                     </div>
                   </template>
 
-                  <!-- الكمية وحذف البند -->
                   <div
                     class="flex w-full items-center justify-between gap-3 md:w-auto"
                   >
@@ -375,7 +360,6 @@ onMounted(async () => {
               </div>
             </div>
 
-            <!-- رسالة الخطأ إن وجدت -->
             <p
               v-if="errorMessage"
               class="rounded-xl bg-red-500/10 p-3 text-xs text-red-500"
@@ -385,7 +369,6 @@ onMounted(async () => {
           </div>
         </template>
 
-        <!-- زر الإلغاء بجانب زر الحفظ -->
         <template #actions>
           <NuxtLink
             to="/dashboard/offers"

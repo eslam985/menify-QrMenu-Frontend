@@ -1,4 +1,3 @@
-// app/services/offerService.ts
 import type { OfferResponse } from "@/types/dataType/offerType";
 import type {
   ListOffersType,

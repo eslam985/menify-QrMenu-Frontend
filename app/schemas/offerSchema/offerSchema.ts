@@ -7,7 +7,6 @@ const titleField = z
   .min(1, "عنوان العرض مطلوب")
   .max(150, "العنوان طويل جداً");
 
-// "" is stored as NULL; null clears it
 const descriptionField = z
   .string()
   .trim()
@@ -15,7 +14,6 @@ const descriptionField = z
   .transform((v) => (v === "" ? null : v))
   .nullable();
 
-// ISO 8601 WITH offset, e.g. 2026-12-31T23:59:00+02:00. The frontend converts from the restaurant timezone.
 const dateField = z.iso.datetime({
   offset: true,
   error: "التاريخ بصيغة ISO مع المنطقة الزمنية",
@@ -23,7 +21,6 @@ const dateField = z.iso.datetime({
 
 const quantityField = z.number().int().min(1).max(99).default(1);
 
-// One line of the offer: a real menu item OR a free text line
 const offerItemField = z.union([
   z.strictObject({
     menu_item_id: z.uuid("معرّف الصنف غير صالح"),
@@ -54,9 +51,6 @@ const itemsField = z
 
 const offerIdParams = z.object({ offerId: z.uuid("معرّف العرض غير صالح") });
 
-// ---------------------------------------------------------------
-// GET /api/offers?status=
-// ---------------------------------------------------------------
 const status = z.enum(["active", "upcoming", "expired", "paused"]).optional();
 
 const listOffersSchema = z.object({
@@ -65,10 +59,6 @@ const listOffersSchema = z.object({
   }),
 });
 
-// ---------------------------------------------------------------
-// POST /api/offers
-// No restaurant_id, no image_url (own endpoint). starts_at defaults to now in the DB.
-// ---------------------------------------------------------------
 const createOfferSchema = z.object({
   body: z
     .strictObject({
@@ -87,10 +77,6 @@ const createOfferSchema = z.object({
     }),
 });
 
-// ---------------------------------------------------------------
-// PATCH /api/offers/:offerId
-// "items", when sent, REPLACES the whole list of the offer.
-// ---------------------------------------------------------------
 const updateOfferSchema = z.object({
   params: offerIdParams,
   body: z
@@ -119,7 +105,6 @@ const updateOfferSchema = z.object({
     ),
 });
 
-// GET / DELETE /api/offers/:offerId (+ image endpoints)
 const offerIdSchema = z.object({ params: offerIdParams });
 
 export {

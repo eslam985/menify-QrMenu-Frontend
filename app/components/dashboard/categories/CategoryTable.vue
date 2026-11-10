@@ -22,7 +22,6 @@ const filteredCategories = computed(() => {
   );
 });
 
-// تحديث إعدادات الجدول في الـ Composable عند تغير البيانات
 const tableColumns = [
   { key: "name", label: "اسم التصنيف" },
   { key: "section", label: "القسم (Section)" },

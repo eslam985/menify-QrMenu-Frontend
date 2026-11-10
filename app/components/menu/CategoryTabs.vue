@@ -13,7 +13,6 @@ const scrollToCategory = (categoryId: string | number) => {
 
 <template>
   <div dir="rtl" v-if="publicMenuStore.categories.length" class="my-fluid">
-    <!-- عنوان الأقسام العام الشامل -->
     <div class="mb-fluid flex items-center justify-between">
       <h2
         class="text-fluid-h3 text-primary flex items-center gap-2.5 font-black"
@@ -32,7 +31,6 @@ const scrollToCategory = (categoryId: string | number) => {
       </span>
     </div>
 
-    <!-- شريط التبويبات الملتصق (Sticky Category Tabs) -->
     <div class="sticky top-4 z-30">
       <div
         class="p-fluid no-scrollbar bg-card/80 border-primary/30 shadow-soft flex items-center gap-2 overflow-x-auto rounded-full border backdrop-blur-md"

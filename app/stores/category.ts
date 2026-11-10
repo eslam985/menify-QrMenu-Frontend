@@ -1,4 +1,3 @@
-// app/stores/category.ts
 import { defineStore } from "pinia";
 import type { CategoryWithCountResponse } from "@/types/dataType/categoryType";
 import type {
@@ -29,7 +28,7 @@ export const useCategoryStore = defineStore("category", () => {
 
   async function fetchCategories() {
     isLoading.value = true;
-    error.value = null; // أو يمكنك مسح متغير error.value بالكامل مستقبلاً لأنه موحد في الـ Interceptor
+    error.value = null;
     try {
       const res = await categoryService.getCategories();
 
@@ -61,7 +60,7 @@ export const useCategoryStore = defineStore("category", () => {
         notiStore.show(res.message || "فشل اضافة التصنيف", "error");
         return false;
       }
-      // the backend appends it at the END, and a new category has no items yet
+
       categories.value.push({ ...res.data, items_count: 0 });
       notiStore.show(
         res.message || `تم اضافة التصنيف ${body.name} بنجاح!`,
@@ -93,7 +92,6 @@ export const useCategoryStore = defineStore("category", () => {
       const existingCategory = categories.value[index];
 
       if (existingCategory && res.data) {
-        // merge: the PATCH response has no items_count
         categories.value[index] = {
           ...existingCategory,
           ...res.data,

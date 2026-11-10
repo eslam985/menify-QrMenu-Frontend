@@ -1,4 +1,3 @@
-// /app/services/restaurantService.ts
 import type { RestaurantResponse } from "@/types/dataType/restaurantType";
 import type { UpdateRestaurantType } from "@/schemas/restaurantSchema/restaurantSchema";
 

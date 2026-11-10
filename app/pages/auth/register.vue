@@ -11,7 +11,6 @@ const { setFormConfig, formDataPayload, resetForm } = formInstance;
 
 provide("current_form_instance", formInstance);
 
-// 1. هيكل الحقول الموحد القياسي المتوافق مع سكيما الباك إند
 const registerFieldsConfig: FormField[] = [
   {
     column: "inviteCode",
@@ -63,13 +62,11 @@ const registerFieldsConfig: FormField[] = [
   },
 ];
 
-// دالة الحفظ المركزية المربوطة بالـ Submit
 const handleRegisterSubmit = async () => {
   if (authStore.isLoading) return;
 
   const payload = formDataPayload.value;
 
-  // تنسيق الحقول لتطابق تماماً بنية الـ payloadRegister النظيف
   const payloadRegister = {
     inviteCode: String(payload.inviteCode).trim(),
     restaurantName: String(payload.restaurantName).trim(),
@@ -97,7 +94,6 @@ const handleRegisterSubmit = async () => {
   }
 };
 
-// 2. مراقبة حية لإنشاء الـ Slug تلقائياً من اسم المطعم داخل المصفوفة
 const slugTouched = ref(false);
 
 onMounted(() => {
@@ -105,14 +101,12 @@ onMounted(() => {
   resetForm();
   setFormConfig(registerFieldsConfig, handleRegisterSubmit);
 
-  // العثور على الحقول داخل الـ Ref للتحكم في قيمها حياً
   const nameField = formInstance.fields.value.find(
     (f) => f.column === "restaurantName",
   );
   const slugField = formInstance.fields.value.find((f) => f.column === "slug");
 
   if (nameField && slugField) {
-    // مراقبة اسم المطعم وتوليد الـ Slug تلقائياً طالما لم يكتبه المستخدم بيده
     watch(
       () => nameField.value,
       (newName) => {
@@ -141,10 +135,8 @@ onMounted(() => {
         </p>
       </div>
 
-      <!-- 🌟 رسم وحقن الفورم بالكامل عبر المكون الموحد لـ Menify -->
       <UiBaseForm>
         <template #extra-fields>
-          <!-- عرض الرابط المباشر لايف ليفهمه العميل بوضوح قبل الحفظ -->
           <div class="mt-1 text-right" dir="rtl">
             <p class="text-text/60 text-xs">
               رابط المنيو الخاص بك سيكون:
@@ -162,7 +154,7 @@ onMounted(() => {
               {{ authStore.errorMessage }}
             </p>
           </div>
-          <!-- حقن رسالة الخطأ والروابط الإرشادية قبل أزرار الحفظ -->
+
           <div class="gap-fluid mt-2 flex flex-col">
             <p
               v-if="authStore.errorMessage"

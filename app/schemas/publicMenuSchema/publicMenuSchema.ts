@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Same rules as the DB CHECK on restaurants.slug
 const publicMenuSchema = z.object({
   params: z.object({
     slug: z

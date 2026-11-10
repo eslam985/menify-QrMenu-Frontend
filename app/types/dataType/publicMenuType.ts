@@ -14,7 +14,7 @@ export interface PublicMenuItem {
 export interface PublicMenuCategory {
   id: string;
   name: string;
-  section: CategorySection; // new
+  section: CategorySection;
   items: PublicMenuItem[];
 }
 
@@ -50,6 +50,6 @@ export interface PublicOffer {
 
 export interface PublicMenuResponse {
   restaurant: PublicRestaurantInfo;
-  offers: PublicOffer[]; // new: only offers live right now
+  offers: PublicOffer[];
   categories: PublicMenuCategory[];
 }

@@ -4,7 +4,6 @@ import { useForm, type FormField } from "~/composables/useForm";
 import type { UserResponse } from "~/types/userType/userType";
 import type { UpdateUserByIdType } from "@/schemas/userSchema/userSchema";
 
-// إنشاء نسخة مستقلة تماماً وخاصة بفورم البروفايل
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
   formInstance;
@@ -14,7 +13,6 @@ provide("current_form_instance", formInstance);
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
-// 1. تحديد هيكل الحقول المطلوب تعديلها للمستخدم
 const profileFieldsConfig: FormField[] = [
   {
     column: "username",
@@ -34,7 +32,6 @@ const profileFieldsConfig: FormField[] = [
   },
 ];
 
-// 2. دالة الحفظ المركزية التي يطلقها الـ BaseForm ديناميكياً عند الـ Submit
 const handleProfileSubmit = async () => {
   const payload = formDataPayload.value;
 
@@ -43,7 +40,6 @@ const handleProfileSubmit = async () => {
   isSubmitting.value = true;
 
   try {
-    // إرسال الـ Payload الصافي (username, email) المجمع تلقائياً إلى الـ Store الخاص بك
     await userStore.updateUserInfo(payload as UpdateUserByIdType["body"]);
   } finally {
     isSubmitting.value = false;
@@ -58,7 +54,6 @@ onMounted(async () => {
     const currentInfo = authStore.user as UserResponse;
 
     if (currentInfo) {
-      // شحن الـ Composable بالهيكل وتغذية الحقول بالقيم الحالية مع ربط دالة الحفظ
       setFormConfig(profileFieldsConfig, handleProfileSubmit, {
         ...currentInfo,
       });

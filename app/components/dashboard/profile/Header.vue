@@ -71,7 +71,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
         البيانات الأساسية
       </h2>
 
-      <!-- container -->
       <div
         @click.self="isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen"
         class="gap-fluid border-primary/20 p-section-fluid bg-card flex flex-col justify-between rounded-3xl border shadow md:flex-row lg:gap-8"
@@ -88,13 +87,10 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
             "
             class="gap-fluid flex flex-col items-center sm:items-start"
           >
-            <!-- حاوية الصورة والأيقونة معاً -->
             <div class="group relative h-26 w-26 md:h-32 md:w-32">
-              <!-- Avatar -->
               <label
                 class="block h-full w-full cursor-pointer overflow-hidden rounded-full"
               >
-                <!-- الـ src هنا ذكي: يعرض المعاينة المؤقتة أولاً، وإذا لم توجد يعرض صورة المستخدم الفعلية أو صورة افتراضية -->
                 <img
                   class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   :src="
@@ -108,7 +104,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
                   decoding="async"
                 />
 
-                <!-- ربط حدث التغيير بالـ input -->
                 <input
                   type="file"
                   accept="image/*"
@@ -117,8 +112,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
                 />
               </label>
 
-              <!-- زر الكاميرا مثبت بدقة على حافة الصورة -->
-              <!-- زر الكاميرا مدمج معه القائمة المنبثقة (Dropdown) -->
               <div class="absolute inset-e-0 bottom-0 z-50">
                 <button
                   type="button"
@@ -128,13 +121,10 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
                   <Icon name="lucide:camera" class="text-primary h-6 w-6" />
                 </button>
 
-                <!-- القائمة المنبثقة لخيارات الصورة -->
-                <!-- التعديل الصحيح والمحمي 100% ضد انكماش الأيقونات -->
                 <div
                   v-if="isDropdownOpen"
                   class="bg-bg border-primary/30 animate-fade-in absolute inset-e-0 top-full z-100 mt-2 flex min-w-[150px] flex-col items-center justify-center gap-2 rounded-2xl border p-2 shadow-xl md:flex-row-reverse"
                 >
-                  <!-- خيار 1: رفع صورة جديدة (مغلف داخل label) -->
                   <label
                     class="hover:bg-primary/10 text-text flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl transition-colors duration-200"
                   >
@@ -156,7 +146,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
                     />
                   </label>
 
-                  <!-- خيار 2: اختيار من الصور السابقة (قمنا بتغليفه داخل button أصيل) -->
                   <button
                     v-if="
                       authStore.user?.avatar_history &&
@@ -172,7 +161,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
                     <Icon name="lucide:history" class="text-primary h-6 w-6" />
                   </button>
 
-                  <!-- خيار 3: حذف الصورة الحالية والعودة للافتراضية (قمنا بتغليفه داخل button أصيل) -->
                   <button
                     v-if="
                       authStore.user?.avatar_url &&
@@ -188,7 +176,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
               </div>
             </div>
 
-            <!--  الزر الجديد يظهر فقط عند وجود صورة جديدة مجهزة للرفع -->
             <button
               v-if="selectedFile"
               type="button"
@@ -200,7 +187,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
             </button>
           </div>
 
-          <!-- info -->
           <div
             @click.self="
               isDropdownOpen ? (isDropdownOpen = false) : isDropdownOpen
@@ -259,7 +245,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
           </div>
         </div>
 
-        <!-- Right -->
         <div
           class="md:gap-fluid grid grid-cols-3 gap-2 self-center md:flex md:flex-col"
         >
@@ -286,7 +271,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
       </div>
     </div>
 
-    <!-- نافذة عرض سجل الصور المرفوعة سابقاً (History Modal) -->
     <div
       @click.self="isModalOpen = false"
       v-if="isModalOpen"
@@ -295,7 +279,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
       <div
         class="bg-card border-primary/30 p-section-fluid animate-fade-in w-full max-w-md space-y-6 rounded-3xl border shadow-2xl"
       >
-        <!-- رأس النافذة -->
         <div
           class="border-primary/30 flex items-center justify-between border-b pb-3"
         >
@@ -311,7 +294,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
           </button>
         </div>
 
-        <!-- شبكة عرض الصور القديمة -->
         <div
           class="gap-fluid grid max-h-[300px] grid-cols-3 overflow-y-auto p-1"
         >
@@ -337,7 +319,6 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
           </div>
         </div>
 
-        <!-- تذييل النافذة -->
         <div class="border-primary/30 flex justify-end border-t pt-3">
           <button type="button" @click="isModalOpen = false" class="btn-danger">
             Close

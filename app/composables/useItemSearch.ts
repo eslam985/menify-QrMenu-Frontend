@@ -1,4 +1,3 @@
-// app/composables/useItemSearch.ts
 export const useItemSearch = () => {
   const searchQuery = useState("item_search_query", () => "");
   const selectedCategoryFilter = useState("item_category_filter", () => "");

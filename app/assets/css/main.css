@@ -7,7 +7,6 @@
   --primary: #c95400;
 }
 
-/* e3e3e3 لما الـ html يبقى عليه class="dark" كل الالوان دي هتتغير لوحدها    */
 .dark {
   --bg: #000;
   --card: #0a0a0a;
@@ -20,14 +19,13 @@
   --color-card: var(--card);
   --color-text: var(--text);
   --color-primary: var(--primary);
-  /* حالات */
+
   --color-success: #22c55e;
   --color-warning: #eab308;
   --color-danger: #fb2c36;
   --color-info: #3b82f6;
 }
 
-/* padding */
 @utility p-fluid {
   padding: clamp(0.7rem, 2vw, 1rem);
 }
@@ -44,7 +42,6 @@
   padding: clamp(1rem, 4vw, 3rem);
 }
 
-/* Margin */
 @utility m-fluid {
   margin: clamp(0.7rem, 2vw, 1rem);
 }
@@ -73,11 +70,9 @@
   margin-bottom: clamp(1.25rem, 4vw, 3rem);
 }
 
-/* my-section-fluid */
 @utility my-section-fluid {
   margin-block: clamp(1.25rem, 4vw, 3rem) clamp(1rem, 5vw, 4rem);
 }
-/* gap */
 
 @utility gap-fluid {
   gap: clamp(0.7rem, 2vw, 1rem);
@@ -98,7 +93,6 @@
 }
 
 @theme {
-  /* ===== أحجام خطوط مرنة → text-fluid-h1 ... ===== */
   --text-fluid-h1: clamp(2rem, 6vw, 5rem);
   --text-fluid-h1--line-height: 1.05;
   --text-fluid-h1--letter-spacing: -0.04em;
@@ -122,14 +116,12 @@
   --text-fluid-xs: clamp(0.7rem, 1vw, 0.8rem);
   --text-fluid-xs--line-height: 1.5;
 
-  /* ===== أنصاف أقطار وظلال ===== */
   --radius-card: clamp(0.75rem, 2vw, 1.25rem);
   --shadow-soft: 0 4px 20px -4px var(--shadow-color);
   --shadow-glow:
     0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent),
     0 10px 30px -10px color-mix(in srgb, var(--accent) 45%, transparent);
 
-  /* ===== Breakpoint إضافي ===== */
   --breakpoint-xs: 25rem;
 
   --animate-shimmer: shimmer 2s infinite;
@@ -140,7 +132,6 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
 
-  /* ===== Animations ===== */
   @keyframes shimmer {
     100% {
       transform: translateX(100%);

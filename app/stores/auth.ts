@@ -1,4 +1,3 @@
-// app/stores/auth.ts
 import type {
   LoginUserType,
   RegisterRestaurantType,
@@ -10,7 +9,6 @@ import { handleGlobalError } from "~/utils/apiError";
 
 export const RolesList = { Admin: 5150, Editor: 1984, User: 2001 } as const;
 
-// دوال مساعدة للتعامل مع الكوكي على جهة المتصفح بأمان تام دون استخدام useCookie داخل الستور
 const COOKIE_NAME = "menify_has_session";
 
 export const useAuthStore = defineStore("auth", () => {
@@ -36,7 +34,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   const user = ref<UserProfileResponse | null>(null);
-  const accessToken = ref<string | null>(null); // memory only, never localStorage
+  const accessToken = ref<string | null>(null);
   const isInitialized = ref(false);
   const subscriptionInactive = ref(false);
   const isLoading = ref(false);
@@ -61,7 +59,6 @@ export const useAuthStore = defineStore("auth", () => {
       userRole.value === RolesList.Editor || userRole.value === RolesList.Admin,
   );
 
-  // Same rule as the backend verifyRoles: Admin > Editor > Viewer
   const hasRole = computed(() => (required: number): boolean => {
     if (!userRole.value) return false;
     if (required === RolesList.Admin) return userRole.value === RolesList.Admin;
@@ -87,14 +84,12 @@ export const useAuthStore = defineStore("auth", () => {
       user.value = res.data;
       return res.data;
     } catch (err: unknown) {
-      // 🌟 نستخدم الدالة الموحدة مع تمرير false لمنع الـ Notification التلقائي هنا
       const { status, code } = handleGlobalError(
         err,
         "فشل تحميل الملف الشخصي",
         false,
       );
 
-      // فحص حالة الحساب والاشتراك بنقاء تام
       if (status === 403 && code === "SUBSCRIPTION_INACTIVE") {
         subscriptionInactive.value = true;
       }
@@ -103,7 +98,6 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  // داخل app/stores/auth.ts
   async function register(payload: RegisterRestaurantType["body"]) {
     if (isLoading.value) return false;
 
@@ -127,8 +121,7 @@ export const useAuthStore = defineStore("auth", () => {
         "فشل عملية التسجيل",
         false,
       );
-      // نرمي كائن الخطأ المصفى للأعلى عشان الصفحة تقرأ الـ status والـ message بنقاء
-      // 🌟 هنا نستقبل الكائن النظيف المصفى القادم من الـ Store وجاهز للعرض فوراً
+
       if (status === 403) {
         errorMessage.value = "كود الدعوة غير صالح أو منتهي الصلاحية";
       } else if (status === 409) {
@@ -148,7 +141,6 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  /** Called after a successful login (the profile comes from GET /user: it has the restaurant info) */
   async function login(body: LoginUserType["body"]) {
     const isNotValid =
       typeof body !== "object" || Object.keys(body)?.length < 2;
@@ -212,7 +204,6 @@ export const useAuthStore = defineStore("auth", () => {
       notiStore.show(successMessage.value, "success");
       return res.success ?? true;
     } catch (err) {
-      /* even if the request fails, clear locally */
       console.error(err);
       return false;
     } finally {
@@ -225,9 +216,7 @@ export const useAuthStore = defineStore("auth", () => {
       }
     }
   }
-  // Restores the session after a page reload: refresh cookie -> new access token -> profile.
-  // One shared promise, so the middleware and any other caller never run two refreshes at once
-  // (the backend rotates the token on every refresh).
+
   let initPromise: Promise<void> | null = null;
   function init(): Promise<void> {
     if (isInitialized.value) return Promise.resolve();
@@ -257,10 +246,8 @@ export const useAuthStore = defineStore("auth", () => {
           return;
         }
 
-        // Only persist/refresh session cookie after full validation succeeds
         setSessionCookie();
       } catch (err: unknown) {
-        // 🌟 نستخدم الدالة الموحدة ونعطل الإشعار التلقائي تماماً (showNotification = false)
         const { status, code } = handleGlobalError(
           err,
           "فشل تهيئة الجلسة",
@@ -278,7 +265,6 @@ export const useAuthStore = defineStore("auth", () => {
         initPromise = null;
       }
     })().catch(() => {
-      // 🌟 حماية نهائية تضمن عدم وصول أي Unhandled Rejection لـ Nuxt
       clearSession();
       isLoading.value = false;
       isInitialized.value = true;

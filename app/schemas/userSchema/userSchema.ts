@@ -1,13 +1,10 @@
 import { z } from "zod";
 import { usernameRe } from "@/utils/regex.js";
 
-// ---------------------------------------------------------------
-// Reusable fields
-// ---------------------------------------------------------------
 const emailField = z
   .string({ error: "البريد الإلكتروني مطلوب" })
   .trim()
-  .toLowerCase() // transforms (unlike .lowercase(), which only validates)
+  .toLowerCase()
   .max(255, "البريد الإلكتروني طويل جداً")
   .pipe(z.email("بريد إلكتروني غير صالح"));
 
@@ -21,7 +18,6 @@ const usernameField = z
     "اسم المستخدم: حروف وأرقام، ويمكن فاصل واحد (مسافة . _ -) بين الكلمات",
   );
 
-// Passwords are NOT trimmed. bcrypt only uses the first 72 BYTES.
 const newPasswordField = z
   .string({ error: "كلمة المرور مطلوبة" })
   .min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل")
@@ -49,7 +45,6 @@ const RESERVED_SLUGS = [
   "test",
 ];
 
-// Must match the DB CHECK: ^[a-z0-9]+(-[a-z0-9]+)*$
 const slugField = z
   .string({ error: "الرابط (slug) مطلوب" })
   .trim()
@@ -62,10 +57,6 @@ const slugField = z
   )
   .refine((s) => !RESERVED_SLUGS.includes(s), "هذا الرابط محجوز");
 
-// ---------------------------------------------------------------
-// Public: register a new restaurant + its first Admin
-// (role is NOT accepted from the client; the controller sets it to Admin)
-// ---------------------------------------------------------------
 const registerRestaurantSchema = z.object({
   body: z.strictObject({
     inviteCode: z.string({ error: "كود الدعوة مطلوب" }).trim().min(16).max(200),
@@ -81,9 +72,6 @@ const registerRestaurantSchema = z.object({
   }),
 });
 
-// ---------------------------------------------------------------
-// Update own profile: ONLY username / email (no roles, no avatar)
-// ---------------------------------------------------------------
 const updateUserByIdSchema = z.object({
   body: z
     .strictObject({

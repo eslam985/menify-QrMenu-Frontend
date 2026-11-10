@@ -31,8 +31,6 @@ const filteredCategories = computed(() => {
     );
 });
 
-// The clicked category's items become the "active" list, set AT CLICK TIME
-// (not on render), so categories never overwrite each other
 const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
   if (!item.is_available) return;
 
@@ -43,7 +41,6 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
 
 <template>
   <div v-if="publicMenuStore.categories?.length > 0" dir="rtl">
-    <!-- خانة البحث -->
     <div class="relative mb-6">
       <div
         class="text-text/40 pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4"
@@ -115,7 +112,6 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
             {{ category.name }}
           </h2>
 
-          <!-- أصناف هذا التصنيف فقط -->
           <div
             class="scrollbar-thumb-primary/20 flex snap-x snap-mandatory scrollbar-thin scrollbar-track-transparent gap-4 overflow-x-auto pt-1 pb-4"
           >

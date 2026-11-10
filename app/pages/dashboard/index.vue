@@ -41,7 +41,7 @@ const getRoleLabel = (role: number | null) => {
       return "غير معروف";
   }
 };
-// findUserById
+
 onMounted(async () => {
   const keysRestaurantCount = restaurantStore.restaurant
     ? Object.keys(restaurantStore.restaurant)?.length
@@ -56,7 +56,6 @@ onMounted(async () => {
     await userStore.findUserById();
 });
 
-// 🌟 حولناها لـ computed عشان الأرقام تتحدث لايف وفلترنا الكروت حسب الصلاحية
 const visibleCards = computed(() => {
   const allCards = [
     {
@@ -126,7 +125,6 @@ const visibleCards = computed(() => {
       </p>
     </div>
 
-    <!-- Quick Cards -->
     <div
       class="xs:grid-cols-2 gap-fluid mb-section-fluid grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4"
     >

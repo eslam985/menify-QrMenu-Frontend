@@ -18,7 +18,7 @@ const slug = computed(() => {
 onMounted(async () => {
   await publicMenuStore.fetchMenu(slug.value);
 });
-watch(slug, (s) => publicMenuStore.fetchMenu(s)); // fires only when navigating to ANOTHER restaurant
+watch(slug, (s) => publicMenuStore.fetchMenu(s));
 onUnmounted(() => publicMenuStore.clearMenu());
 
 const notFound = computed(() => {
@@ -41,7 +41,6 @@ const notFound = computed(() => {
 
 <template>
   <div class="px-fluid mx-auto w-full pb-16 2xl:max-w-[90%]">
-    <!-- خطأ في التحميل -->
     <div v-if="publicMenuStore.error" class="py-24 text-center" dir="rtl">
       <h1 class="text-primary mb-2 text-2xl font-bold">
         {{ notFound ? "المنيو غير متاح" : "تعذّر تحميل المنيو" }}

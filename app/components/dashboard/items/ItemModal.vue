@@ -8,14 +8,11 @@ const { isOpen, selectedItem: editingItem, closeModal } = useItemModal();
 const itemStore = useItemStore();
 const categoryStore = useCategoryStore();
 
-// 1. إنشاء نسخة مستقلة ومحمية من الـ Composable الخاص بالفورم
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, resetForm } = formInstance;
 
-// 2. حقن الـ Instance للـ BaseForm الابن عبر الـ Provide النقية
 provide("current_form_instance", formInstance);
 
-// إدارات مخصصة للصورة والـ Checkbox للحفاظ على توافق المعمارية الحالية
 const selectedFile = ref<File | null>(null);
 const imagePreview = ref<string | null>(null);
 const isAvailable = ref<boolean>(true);
@@ -29,7 +26,6 @@ const handleFileChange = (e: Event) => {
   }
 };
 
-// 3. بناء مصفوفة الحقول وتغذية قائمة خيارات الـ Categories ديناميكياً من الـ Store
 const itemFieldsConfig = computed<FormField[]>(() => [
   {
     column: "title",
@@ -45,7 +41,7 @@ const itemFieldsConfig = computed<FormField[]>(() => [
     label: "التصنيف",
     required: true,
     type: "select",
-    colspan: "col-span-1 sm:col-span-1.5", // متجاوب ومقسوم هندسياً بجانب السعر
+    colspan: "col-span-1 sm:col-span-1.5",
     options: categoryStore.categories.map((cat) => ({
       label: cat.name,
       value: cat.id,
@@ -56,7 +52,7 @@ const itemFieldsConfig = computed<FormField[]>(() => [
     value: 0,
     label: "السعر (ج.م)",
     required: true,
-    type: "text", // نتركه نصاً ليتوافق مع الحقول القياسية في المعمارية
+    type: "text",
     colspan: "col-span-1 sm:col-span-1.5",
   },
   {
@@ -69,11 +65,9 @@ const itemFieldsConfig = computed<FormField[]>(() => [
   },
 ]);
 
-// 4. دالة الإرسال المركزية المتوافقة مع معمارية الـ Payload النظيف والرفع الثنائي
 const handleSubmit = async () => {
   errorMessage.value = "";
 
-  // بناء الكائن النهائي مع تحويل الأرقام بدقة للباك إند
   const payload: CreateMenuItemType["body"] = {
     category_id: formDataPayload.value.category_id as string,
     title: String(
@@ -108,7 +102,6 @@ const handleSubmit = async () => {
       }
     }
 
-    // رفع الصورة بشكل منفصل ومنعزل تماماً إن وجدت بنجاح
     if (selectedFile.value && itemId) {
       const formData = new FormData();
       formData.append("image", selectedFile.value);
@@ -123,7 +116,6 @@ const handleSubmit = async () => {
   }
 };
 
-// 5. مراقبة تفتح وغلق المودال لشحن البيانات أو تفريغها نقياً
 watch(
   [isOpen, editingItem],
   ([open, item]) => {
@@ -174,7 +166,6 @@ watch(
     <div
       class="bg-card rounded-card border-primary/10 gap-fluid flex max-h-[90vh] w-full max-w-lg flex-col overflow-y-auto border p-6 text-right shadow-2xl"
     >
-      <!-- عنوان المودال -->
       <h3
         class="text-fluid-h3 text-primary border-primary/5 border-b pb-2 font-bold"
       >
@@ -182,14 +173,11 @@ watch(
       </h3>
 
       <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
-        <!-- استدعاء فورم النظام العام وتمرير كل المحتويات في مكانها الهندسي السليم -->
         <UiBaseForm>
-          <!-- أولاً: حقن الحقول الخاصة (الصورة والـ Checkbox) لتظهر قبل الأزرار -->
           <template #extra-fields>
             <div
               class="gap-fluid mt-2 grid grid-cols-1 items-start md:grid-cols-2"
             >
-              <!-- حقل الصورة المطور -->
               <div class="flex flex-col gap-1.5 text-right">
                 <label class="text-fluid-xs text-primary block font-medium"
                   >صورة الصنف</label
@@ -225,7 +213,6 @@ watch(
                 </div>
               </div>
 
-              <!-- حقل الـ Checkbox الخاص بالإتاحة -->
               <div class="flex items-center gap-2 pt-6 text-right">
                 <input
                   v-model="isAvailable"
@@ -242,7 +229,6 @@ watch(
             </div>
           </template>
 
-          <!-- ثانياً: حقن زر الإلغاء بجانب زر الحفظ في نهاية الفورم تماماً -->
           <template #actions>
             <button
               type="button"
@@ -254,7 +240,6 @@ watch(
           </template>
         </UiBaseForm>
 
-        <!-- إظهار رسائل الخطأ الجانبية إن وُجدت في الأسفل خالص -->
         <p
           v-if="errorMessage"
           class="mt-2 rounded-lg bg-red-500/10 p-2.5 text-xs text-red-500"

@@ -5,7 +5,6 @@ import {
   newPasswordField,
 } from "@/schemas/userSchema/userSchema.js";
 
-// Admin (5150) is NOT in the list: it can't be created or assigned through the API
 const staffRoleField = z.enum(["1984", "2001"], {
   error: "الدور يجب أن يكون 1984 (Editor) أو 2001 (User)",
 });
@@ -14,7 +13,6 @@ const staffIdParams = z.object({
   staffId: z.uuid("معرّف الموظف غير صالح"),
 });
 
-// POST /api/staff
 const createStaffSchema = z.object({
   body: z.strictObject({
     username: usernameField,
@@ -24,7 +22,6 @@ const createStaffSchema = z.object({
   }),
 });
 
-// PATCH /api/staff/:staffId  (role change only)
 const updateStaffRoleSchema = z.object({
   params: staffIdParams,
   body: z.strictObject({
@@ -32,7 +29,6 @@ const updateStaffRoleSchema = z.object({
   }),
 });
 
-// DELETE /api/staff/:staffId
 const staffIdSchema = z.object({
   params: staffIdParams,
 });

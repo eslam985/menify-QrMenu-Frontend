@@ -29,9 +29,7 @@ const handleRefresh = async () => {
       </p>
     </div>
 
-    <!-- أدوات البحث، الفلتر، والتحكم -->
     <div class="flex w-full flex-wrap items-center gap-3 lg:w-auto">
-      <!-- خانة البحث -->
       <div class="relative w-full sm:w-60">
         <span
           class="text-text/40 pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs"
@@ -53,7 +51,6 @@ const handleRefresh = async () => {
         </button>
       </div>
 
-      <!-- فلتر الحالة -->
       <select
         :value="statusFilter"
         @change="setStatusFilter(($event.target as HTMLSelectElement).value)"
@@ -64,7 +61,6 @@ const handleRefresh = async () => {
         <option value="paused">متوقف</option>
       </select>
 
-      <!-- زر التحديث -->
       <button
         @click="handleRefresh"
         :disabled="offerStore.isLoading"
@@ -78,7 +74,6 @@ const handleRefresh = async () => {
         />
       </button>
 
-      <!-- زر الإضافة -->
       <button
         v-if="authStore?.isEditorAndAbove"
         @click="navigateTo('/dashboard/offers/new')"

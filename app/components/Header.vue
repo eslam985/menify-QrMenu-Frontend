@@ -1,6 +1,5 @@
 <!-- /project_Full-stack/Menify/frontend/app/components/Header.vue -->
 <template>
-  <!-- Navbar / Header -->
   <header
     class="border-primary/50 p-fluid mx-auto flex w-full items-center justify-between border-b 2xl:max-w-[80%]"
   >
@@ -19,7 +18,6 @@
     </div>
 
     <div class="flex items-center gap-3">
-      <!-- زر اللوج ان للأدمن -->
       <nuxt-link
         to="/auth/login"
         class="px-fluid bg-card border-primary/10 shadow-soft flex items-center gap-2 rounded-xl border py-2 text-(length:--text-fluid-sm) font-bold transition hover:text-white"
@@ -31,7 +29,6 @@
         <span class="text-text md:hover:text-primary">دخول الأدمن</span>
       </nuxt-link>
 
-      <!-- زر التارك مود اللي عملناه ف الأول -->
       <ClientOnly>
         <ThemeToggle />
       </ClientOnly>

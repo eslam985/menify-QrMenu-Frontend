@@ -1,4 +1,3 @@
-// app/composables/useOfferModal.ts
 export const useOfferModal = () => {
   const isOpen = useState("offer_modal_open", () => false);
   const editingOffer = useState<unknown | null>(

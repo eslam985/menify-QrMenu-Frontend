@@ -10,7 +10,6 @@ const authStore = useAuthStore();
   <header
     class="border-primary/15 p-fluid bg-card sticky top-0 z-30 flex w-full shrink-0 items-center justify-between border-b shadow-xs"
   >
-    <!-- يمين الهيدر: زر القائمة للموبايل + الشعار والعنوان -->
     <div class="flex items-center gap-4">
       <button
         @click="toggleMobile"
@@ -35,7 +34,6 @@ const authStore = useAuthStore();
       </div>
     </div>
 
-    <!-- يسار الهيدر: تبديل الثيم + معلومات المشرف -->
     <div class="flex items-center gap-3">
       <div class="hidden flex-col items-end sm:flex">
         <NuxtLink

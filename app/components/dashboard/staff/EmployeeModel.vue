@@ -38,7 +38,6 @@ const employeeFieldsConfig = computed<FormField[]>(() => {
     },
   ];
 
-  // نضيف حقول الباسورد فقط في حالة الإضافة الجديدة
   if (!isEditMode.value) {
     baseFields.unshift(
       {
@@ -132,8 +131,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- حماية صارمة على مستوى الـ UI: الفورم يختفي كلياً عن الـ Editor ولا يراه إلا الـ Admin فقط -->
-
   <div v-if="isAdmin" class="mb-section-fluid mx-auto max-w-6xl">
     <h3
       class="text-fluid-h3 text-text mb-section-fluid border-primary/10 gap-fluid md:hover:text-primary flex items-center border-b pb-2 font-bold"

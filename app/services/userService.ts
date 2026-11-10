@@ -1,4 +1,3 @@
-// Menify/frontend/app/services/userService.ts
 import type {
   ChangePasswordType,
   GetSessionsQueryType,

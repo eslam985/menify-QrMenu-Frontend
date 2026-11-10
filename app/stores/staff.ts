@@ -1,4 +1,3 @@
-// Menify/frontend/app/stores/staff.ts
 import { defineStore } from "pinia";
 import { useStaffService } from "@/services/staffService";
 import type { StaffResponse } from "@/types/dataType/staffType";

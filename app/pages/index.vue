@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// مطاعم تجريبية للاختيار السريع (يمكن ربطها لاحقاً بالـ API)
 const sampleRestaurants = [
   { name: "Case Cafe", slug: "case-cafe-1", desc: "أفضل قهوة في المدينة" },
   {
@@ -12,11 +11,9 @@ const sampleRestaurants = [
 
 <template>
   <div class="bg-bg text-text flex min-h-screen flex-col justify-between">
-    <!-- Main Hero Section -->
     <main
       class="px-fluid p-section-fluid gap-section mx-auto my-auto flex w-full flex-col items-center text-center 2xl:max-w-[80%]"
     >
-      <!-- Badge -->
       <div
         class="p-fluid bg-bg border-primary/20 text-primary inline-flex items-center gap-2 rounded-full border py-1.5 text-start text-(length:--text-fluid-sm) font-bold"
       >
@@ -24,7 +21,6 @@ const sampleRestaurants = [
         <Icon name="lucide:sparkles" class="h-4 w-4" />
       </div>
 
-      <!-- Title & Desc -->
       <div class="flex max-w-3xl flex-col gap-4">
         <h1
           class="text-(length:--text-fluid-h1) leading-tight font-black tracking-tighter"
@@ -40,7 +36,6 @@ const sampleRestaurants = [
         </p>
       </div>
 
-      <!-- Restaurant Selector Box -->
       <div
         class="bg-card p-fluid shadow-soft border-primary/10 flex w-full flex-col gap-4 rounded-xl border 2xl:max-w-[80%]"
       >
@@ -83,7 +78,6 @@ const sampleRestaurants = [
         </div>
       </div>
 
-      <!-- Subscription Plans Section -->
       <div class="mt-12 w-full text-right">
         <div class="mb-8">
           <h2 class="text-primary text-(length:--text-fluid-h2) font-bold">
@@ -95,7 +89,6 @@ const sampleRestaurants = [
         </div>
 
         <div class="gap-fluid grid w-full grid-cols-1 md:grid-cols-3">
-          <!-- باقة شهرية -->
           <div
             class="bg-card p-fluid border-primary/10 shadow-soft relative flex flex-col justify-between overflow-hidden rounded-xl border"
           >
@@ -136,7 +129,6 @@ const sampleRestaurants = [
             </a>
           </div>
 
-          <!-- اشتراك نصف سنوي -->
           <div
             class="bg-card p-fluid border-primary/20 shadow-soft relative flex flex-col justify-between overflow-hidden rounded-xl border"
           >
@@ -178,7 +170,6 @@ const sampleRestaurants = [
             </a>
           </div>
 
-          <!-- اشتراك سنوي -->
           <div
             class="bg-card p-fluid border-primary shadow-soft relative flex flex-col justify-between overflow-hidden rounded-xl border-2"
           >
@@ -223,7 +214,6 @@ const sampleRestaurants = [
         </div>
       </div>
 
-      <!-- Features Grid -->
       <div
         class="gap-fluid mt-12 grid w-full grid-cols-1 text-right md:grid-cols-3"
       >

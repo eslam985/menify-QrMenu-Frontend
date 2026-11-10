@@ -1,4 +1,3 @@
-// app/composables/useTable.ts
 export type TableRow = Record<string, unknown>;
 export interface Column {
   key: string;
@@ -33,7 +32,6 @@ export const useTable = () => {
   };
 
   const handleRowClick = (row: TableRow) => {
-    // يمكنك تخصيص هذا الحدث أو تركه عاماً
     console.log(row);
   };
 

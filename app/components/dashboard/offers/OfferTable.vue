@@ -9,7 +9,6 @@ const { searchQuery, statusFilter } = useOfferSearch();
 const { setTableConfig } = useTable();
 const authStore = useAuthStore();
 
-// تصفية العروض بناءً على البحث والحالة
 const filteredOffers = computed(() => {
   let result = offerStore.offers;
 
@@ -59,7 +58,6 @@ const formatDate = (dateStr: string) => {
 
 <template>
   <UiBaseTable>
-    <!-- تخصيص عمود الصورة -->
     <template #cell-image_url="{ row }">
       <div class="flex items-center justify-center">
         <img
@@ -77,7 +75,6 @@ const formatDate = (dateStr: string) => {
       </div>
     </template>
 
-    <!-- تخصيص عمود عنوان العرض (مع الوصف لو موجود) -->
     <template #cell-title="{ row }">
       <div>
         <p class="text-text text-xs font-bold">{{ row.title }}</p>
@@ -91,7 +88,6 @@ const formatDate = (dateStr: string) => {
       </div>
     </template>
 
-    <!-- تخصيص عمود سعر العرض -->
     <template #cell-offer_price="{ row }">
       <span class="text-primary font-bold">
         {{
@@ -102,7 +98,6 @@ const formatDate = (dateStr: string) => {
       </span>
     </template>
 
-    <!-- تخصيص عمود السعر الأصلي -->
     <template #cell-original_total="{ row }">
       <span class="text-text/70 font-medium">
         {{
@@ -113,7 +108,6 @@ const formatDate = (dateStr: string) => {
       </span>
     </template>
 
-    <!-- تخصيص عمود قيمة التوفير -->
     <template #cell-savings="{ row }">
       <span
         v-if="
@@ -128,7 +122,6 @@ const formatDate = (dateStr: string) => {
       <span v-else class="text-text/40 text-xs">—</span>
     </template>
 
-    <!-- تخصيص عمود الـ Status -->
     <template #cell-status="{ row }">
       <span
         class="bg-primary/10 text-primary rounded-lg px-2.5 py-1 text-[10px] font-bold"
@@ -137,7 +130,6 @@ const formatDate = (dateStr: string) => {
       </span>
     </template>
 
-    <!-- تخصيص عمود بنود العرض (items) -->
     <template #cell-items="{ row }">
       <div class="flex max-w-[180px] flex-col gap-1">
         <span class="text-text text-xs font-bold">
@@ -160,7 +152,6 @@ const formatDate = (dateStr: string) => {
       </div>
     </template>
 
-    <!-- تخصيص عمود توفر الأصناف (all_items_available) -->
     <template #cell-all_items_available="{ row }">
       <span
         :class="[
@@ -174,7 +165,6 @@ const formatDate = (dateStr: string) => {
       </span>
     </template>
 
-    <!-- تخصيص عمود الحالة (is_active) -->
     <template #cell-is_active="{ row }">
       <span
         :class="[
@@ -188,7 +178,6 @@ const formatDate = (dateStr: string) => {
       </span>
     </template>
 
-    <!-- تنسيق تواريخ البداية والنهاية -->
     <template #cell-starts_at="{ row }">
       <span class="text-text/60 text-xs">{{
         formatDate(row.starts_at as OfferResponse["starts_at"])
@@ -200,14 +189,12 @@ const formatDate = (dateStr: string) => {
       }}</span>
     </template>
 
-    <!-- تخصيص عمود تاريخ الإنشاء -->
     <template #cell-created_at="{ row }">
       <span class="text-text/60 text-xs">{{
         formatDate(row.created_at as OfferResponse["created_at"])
       }}</span>
     </template>
 
-    <!-- أزرار الإجراءات -->
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-center gap-2">
         <button

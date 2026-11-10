@@ -1,4 +1,3 @@
-// app/stores/item.ts
 import { defineStore } from "pinia";
 import { useItemService } from "~/services/itemService";
 
@@ -18,7 +17,6 @@ export const useItemStore = defineStore("item", () => {
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
-  // جلب جميع الأصناف (مع إمكانية تمرير فلتر مثل category_id)
   async function fetchItems(params?: ListMenuItemsType["query"]) {
     isLoading.value = true;
     error.value = null;
@@ -35,7 +33,6 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
-  // إضافة صنف جديد
   async function addItem(body: CreateMenuItemType["body"]) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show(
@@ -77,7 +74,6 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
-  // تعديل صنف
   async function updateItem(id: string, body: UpdateMenuItemType["body"]) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show(
@@ -106,7 +102,6 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
-  // حذف صنف
   async function removeItem(id: string) {
     if (isLoading.value || !id) return false;
     if (!authStore.isAdmin) {
@@ -133,7 +128,6 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
-  // تبديل حالة التوفر (متوفر / غير متوفر)
   async function toggleAvailability(id: string, currentStatus: boolean) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show(
@@ -163,7 +157,6 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
-  // رفع صورة الصنف
   async function uploadImage(id: string, formData: FormData) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show(
@@ -191,7 +184,6 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
-  // حذف صورة الصنف
   async function deleteImage(id: string) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show(
@@ -219,7 +211,6 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
-  // إعادة ترتيب الأصناف
   async function reorderItems(payload: { category_id: string; ids: string[] }) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show(
@@ -235,13 +226,11 @@ export const useItemStore = defineStore("item", () => {
     try {
       const res = await itemService.reorderItems(payload);
 
-      // تحديث الترتيب محلياً بناءً على مصفوفة الـ ids والـ index الجديد
       payload.ids.forEach((id, index) => {
         const item = items.value.find((i) => i.id === id);
         if (item) item.display_order = index;
       });
 
-      // إعادة ترتيب مصفوفة الأصناف محلياً حسب display_order الجديد
       items.value.sort((a, b) => a.display_order - b.display_order);
 
       notiStore.show(res.message || "تم إعادة ترتيب الأصناف بنجاح!", "success");

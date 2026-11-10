@@ -25,12 +25,11 @@ export interface RestaurantResponse {
   currency: string;
   timezone: string;
   working_hours: WorkingHours | null;
-  status: string; // read-only: the dashboard shows a warning when suspended
-  subscription_ends_at: string | null; // read-only
+  status: string;
+  subscription_ends_at: string | null;
   created_at: string;
 }
 
-/** Input of Restaurant.update. Only keys that are present are updated. */
 export interface UpdateRestaurantInput {
   name?: string | undefined;
   description?: string | null | undefined;

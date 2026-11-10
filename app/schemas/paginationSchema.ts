@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// 1. السكيما الأساسية: للترقيم فقط (page, limit)
 const paginationSchema = z.object({
   query: z.object({
     page: z.coerce.number().int().positive().default(1),
@@ -8,7 +7,6 @@ const paginationSchema = z.object({
   }),
 });
 
-// 2. السكيما الممتدة: للترقيم مع البحث (page, limit, search)
 const searchPaginationSchema = z.object({
   query: paginationSchema.shape.query.extend({
     search: z.string().trim().optional(),

@@ -7,25 +7,23 @@ const slug = computed(() => authStore.restaurantSlug);
 const qrCodeUrl = ref("");
 const copied = ref(false);
 
-// تكوين الرابط الكامل للمنيو بناءً على الدومين الحالي أو الثابت
 const menuLink = computed(() => {
   if (import.meta.client) {
     return `${window.location.origin}/menu/${slug.value}`;
   }
 
-  // على السيرفر، نقوم بجلب الدومين والبروتوكول الحالي ديناميكياً دون أي هاردكود
   const requestUrl = useRequestURL();
   return `${requestUrl.origin}/menu/${slug.value}`;
 });
-// توليد الـ QR كصورة Data URL c95400 ffffff
+
 const generateQr = async () => {
   try {
     qrCodeUrl.value = await QRCode.toDataURL(menuLink.value, {
       width: 300,
       margin: 2,
       color: {
-        dark: "#c95400", // لون الـ QR (Primary)
-        light: "#ffffff", // خلفية بيضاء لضمان قراءة سريعة ودقيقة بالهاتف
+        dark: "#c95400",
+        light: "#ffffff",
       },
     });
   } catch (err) {
@@ -98,7 +96,6 @@ watch(slug, () => {
     </div>
 
     <div class="flex w-full flex-wrap items-center justify-center gap-3">
-      <!-- زر تحميل الـ QR -->
       <a
         v-if="qrCodeUrl"
         :href="qrCodeUrl"
@@ -108,7 +105,6 @@ watch(slug, () => {
         <Icon name="lucide:download" class="h-4 w-4" /> تحميل الـ QR للطباعة
       </a>
 
-      <!-- زر معاينة المنيو الحي -->
       <NuxtLink :href="menuLink" target="_blank" class="btn-danger text-text">
         <Icon name="lucide:external-link" class="h-4 w-4" /> معاينة المنيو
       </NuxtLink>

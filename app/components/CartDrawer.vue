@@ -12,7 +12,6 @@ const totalItemsCount = computed(() =>
 
 <template>
   <div>
-    <!-- الشريط العائم أسفل الشاشة -->
     <div
       v-if="cartStore.items.length > 0"
       class="fixed bottom-6 left-1/2 z-40 w-[90%] max-w-xl -translate-x-1/2"
@@ -34,7 +33,6 @@ const totalItemsCount = computed(() =>
       </button>
     </div>
 
-    <!-- نافذة تفاصيل السلة (Drawer) -->
     <div
       v-if="isCartOpen"
       @click.self="isCartOpen = false"
@@ -43,7 +41,6 @@ const totalItemsCount = computed(() =>
       <div
         class="bg-card text-text p-fluid border-primary/10 flex h-full w-full max-w-md flex-col border-l shadow-2xl"
       >
-        <!-- رأس السلة -->
         <div
           class="border-primary/10 flex items-center justify-between border-b pb-4"
         >
@@ -62,7 +59,6 @@ const totalItemsCount = computed(() =>
           </button>
         </div>
 
-        <!-- قائمة المنتجات -->
         <div class="flex flex-1 flex-col gap-3 overflow-y-auto py-4">
           <div
             v-for="item in cartStore.items"
@@ -85,7 +81,6 @@ const totalItemsCount = computed(() =>
               </div>
             </div>
 
-            <!-- أزرار التحكم بالكمية -->
             <div class="flex items-center gap-2">
               <button
                 @click="cartStore.removeItem(item.id)"
@@ -106,7 +101,6 @@ const totalItemsCount = computed(() =>
           </div>
         </div>
 
-        <!-- الملخص -->
         <div class="border-primary/10 flex flex-col gap-3 border-t pt-4">
           <div class="flex items-center justify-between text-lg font-black">
             <span>الإجمالي الكلي:</span>

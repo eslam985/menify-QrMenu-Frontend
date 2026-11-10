@@ -22,7 +22,6 @@ const handleAddToCart = () => {
     <div
       class="bg-card text-text shadow-soft border-primary/10 flex w-full max-w-lg flex-col overflow-hidden rounded-xl border"
     >
-      <!-- صورة المنتج أو رأس المودال -->
       <div class="bg-bg relative h-56 w-full">
         <img
           v-if="item.image_url || publicMenuStore.restaurant?.logo_url"
@@ -39,7 +38,6 @@ const handleAddToCart = () => {
           <Icon name="lucide:utensils" class="h-16 w-16 opacity-50" />
         </div>
 
-        <!-- زر الإغلاق -->
         <button
           @click="emit('close')"
           class="absolute top-4 left-4 cursor-pointer rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70"
@@ -48,7 +46,6 @@ const handleAddToCart = () => {
         </button>
       </div>
 
-      <!-- تفاصيل الوجبة -->
       <div class="flex flex-col gap-4 p-6">
         <div>
           <h2 class="text-text text-(length:--text-fluid-h2) font-bold">
@@ -66,7 +63,6 @@ const handleAddToCart = () => {
           {{ item.description }}
         </p>
 
-        <!-- زر الإضافة للسلة -->
         <button
           @click="handleAddToCart"
           class="bg-primary mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3 font-bold text-white shadow-lg transition hover:opacity-90"

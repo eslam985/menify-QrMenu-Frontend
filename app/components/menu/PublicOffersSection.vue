@@ -4,7 +4,6 @@ import type { OfferItemResponse } from "@/types/dataType/offerType";
 import type { PublicOffer } from "@/types/dataType/publicMenuType";
 const publicMenuStore = usePublicMenuStore();
 
-// دالة حساب السعر الأصلي تلقائياً من محتويات العرض (سعر القطعة × الكمية) لو لم يأتِ جاهزاً
 const getOriginalTotal = (offer: PublicOffer) => {
   if (offer.original_total) return offer.original_total;
 
@@ -24,7 +23,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
     v-if="publicMenuStore.offers && publicMenuStore.offers.length > 0"
     class="mb-10"
   >
-    <!-- هيدر القسم -->
     <div class="gap-fluid mb-fluid flex flex-wrap items-center justify-between">
       <h2
         class="text-fluid-h3 text-primary flex items-center gap-2.5 font-black"
@@ -43,7 +41,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
       </span>
     </div>
 
-    <!-- حاوية العروض الأفقية (Horizontal Scroll) -->
     <div
       class="scrollbar-thumb-primary/20 flex snap-x snap-mandatory scrollbar-thin scrollbar-track-transparent gap-4 overflow-x-auto pt-1 pb-4"
     >
@@ -52,11 +49,9 @@ const getOriginalTotal = (offer: PublicOffer) => {
         :key="offer.id"
         class="bg-card border-primary/20 p-fluid group hover:border-primary/50 relative flex w-[90%] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-3xl border shadow-xl transition-all duration-300 sm:w-[480px] md:w-[520px]"
       >
-        <!-- شارات أقصى اليمين واليسار (التوفير وحالة التوفر) -->
         <div
           class="absolute top-2 left-2 z-10 flex flex-col items-end gap-1.5 md:top-6"
         >
-          <!-- شارة التوفير -->
           <div
             v-if="offer.savings && offer.savings > 0"
             class="text-fluid-xs flex items-center gap-1 rounded-full bg-green-500 px-3 py-1 font-black text-white shadow-md"
@@ -65,7 +60,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
             <span>وفّر {{ formatPrice(offer.savings) }} ج.م</span>
           </div>
 
-          <!-- شارة حالة توفر الأصناف -->
           <div
             :class="[
               'text-fluid-xs rounded-full border px-2.5 py-0.5 font-bold shadow-xs backdrop-blur-md',
@@ -79,7 +73,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
         </div>
 
         <div>
-          <!-- صورة العرض الرئيسية -->
           <div
             v-if="offer.image_url"
             class="border-primary/10 relative mb-4 h-44 w-full overflow-hidden rounded-2xl border shadow-inner"
@@ -94,7 +87,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
             ></div>
           </div>
 
-          <!-- العنوان والوصف -->
           <div class="mb-fluid gap-fluid flex flex-wrap justify-between">
             <div class="w-full">
               <h3
@@ -109,7 +101,7 @@ const getOriginalTotal = (offer: PublicOffer) => {
                 {{ offer.description }}
               </p>
             </div>
-            <!-- فترة صلاحية العرض -->
+
             <div
               v-if="offer.ends_at"
               class="gap-fluid text-fluid-sm text-text/50 bg-bg/60 border-primary/10 mt-2 mb-2 flex w-full flex-wrap justify-between rounded-xl border px-3 py-2"
@@ -128,7 +120,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
             </div>
           </div>
 
-          <!-- اصناف ومكونات العرض التفصيلية -->
           <div
             v-if="offer.items?.length > 0"
             class="bg-bg/40 p-fluid border-primary/10 mb-fluid rounded-2xl border md:p-6"
@@ -151,7 +142,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
                 class="bg-card/60 border-primary/5 flex items-center justify-between rounded-xl border p-2.5 text-xs"
               >
                 <div class="gap-fluid flex items-center overflow-hidden">
-                  <!-- صورة مصغرة للبند لو متوفرة -->
                   <div
                     v-if="
                       item.image_url || publicMenuStore.restaurant?.logo_url
@@ -168,7 +158,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
                     />
                   </div>
                   <div class="flex flex-col gap-1 truncate px-2">
-                    <!-- صياغة الجملة بشكل منطقي: (العدد + اسم الصنف) -->
                     <span class="text-text text-fluid-p truncate font-bold">
                       <span class="text-primary font-black">{{
                         item.quantity
@@ -176,7 +165,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
                       {{ item.title || item.custom_label }}
                     </span>
 
-                    <!-- عرض السعر الإجمالي للبند لو متوفر السعر الفردي -->
                     <span
                       v-if="item.unit_price"
                       class="text-fluid-xs text-text/60"
@@ -201,7 +189,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
                   </div>
                 </div>
 
-                <!-- مؤشر توفر البند الفردي (بدون تكرار الكمية) -->
                 <div class="flex shrink-0 items-center gap-2">
                   <span
                     :class="[
@@ -217,11 +204,9 @@ const getOriginalTotal = (offer: PublicOffer) => {
           </div>
         </div>
 
-        <!-- footer البطاقة: مقارنة الأسعار الواضحة (قبل وبعد العرض) -->
         <div
           class="border-primary/10 mt-auto flex flex-col gap-2 border-t pt-4"
         >
-          <!-- صندوق المقارنة الجاهز للعميل -->
           <div
             v-if="offer.original_total"
             class="bg-bg/60 border-primary/10 flex flex-col gap-1.5 rounded-xl border p-3 text-xs"
@@ -254,7 +239,6 @@ const getOriginalTotal = (offer: PublicOffer) => {
             </div>
           </div>
 
-          <!-- footer البطاقة: سعر العرض الخاص بجوار السعر الأصلي المشطوب (المحسوب تلقائياً) -->
           <div
             v-if="offer.offer_price !== null && offer.offer_price !== undefined"
             class="border-primary/10 mt-auto flex flex-col gap-2 border-t pt-4"
@@ -264,14 +248,13 @@ const getOriginalTotal = (offer: PublicOffer) => {
                 >سعر العرض الخاص</span
               >
               <div class="flex items-baseline gap-2.5">
-                <!-- السعر النهائي الجديد -->
                 <span class="text-primary text-2xl font-black">
                   {{ formatPrice(offer.offer_price) }}
                   <span v-if="offer.offer_price" class="text-xs font-bold"
                     >ج.م</span
                   >
                 </span>
-                <!-- السعر الأصلي المشطوب (محسوب تلقائياً) -->
+
                 <span
                   v-if="getOriginalTotal(offer) > (offer.offer_price || 0)"
                   class="text-text/40 text-xs font-semibold line-through"

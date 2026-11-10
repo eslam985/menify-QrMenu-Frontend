@@ -39,9 +39,7 @@ const handleRefresh = async () => {
       </p>
     </div>
 
-    <!-- أدوات البحث، الفلتر، والتحكم -->
     <div class="flex w-full flex-wrap items-center gap-3 lg:w-auto">
-      <!-- خانة البحث -->
       <div class="relative w-full sm:w-60">
         <span
           class="text-text/40 pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs"
@@ -63,7 +61,6 @@ const handleRefresh = async () => {
         </button>
       </div>
 
-      <!-- فلتر التصنيفات -->
       <select
         :value="selectedCategoryFilter"
         @change="setCategoryFilter(($event.target as HTMLSelectElement).value)"
@@ -79,7 +76,6 @@ const handleRefresh = async () => {
         </option>
       </select>
 
-      <!-- زر التحديث -->
       <button
         @click="handleRefresh"
         :disabled="itemStore.isLoading"
@@ -93,7 +89,6 @@ const handleRefresh = async () => {
         />
       </button>
 
-      <!-- زر الإضافة -->
       <button
         v-if="authStore?.isEditorAndAbove"
         @click="openItemModal()"
@@ -104,7 +99,6 @@ const handleRefresh = async () => {
       </button>
 
       <div v-if="authStore?.isEditorAndAbove">
-        <!-- زر فتح مودال الترتيب -->
         <button
           type="button"
           @click="openReorderModal"
@@ -114,7 +108,6 @@ const handleRefresh = async () => {
           ترتيب الأصناف
         </button>
 
-        <!-- ضع المودال في أي مكان في الصفحة أو レイアウト وسيشتغل بالـ Composable تلقائياً -->
         <DashboardItemsItemReorderModal />
       </div>
     </div>

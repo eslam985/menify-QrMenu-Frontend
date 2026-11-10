@@ -27,7 +27,6 @@ const handleRefresh = async () => {
       </p>
     </div>
 
-    <!-- أداة البحث وأزرار التحكم -->
     <div class="flex w-full flex-wrap items-center gap-3 md:w-auto">
       <CommonBaseSearchInput />
 

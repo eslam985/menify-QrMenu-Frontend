@@ -30,7 +30,6 @@ const filteredEmployee = computed(() => {
   );
 });
 
-// تحديث إعدادات الجدول في الـ Composable عند تغير البيانات
 const tableColumns = [
   { key: "avatar_url", label: "الصورة" },
   { key: "username", label: "اسم الموظف" },
@@ -90,7 +89,6 @@ const role = (role: string): "Admin" | "Editor" | "User" | "N/A" => {
     </template>
 
     <template #cell-actions="{ row }">
-      <!-- لو الصف يخص الأدمن الحالي، نمنع ظهور أزرار التعديل والحذف -->
       <div
         v-if="row.id === authStore.user?.id || row.roles === '5150'"
         class="flex items-center justify-center"
@@ -102,7 +100,6 @@ const role = (role: string): "Admin" | "Editor" | "User" | "N/A" => {
         </span>
       </div>
 
-      <!-- لباقي الموظفين، تظهر الأزرار بشكل طبيعي للأدمن -->
       <div
         v-else-if="authStore.isAdmin"
         class="flex items-center justify-center gap-2"

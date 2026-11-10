@@ -6,14 +6,11 @@ const { searchQuery, setSearchQuery } = useCategorySearch();
 
 const route = useRoute();
 
-// جلب آخر جزء من الرابط ديناميكياً
 const currentSection = computed(() => {
   const parts = route.path.split("/");
-  // دالة filter تضمن حذف أي فراغات إذا كان الرابط ينتهي بـ سلاش مائل /
+
   const cleanParts = parts.filter(Boolean);
   return cleanParts[cleanParts.length - 1];
-  // إذا كنت في صفحة الأصناف سيطبع: items
-  // إذا كنت في صفحة التصنيفات سيطبع: categories
 });
 </script>
 

@@ -12,7 +12,6 @@ defineSlots<{
 
 <template>
   <div class="relative w-full">
-    <!-- حالة التحميل (Loading) -->
     <div
       v-if="isLoading"
       class="text-text/60 flex flex-col items-center justify-center gap-3 py-20"
@@ -20,7 +19,6 @@ defineSlots<{
       loading...
     </div>
 
-    <!-- حالة عدم وجود بيانات (Empty State) -->
     <div
       v-else-if="!rows || !rows.length"
       class="text-text/60 border-primary/20 text-fluid-p rounded-2xl border border-dashed py-20 text-center"
@@ -28,7 +26,6 @@ defineSlots<{
       لا توجد بيانات لعرضها
     </div>
 
-    <!-- شبكة الكروت الديناميكية (Grid) -->
     <div
       v-else
       class="gap-fluid-gap grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
@@ -38,7 +35,6 @@ defineSlots<{
         :key="String(row.id ?? index)"
         class="bg-card border-primary/10 shadow-soft hover:border-primary/40 group flex max-h-[400px] flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:shadow-md"
       >
-        <!-- 🌟 الـ row هنا من النوع T تلقائياً بنسبة 100% لأن مصفوفة rows نوعها T[] قادمة من الـ Props -->
         <slot name="card" :row="row"></slot>
       </div>
     </div>

@@ -1,4 +1,3 @@
-// app/composables/useItemModal.ts
 export const useItemModal = () => {
   const isOpen = useState("public_item_modal_open", () => false);
   const selectedItem = useState<unknown | null>(

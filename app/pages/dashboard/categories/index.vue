@@ -20,13 +20,10 @@ onMounted(async () => {
 
 <template>
   <div>
-    <!-- هيدر التصنيفات المنفصل (يحتوي على البحث، زر التحديث، وزر الإضافة) -->
     <CategoryHeader />
 
-    <!-- جدول عرض التصنيفات (مع دعم التصفية المباشرة) -->
     <CategoryTable />
 
-    <!-- مودال إضافة تصنيف -->
     <CategoryModal />
   </div>
 </template>

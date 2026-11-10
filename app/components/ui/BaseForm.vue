@@ -1,14 +1,12 @@
 <!-- app/components/ui/BaseForm.vue -->
 <script setup lang="ts">
 import { inject } from "vue";
-// 🌟 استيراد الأنواع الموحدة والجاهزة مباشرة في سطر واحد
+
 import type { FormInstance } from "~/composables/useForm";
 
-// التقاط الـ Instance المحقون بنقاء وصرامة تامة متطابقة 100% مع الأب
 const { fields, isSubmitting, workingHours, toggleDay, onSubmitHandler } =
   inject("current_form_instance") as FormInstance;
 
-// أسماء الأيام لعرضها في حال تفعيل جزء مواعيد العمل
 const daysTranslation: Record<string, string> = {
   sat: "السبت",
   sun: "الأحد",
@@ -25,7 +23,6 @@ const daysTranslation: Record<string, string> = {
     @submit.prevent="onSubmitHandler"
     class="gap-fluid grid w-full grid-cols-3"
   >
-    <!-- حقول خداع ذكية لمنع المتصفح من ملء بيانات الموظف تلقائياً ببيانات الأدمن -->
     <input
       type="text"
       name="email"
@@ -39,21 +36,18 @@ const daysTranslation: Record<string, string> = {
       autocomplete="new-password"
     />
 
-    <!-- 1. الحقول الديناميكية المشتركة -->
     <div
       v-for="form in fields"
       :key="form.column"
       :class="form.colspan || 'col-span-3'"
       class="flex flex-col"
     >
-      <!-- العنوان لكل حقل -->
       <label
         class="text-fluid-xs text-primary mb-1.5 block font-medium select-none"
       >
         {{ form.label }} <span v-if="form.required" class="text-denger">*</span>
       </label>
 
-      <!-- نوع الحقل: Textarea -->
       <textarea
         v-if="form.type === 'textarea'"
         :value="String(form.value ?? '')"
@@ -64,7 +58,6 @@ const daysTranslation: Record<string, string> = {
         class="p-fluid bg-card border-primary/10 text-text/80 text-fluid-p focus:border-primary min-h-[120px] w-full resize-none rounded-xl border transition-colors focus:outline-none"
       ></textarea>
 
-      <!-- نوع الحقل: Select Menu -->
       <select
         v-else-if="form.type === 'select'"
         v-model="form.value"
@@ -81,7 +74,6 @@ const daysTranslation: Record<string, string> = {
         </option>
       </select>
 
-      <!-- الحقول القياسية (text, tel, password) -->
       <input
         v-else-if="form.type !== 'file'"
         :type="form.type"
@@ -93,7 +85,6 @@ const daysTranslation: Record<string, string> = {
       />
     </div>
 
-    <!-- 2. شق مواعيد العمل المطور بأسلوب عصري ومتجاوب بالكامل -->
     <div
       v-if="Object.values(workingHours).some((hours) => hours !== null)"
       class="gap-fluid mt-fluid border-primary/10 pt-fluid col-span-3 grid grid-cols-1 border-t"
@@ -113,7 +104,6 @@ const daysTranslation: Record<string, string> = {
           "
           class="p-fluid shadow-soft flex flex-col items-stretch gap-3 rounded-2xl border transition-all duration-300"
         >
-          <!-- السطر العلوي: اسم اليوم والتحكم في حالته -->
           <div
             class="border-primary/5 flex items-center justify-between border-b pb-2"
           >
@@ -139,7 +129,6 @@ const daysTranslation: Record<string, string> = {
               </label>
             </div>
 
-            <!-- شارة حالة اليوم الصغيرة -->
             <span
               :class="
                 hours
@@ -152,24 +141,22 @@ const daysTranslation: Record<string, string> = {
             </span>
           </div>
 
-          <!-- السطر السفلي: حقول الوقت الذكية المنسقة كـ Input Group احترافي -->
           <div class="flex h-11 items-center justify-center">
             <div
               v-if="hours"
               class="bg-bg border-primary/10 animate-fade-in grid w-full grid-cols-7 items-center rounded-xl border px-2 py-1"
             >
-              <!-- وقت الفتح -->
               <input
                 type="time"
                 v-model="hours.open"
                 class="text-text text-fluid-sm col-span-3 w-full cursor-pointer bg-transparent text-center focus:outline-none"
               />
-              <!-- فاصل بياني -->
+
               <span
                 class="text-text/40 text-fluid-xs col-span-1 text-center font-medium"
                 >إلى</span
               >
-              <!-- وقت الغلق -->
+
               <input
                 type="time"
                 v-model="hours.close"
@@ -177,7 +164,6 @@ const daysTranslation: Record<string, string> = {
               />
             </div>
 
-            <!-- رسالة غلق اليوم الجمالية عند الغلق لتجنب الفراغ -->
             <div
               v-else
               class="text-text/40 text-fluid-sm flex w-full items-center justify-center gap-1 text-center font-medium tracking-wide"
@@ -190,14 +176,11 @@ const daysTranslation: Record<string, string> = {
       </div>
     </div>
 
-    <!-- مكان مخصص لحقن أي حقول إضافية خارج المعمارية القياسية (مثل الصورة والـ Checkbox) -->
     <div class="col-span-3">
       <slot name="extra-fields" />
     </div>
 
-    <!-- 3. زر الإرسال الموحد المعتمد على حالة الـ Submitting لمنع التكرار عشوائياً -->
     <div class="mt-fluid col-span-3 flex items-center justify-end gap-3">
-      <!-- الـ Slot المخصص للسماح بإضافة أزرار مثل إلغاء بجانب الحفظ -->
       <slot name="actions" />
 
       <button

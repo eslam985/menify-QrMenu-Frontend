@@ -4,15 +4,14 @@ import { useForm, type FormField } from "~/composables/useForm";
 
 import type { ChangePasswordType } from "@/schemas/userSchema/userSchema";
 
-const formInstance = useForm(); // إنشاء نسخة مستقلة تماماً وخاصة بالباسورد
+const formInstance = useForm();
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
   formInstance;
-// توصيل نسخة الباسورد المستقلة للـ BaseForm التابع له
+
 provide("current_form_instance", formInstance);
 
 const userStore = useUserStore();
 
-// 1. تحديد هيكل الحقول الثلاثة لتأمين عملية تغيير كلمة المرور
 const passwordFieldsConfig: FormField[] = [
   {
     column: "currentPassword",
@@ -40,13 +39,11 @@ const passwordFieldsConfig: FormField[] = [
   },
 ];
 
-// 2. دالة الحفظ المركزية التي سيطلقها الـ BaseForm ديناميكياً عند الـ Submit
 const handlePasswordSubmit = async () => {
   const payload = formDataPayload.value;
 
   if (Object.keys(payload)?.length < 1) return;
 
-  // التحقق الفوري (Validation) من تطابق كلمة المرور الجديدة قبل إرسال الطلب للسيرفر
   if (payload.newPassword !== payload.confirmPassword) {
     const notiStore = useNotificationStore();
     notiStore.show("كلمة المرور الجديدة وتأكيدها غير متطابقين!", "error");
@@ -61,12 +58,10 @@ const handlePasswordSubmit = async () => {
   };
 
   try {
-    // إرسال كائن البيانات الصافي (currentPassword, newPassword) للـ Store الخاص بك
     const isSuccess = await userStore.changePassword(
       paylod as ChangePasswordType["body"],
     );
 
-    // إذا تم التغيير بنجاح، نقوم بتفريغ الحقول حمايةً للمستخدم
     if (isSuccess) {
       resetForm();
       setFormConfig(passwordFieldsConfig, handlePasswordSubmit);
@@ -76,7 +71,6 @@ const handlePasswordSubmit = async () => {
   }
 };
 
-// 3. تطهير وتهيئة الـ Composable فور الدخول للصفحة بناءً على قرارنا الهندسي الأخير
 onMounted(() => {
   resetForm();
   setFormConfig(passwordFieldsConfig, handlePasswordSubmit);

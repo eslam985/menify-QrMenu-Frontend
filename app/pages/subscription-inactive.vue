@@ -1,6 +1,5 @@
 <!-- frontend/app/pages/subscription-inactive.vue -->
 <script setup lang="ts">
-// 🛡️ حماية الصفحة: السماح بالدخول فقط إذا كان الاشتراك متوقفاً حقاً
 definePageMeta({
   middleware: [
     () => {
@@ -21,12 +20,11 @@ const email = String(config.public.supportEmail || "");
 const checking = ref(false);
 const stillInactive = ref(false);
 
-// After the owner renews and you reactivate the restaurant: try to restore the session
 const retry = async () => {
   checking.value = true;
   stillInactive.value = false;
   auth.subscriptionInactive = false;
-  auth.isInitialized = false; // force init() to run again
+  auth.isInitialized = false;
   await auth.init();
 
   if (auth.isAuthenticated) await navigateTo("/dashboard");

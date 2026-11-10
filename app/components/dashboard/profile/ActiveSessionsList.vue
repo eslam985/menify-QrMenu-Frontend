@@ -8,7 +8,6 @@ const userStore = useUserStore();
 const { sessions, isLoading } = storeToRefs(userStore);
 const { setTableConfig } = useTable();
 
-// 1. فك تشفير الـ User Agent لعرض المتصفح ونظام التشغيل بنقاء
 const parseUserAgent = (ua: SessionResponse["user_agent"]) => {
   if (!ua) return "جهاز غير معروف";
 
@@ -25,17 +24,13 @@ const parseUserAgent = (ua: SessionResponse["user_agent"]) => {
   return "جهاز غير معروف";
 };
 
-// 2. التحقق مما إذا كانت هذه الجلسة هي الجلسة الحالية المفتوحة بالمتصفح الآن
-// 🌟 دالة مطورة تفحص الـ User Agent والـ IP معاً لمنع تداخل بصمات الأجهزة المتطابقة
 const isCurrentSession = (session: SessionResponse) => {
   if (!import.meta.client) return false;
-  // 1. مطابقة بصمة المتصفح والنظام الحالي
+
   const isUAMatch = session.user_agent === navigator.userAgent;
 
   if (sessions.value.length === 1) return isUAMatch;
 
-  // 2. مطابقة الـ IP المسجل للجلسة مع الـ IP الحالي للمستخدم إذا كان مخزناً في الـ authStore
-  // أو الاعتماد على أن الجلسة الحالية المفتوحة الآن تكون دائماً هي أحدث جلسة تم تحديثها (updated_at) في القائمة
   const isMostRecent =
     session.id ===
     sessions.value.reduce<SessionResponse>(
@@ -43,11 +38,9 @@ const isCurrentSession = (session: SessionResponse) => {
       sessions.value[0] as SessionResponse,
     ).id;
 
-  // الدمج الأمني يضمن تحديد جهازك الفعلي بدقة ويمنع الخداع البصري
   return isUAMatch && isMostRecent;
 };
 
-// 3. تحديد أعمدة جدول الجلسات النشطة
 const sessionTableColumns = [
   { key: "device_info", label: "الجهاز / المتصفح" },
   { key: "ip_address", label: "عنوان الـ IP" },
@@ -58,12 +51,10 @@ const sessionTableColumns = [
   { key: "actions", label: "الإجراءات الأمنية" },
 ];
 
-// 4. دالة إنهاء وطرد الجلسة
 const handleRevokeSession = async (sessionId: string) => {
   await userStore.removeSessionById(sessionId);
 };
 
-// شحن وتغذية الـ useTable بالبيانات والأعمدة ديناميكياً
 watchEffect(() => {
   setTableConfig(sessionTableColumns, sessions.value, isLoading.value);
 });
@@ -79,9 +70,7 @@ watchEffect(() => {
     </h3>
 
     <div class="">
-      <!-- استدعاء الجدول الموحد الخاص بمشروعك -->
       <UiBaseTable>
-        <!-- تخصيص عمود الجهاز والمتصفح -->
         <template #cell-device_info="{ row }">
           <div class="text-text flex items-center gap-2 font-bold">
             <Icon
@@ -103,7 +92,6 @@ watchEffect(() => {
           </div>
         </template>
 
-        <!-- تخصيص عمود الـ IP -->
         <template #cell-ip_address="{ row }">
           <span
             class="text-fluid-sm text-text/80 bg-bg border-primary/5 rounded border px-2 py-0.5 font-mono"
@@ -112,7 +100,6 @@ watchEffect(() => {
           </span>
         </template>
 
-        <!-- تخصيص عمود تاريخ الإضافة -->
         <template #cell-created_at="{ row }">
           <span class="text-fluid-xs text-text/60">{{
             formatDate((row as unknown as SessionResponse).created_at)
@@ -131,7 +118,6 @@ watchEffect(() => {
           }}</span>
         </template>
 
-        <!-- تخصيص عمود الحالة الأمنية (تمييز الجلسة الحالية) -->
         <template #cell-status="{ row }">
           <span
             v-if="isCurrentSession(row as unknown as SessionResponse)"
@@ -150,7 +136,6 @@ watchEffect(() => {
           </span>
         </template>
 
-        <!-- تخصيص الإجراءات الأمنية (طرد وحذف الأجهزة الأخرى وحجب تدمير الذات) -->
         <template #cell-actions="{ row }">
           <div class="flex items-center justify-center">
             <button

@@ -1,4 +1,3 @@
-// app/composables/useOfferSearch.ts
 export const useOfferSearch = () => {
   const searchQuery = useState("offer_search_query", () => "");
   const statusFilter = useState("offer_status_filter", () => "");

@@ -23,7 +23,6 @@ const {
 
 provide("current_form_instance", formInstance);
 
-// 1. تعريف بنية وتكوين حقول المطعم (Configuration) متوافقة مع الـ FormField Type
 const restaurantFieldsConfig: FormField[] = [
   {
     column: "name",
@@ -107,14 +106,11 @@ const restaurantFieldsConfig: FormField[] = [
   },
 ];
 
-// 2. دالة الإرسال المركزية التي سيستدعيها الـ BaseForm ديناميكياً عند الـ submit
 const handleRestaurantSubmit = async () => {
   isSubmitting.value = true;
   try {
-    // نأخذ نسخة عميقة من الـ payload المجمع تلقائياً بواسطة الـ Composable
     const payload = { ...formDataPayload.value };
 
-    // إرسال البيانات النصية ومواعيد العمل إلى الـ Store الخاص بك مباشرة
     await restaurantStore.updateRestaurant(payload);
   } finally {
     isSubmitting.value = false;
@@ -125,7 +121,6 @@ onMounted(async () => {
   restaurantStore.isLoading = true;
 
   try {
-    // جلب بيانات المطعم الحالية من السيرفر
     if (
       !restaurantStore.restaurant ||
       Object.keys(restaurantStore.restaurant).length < 1
@@ -136,14 +131,12 @@ onMounted(async () => {
     const restaurantData = restaurantStore.restaurant;
 
     if (restaurantData) {
-      // شحن الـ Composable بالهيكل والبيانات النصية مع تمرير دالة الحفظ
       setFormConfig(
         restaurantFieldsConfig,
         handleRestaurantSubmit,
         restaurantData,
       );
 
-      // تشريح وشحن ساعات العمل المفعّلة إن وجدت داخل الـ Composable
       if (restaurantData.working_hours) {
         setWorkingHoursConfig(restaurantData.working_hours);
       }

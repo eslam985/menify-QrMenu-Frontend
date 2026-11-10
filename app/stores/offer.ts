@@ -1,4 +1,3 @@
-// app/stores/offer.ts
 import type {
   CreateOfferType,
   ListOffersType,
@@ -26,7 +25,6 @@ export const useOfferStore = defineStore("offer", () => {
     () => offers.value.filter((offer) => !offer.is_active).length,
   );
 
-  // جلب قائمة العروض
   async function fetchOffers(params?: ListOffersType["query"]) {
     isLoading.value = true;
     error.value = null;
@@ -44,7 +42,6 @@ export const useOfferStore = defineStore("offer", () => {
     }
   }
 
-  // إضافة عرض جديد
   async function addOffer(body: CreateOfferType["body"]) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show(
@@ -77,7 +74,6 @@ export const useOfferStore = defineStore("offer", () => {
     }
   }
 
-  // تحديث عرض
   async function updateOffer(id: string, body: UpdateOfferType["body"]) {
     if (!authStore.isEditorAndAbove) {
       notiStore.show(
@@ -105,7 +101,6 @@ export const useOfferStore = defineStore("offer", () => {
     }
   }
 
-  // حذف عرض
   async function removeOffer(id: string) {
     if (isLoading.value || !id) return false;
     if (!authStore.isAdmin) {

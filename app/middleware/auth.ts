@@ -1,10 +1,8 @@
-// app/middleware/auth.ts
-
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (import.meta.server) return; // the session lives in the browser memory
+  if (import.meta.server) return;
 
   const auth = useAuthStore();
-  await auth.init(); // restores the session after F5 (no-op when already initialized)
+  await auth.init();
 
   if (auth.subscriptionInactive) {
     if (to.path === "/subscription-inactive") return;

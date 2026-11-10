@@ -1,16 +1,14 @@
-// src/types/userType/userType.ts
-
 export type RolesType = "2001" | "5150" | "1984";
 
 export interface SetAndUpdateAvatarUrlResponse {
-  id: string; // UUID
+  id: string;
   username: string;
   avatar_url: string;
   avatar_history: string[] | null;
 }
 
 export interface UserResponse extends SetAndUpdateAvatarUrlResponse {
-  restaurant_id: string; // UUID (tenant)
+  restaurant_id: string;
   email: string;
   roles: RolesType;
   created_at: string;
@@ -31,16 +29,14 @@ export interface UserProfileResponse extends UserResponse {
 export interface UserRequest {
   username: string;
   email: string;
-  password: string; // already hashed (bcrypt) — stored in users.password_hash
+  password: string;
   roles: RolesType;
 }
 
-/** Input of User.createNewUser (adds the tenant id) */
 export interface CreateUserInput extends UserRequest {
   restaurantId: string;
 }
 
-/** Input of User.registerRestaurantWithOwner */
 export interface RegisterRestaurantInput {
   inviteCode: string;
   restaurantName: string;
@@ -52,14 +48,13 @@ export interface RegisterRestaurantInput {
 }
 
 export interface FindUserByEmailResponse extends UserResponse {
-  password: string; // aliased from password_hash in the query
+  password: string;
 }
 
-// The raw refresh token is no longer stored (only its hash), so it is not returned.
 export interface SessionResponse {
   id: string;
   user_id: string;
-  family_id: string; // new
+  family_id: string;
   user_agent: string | null;
   ip_address: string | null;
   expires_at: string;

@@ -1,5 +1,3 @@
-// app/services/categoryService.ts
-
 import type {
   CategoryResponse,
   DeleteCategoryResult,

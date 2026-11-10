@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare",
     "type-check": "nuxt typecheck",
     "type-check:watch": "vue-tsc --noEmit --watch -p .nuxt/tsconfig.app.json",
-    "format": "prettier --write \"app/**/*.{vue,ts,css}\" \"nuxt.config.ts\""
+    "format": "prettier --write \"app/**/*.{vue,ts,css}\" \"nuxt.config.ts\"",
+    "clean": "clean-comments"
   },
   "dependencies": {
     "@nuxt/icon": "^2.6.2",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.6",
+    "clean-comments": "github:eslam985/clean-comments#main",
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^6.0.3",

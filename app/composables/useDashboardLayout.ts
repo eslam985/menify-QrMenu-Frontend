@@ -1,4 +1,3 @@
-// app/composables/useDashboardLayout.ts
 export const useDashboardLayout = () => {
   const isMobileOpen = useState("dashboard_mobile_open", () => false);
 

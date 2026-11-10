@@ -9,7 +9,6 @@ if (import.meta.client) {
 
 <template>
   <div class="bg-bg text-text relative flex min-h-screen w-full flex-col">
-    <!-- تغليف الـ Loader بـ ClientOnly يمنع أي تضارب أو Mismatch بين السيرفر والمتصفح -->
     <ClientOnly>
       <div
         v-if="!authStore.isInitialized"

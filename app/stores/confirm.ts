@@ -1,4 +1,3 @@
-// app/stores/confirm.ts
 import { defineStore } from "pinia";
 
 export const useConfirmStore = defineStore("confirm", () => {

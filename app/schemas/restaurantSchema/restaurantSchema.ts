@@ -1,14 +1,10 @@
 import { z } from "zod";
 
-// ---------------------------------------------------------------
-// Reusable fields. "" is not accepted; send null to clear a field.
-// ---------------------------------------------------------------
 const phoneField = z
   .string()
   .trim()
   .regex(/^\+?[0-9][0-9\s-]{6,18}$/, "رقم الهاتف غير صالح");
 
-// https only: these links are shown to customers
 const httpsUrlField = z
   .string()
   .trim()
@@ -20,7 +16,6 @@ const timeField = z
   .string()
   .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "الوقت بصيغة HH:MM (مثال 09:30)");
 
-// null = closed that day. close < open means "closes after midnight".
 const dayField = z
   .strictObject({ open: timeField, close: timeField })
   .refine((d) => d.open !== d.close, "وقت الفتح والإغلاق لا يمكن أن يتساويا")
@@ -49,11 +44,6 @@ const timezoneField = z
     }
   }, "المنطقة الزمنية غير صالحة (مثال Africa/Cairo)");
 
-// ---------------------------------------------------------------
-// PATCH /api/restaurant
-// slug and logo_url are NOT accepted: the slug is immutable, the logo has its own endpoint.
-// Every field is optional; the nullable ones can be cleared with null.
-// ---------------------------------------------------------------
 const updateRestaurantSchema = z.object({
   body: z
     .strictObject({

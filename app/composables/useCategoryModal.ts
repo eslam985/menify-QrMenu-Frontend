@@ -1,4 +1,3 @@
-// app/composables/useCategoryModal.ts
 export const useCategoryModal = () => {
   const isOpen = useState("category_modal_open", () => false);
   const editingCategory = useState<unknown | null>(

@@ -2,15 +2,12 @@ import { defineStore } from "pinia";
 import type { CartItem } from "@/types/dataType/menuItemType";
 
 export const useCartStore = defineStore("cart", () => {
-  // استخدام useCookie من نكسك لحفظ البيانات بأمان وتجنب مشاكل الـ Hydration والتفريغ مع الـ Reload
-  // الصلاحية 24 ساعة (يوم كامل) كما طلبت
   const items = useCookie<CartItem[]>("menify_cart", {
     default: () => [],
     maxAge: 60 * 60 * 24,
   });
 
   const addItem = (item: CartItem) => {
-    // عمل نسخة من مصفوفة العناصر لتحديث الـ Cookie بشكل صحيح
     const currentItems = [...(items.value || [])];
     const existingItem = currentItems.find((i) => i.id === item.id);
 

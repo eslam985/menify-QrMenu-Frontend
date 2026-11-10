@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-// ---------------------------------------------------------------
-// Reusable fields
-// ---------------------------------------------------------------
-// No regex on purpose: "Tea & Coffee", "حلويات - شرقية", "Burger (Large)" are valid names.
 const nameField = z
   .string({ error: "اسم التصنيف مطلوب" })
   .trim()
@@ -27,20 +23,13 @@ const categoryIdParams = z.object({
 const categoryIdSchema = z.object({
   params: categoryIdParams,
 });
-// ---------------------------------------------------------------
-// POST /api/categories
-// restaurant_id is NEVER accepted from the client (it comes from req.restaurantId)
-// display_order is optional: when omitted the service appends the category at the end
-// ---------------------------------------------------------------
+
 const createCategorySchema = z.strictObject({
   name: nameField,
   section: sectionField.default("food"),
   display_order: displayOrderField.optional(),
 });
 
-// ---------------------------------------------------------------
-// PATCH /api/categories/:categoryId
-// ---------------------------------------------------------------
 const updateCategorySchema = z
   .strictObject({
     name: nameField.optional(),
@@ -51,10 +40,6 @@ const updateCategorySchema = z
     message: "يجب إرسال حقل واحد على الأقل للتحديث",
   });
 
-// ---------------------------------------------------------------
-// PATCH /api/categories/reorder
-// The array order IS the new order: ids[0] -> 0, ids[1] -> 1, ...
-// ---------------------------------------------------------------
 const reorderCategoriesSchema = z.strictObject({
   ids: z
     .array(z.uuid("معرّف تصنيف غير صالح"), {

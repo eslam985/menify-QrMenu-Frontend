@@ -13,7 +13,6 @@ const { setFormConfig, formDataPayload, resetForm } = formInstance;
 
 provide("current_form_instance", formInstance);
 
-// 1. تحديد هيكل الحقول القياسي لفورم تسجيل الدخول
 const loginFieldsConfig: FormField[] = [
   {
     column: "email",
@@ -33,7 +32,6 @@ const loginFieldsConfig: FormField[] = [
   },
 ];
 
-// منع الـ Open Redirect بأمان تام
 const safeRedirect = (): string => {
   const r = String(route.query.redirect ?? "");
   return r.startsWith("/") && !r.startsWith("//") && !r.includes("\\")
@@ -41,7 +39,6 @@ const safeRedirect = (): string => {
     : "/dashboard";
 };
 
-// دالة الحفظ والتحقق المركزية المربوطة بالـ Submit ديناميكياً
 const handleLoginSubmit = async () => {
   if (authStore.isLoading) return;
 
@@ -52,7 +49,6 @@ const handleLoginSubmit = async () => {
     password: String(payload.password),
   };
 
-  // تمرير الكائن مع حقن النوع الصارم القادم مباشرة من السكيما الخاصة بالباك إند
   const isSuccess = await authStore.login(
     payloadLogin as LoginUserType["body"],
   );
@@ -86,10 +82,8 @@ onMounted(() => {
         </p>
       </div>
 
-      <!-- 🌟 تشغيل الفورم المركزي الموحد لنظام Menify -->
       <UiBaseForm>
         <template #extra-fields>
-          <!-- حقن رسالة الخطأ والروابط الإرشادية قبل أزرار الحفظ -->
           <div class="gap-fluid mt-2 flex flex-col">
             <p
               v-if="authStore.errorMessage"

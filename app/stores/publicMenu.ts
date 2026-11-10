@@ -1,4 +1,3 @@
-// app/stores/publicMenu.ts
 import { usePublicMenuService } from "@/services/publicMenuService";
 import type {
   PublicMenuCategory,
@@ -30,8 +29,8 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
   const categoriesCount = computed(() => categories.value?.length);
 
   async function fetchMenu(slug: string) {
-    if (!slug || isLoading.value) return; // guard: no slug / already running
-    if (loadedSlug === slug && restaurant.value) return; // guard: already loaded, no refetch
+    if (!slug || isLoading.value) return;
+    if (loadedSlug === slug && restaurant.value) return;
 
     isLoading.value = true;
     error.value = null;
@@ -54,7 +53,6 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
 
       return res;
     } catch (e: unknown) {
-      // 🌟 نستخدم الدالة الموحدة ونكتم الإشعار المنبثق لزبائن المنيو العام (showNotification = false)
       const { status, message } = handleGlobalError(
         e,
         "حدث خطأ أثناء تحميل بيانات المنيو.",

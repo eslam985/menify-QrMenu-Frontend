@@ -21,12 +21,10 @@ defineSlots<{
   <div
     class="bg-card border-primary/30 shadow-soft mx-auto w-full overflow-hidden rounded-2xl border 2xl:max-w-[90%]"
   >
-    <!-- loading -->
     <div v-if="isLoading" class="text-text p-8 text-center font-medium">
       loading...
     </div>
 
-    <!-- table -->
     <div v-else-if="rows && rows.length > 0" class="w-full overflow-x-auto">
       <table class="text-fluid-xs w-full whitespace-nowrap">
         <thead class="bg-bg border-primary/30 text-primary border-b">
@@ -63,7 +61,6 @@ defineSlots<{
               :key="col.key"
               class="p-fluid md:hover:text-primary text-center"
             >
-              <!-- 🌟 الحل هنا: نقوم بعمل كاست آمن للـ row المستلمة من المجموع المحلي إلى النوع T الخارجي -->
               <slot
                 :name="`cell-${col.key}`"
                 :value="row[col.key]"
@@ -77,7 +74,6 @@ defineSlots<{
       </table>
     </div>
 
-    <!-- no data -->
     <div
       v-else
       class="text-fluid-xs text-text bg-primary/5 space-y-3 py-12 text-center"

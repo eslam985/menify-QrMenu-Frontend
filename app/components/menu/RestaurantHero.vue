@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const publicMenuStore = usePublicMenuStore();
 
-// خريطة تحويل مفاتيح الأيام مع تعريف نوع البيانات لـ TypeScript
 const daysMap: Record<string, string> = {
   sun: "الأحد",
   mon: "الإثنين",
@@ -12,7 +11,6 @@ const daysMap: Record<string, string> = {
   sat: "السبت",
 };
 
-// دالة لمعرفة مواعيد اليوم الحالي
 const todayHours = computed(() => {
   const hours = publicMenuStore.restaurant?.working_hours;
   if (!hours || typeof hours !== "object") return null;
@@ -20,7 +18,6 @@ const todayHours = computed(() => {
   const daysKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
   const currentDayKey = daysKeys[new Date().getDay()];
 
-  // التحقق من أن المفتاح موجود وغير فارغ لتجنب خطأ الـ undefined
   if (!currentDayKey) return null;
 
   const todayData = hours[currentDayKey];
@@ -40,7 +37,6 @@ const todayHours = computed(() => {
 
 <template>
   <div>
-    <!-- Loading -->
     <div
       v-if="publicMenuStore.isLoading"
       class="py-fluid m-auto flex items-center justify-center self-center"
@@ -50,7 +46,6 @@ const todayHours = computed(() => {
       ></div>
     </div>
 
-    <!-- Error -->
     <div
       v-else-if="publicMenuStore.error"
       class="my-fluid bg-denger/10 border-denger/20 text-denger p-fluid m-auto mx-auto max-w-7xl self-center rounded-xl border text-center"
@@ -61,13 +56,11 @@ const todayHours = computed(() => {
       </p>
     </div>
 
-    <!-- Hero -->
     <section
       dir="rtl"
       v-else-if="publicMenuStore.restaurant"
       class="mb-fluid shadow-soft relative mx-auto flex min-h-[380px] items-end overflow-hidden md:rounded-b-md"
     >
-      <!-- الخلفية -->
       <div
         class="absolute inset-0 bg-cover bg-center"
         :style="
@@ -78,7 +71,7 @@ const todayHours = computed(() => {
             : { background: 'var(--color-card)' }
         "
       />
-      <!-- التدرجات اللونية والضباب -->
+
       <div
         class="absolute inset-0 bg-linear-to-t from-black/90 via-black/60 to-black/20 backdrop-blur-[2px]"
       />
@@ -86,11 +79,9 @@ const todayHours = computed(() => {
         class="from-primary/30 absolute inset-0 bg-linear-to-br via-transparent to-transparent"
       />
 
-      <!-- المحتوى -->
       <div
         class="p-fluid gap-fluid-section relative z-10 flex w-full flex-col-reverse items-start justify-between self-center md:flex-row md:items-end"
       >
-        <!-- Left -->
         <div class="gap-fluid flex flex-1 flex-col">
           <div dir="ltr">
             <h1
@@ -113,11 +104,9 @@ const todayHours = computed(() => {
             {{ publicMenuStore.restaurant.description }}
           </p>
 
-          <!-- Badges (Address, Timezone, Working Hours) -->
           <div
             class="flex max-w-xl flex-wrap items-center gap-3 text-sm text-white/80"
           >
-            <!-- Address -->
             <span
               v-if="publicMenuStore.restaurant.address"
               class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5 backdrop-blur-md"
@@ -126,7 +115,6 @@ const todayHours = computed(() => {
               {{ publicMenuStore.restaurant.address }}
             </span>
 
-            <!-- Today's Hours -->
             <span
               v-if="todayHours"
               class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5 backdrop-blur-md"
@@ -141,7 +129,6 @@ const todayHours = computed(() => {
               >
             </span>
 
-            <!-- Timezone -->
             <span
               v-if="publicMenuStore.restaurant.timezone"
               class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5 backdrop-blur-md"
@@ -151,7 +138,6 @@ const todayHours = computed(() => {
             </span>
           </div>
 
-          <!-- Actions -->
           <div class="flex flex-wrap items-center gap-2.5 pt-2">
             <a
               v-if="publicMenuStore.restaurant.phone"

@@ -1,4 +1,3 @@
-// /project_Full-stack/Menify/backend/src/types/globalTypes.ts
 export interface PageAndLimitType {
   page?: number;
   limit?: number;

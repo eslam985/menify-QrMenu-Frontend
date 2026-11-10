@@ -1,4 +1,3 @@
-// app/composables/useCategorySearch.ts
 export const useCategorySearch = () => {
   const searchQuery = useState("category_search_query", () => "");
 

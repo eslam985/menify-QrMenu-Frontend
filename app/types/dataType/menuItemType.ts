@@ -1,10 +1,9 @@
-/** Menu item as returned to the client (restaurant_id is intentionally not exposed) */
 export interface MenuItemResponse {
   id: string;
   category_id: string;
   title: string;
   description: string | null;
-  price: number; // NUMERIC(10,2) is cast with price::float8 in the SELECT
+  price: number;
   image_url: string | null;
   is_available: boolean;
   display_order: number;
@@ -14,7 +13,7 @@ export interface MenuItemResponse {
 export interface CartItem extends MenuItemResponse {
   quantity: number;
 }
-/** Input of MenuItem.create. restaurantId always comes from req.restaurantId */
+
 export interface CreateMenuItemInput {
   restaurantId: string;
   categoryId: string;
@@ -24,7 +23,6 @@ export interface CreateMenuItemInput {
   isAvailable?: boolean | undefined;
 }
 
-/** Input of MenuItem.update (at least one field is guaranteed by the schema) */
 export interface UpdateMenuItemInput {
   category_id?: string | undefined;
   title?: string | undefined;
@@ -33,7 +31,6 @@ export interface UpdateMenuItemInput {
   is_available?: boolean | undefined;
 }
 
-/** Optional filters of the dashboard list */
 export interface ListMenuItemsFilter {
   categoryId?: string | undefined;
   isAvailable?: boolean | undefined;
@@ -41,9 +38,9 @@ export interface ListMenuItemsFilter {
 
 export interface DeleteMenuItemResult {
   id: string;
-  image_url: string | null; // the controller deletes it from Cloudinary after the DB delete
+  image_url: string | null;
 }
 export interface SetImageResult {
   item: MenuItemResponse;
-  previousImageUrl: string | null; // the controller deletes it from Cloudinary
+  previousImageUrl: string | null;
 }

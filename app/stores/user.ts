@@ -1,4 +1,3 @@
-// Menify/frontend/app/stores/user.ts
 import type {
   ChangePasswordType,
   GetSessionsQueryType,

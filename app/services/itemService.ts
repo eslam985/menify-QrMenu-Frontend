@@ -1,4 +1,3 @@
-// app/services/itemService.ts
 import type {
   CreateMenuItemType,
   ListMenuItemsType,
@@ -106,7 +105,7 @@ export const useItemService = () => {
         "/menu-items/reorder",
         {
           method: "PATCH",
-          body: payload, // يرسل category_id و ids بالشكل الصحيح تماماً للباك اند
+          body: payload,
         },
       );
 

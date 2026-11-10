@@ -15,7 +15,6 @@ const handleLogout = async () => {
   await authStore.logout();
 };
 
-// 🌟 استخدام computed يضمن تحديث اسم المطعم واسم المستخدم وفلترة الروابط حسب الصلاحية فوراً
 const visibleNavLinks = computed(() => {
   const restaurantName = authStore.user?.restaurant_name
     ? `${authStore.user.restaurant_name} Details`
@@ -96,7 +95,6 @@ const visibleNavLinks = computed(() => {
       ]"
     >
       <div>
-        <!-- Logo & Title -->
         <div class="mb-8 flex items-center justify-between">
           <div class="gap-fluid flex items-center">
             <div
@@ -119,8 +117,6 @@ const visibleNavLinks = computed(() => {
           </button>
         </div>
 
-        <!-- Navigation Links -->
-        <!-- Navigation Links -->
         <nav class="flex flex-col gap-2">
           <NuxtLink
             v-for="con in visibleNavLinks"
@@ -135,7 +131,6 @@ const visibleNavLinks = computed(() => {
         </nav>
       </div>
 
-      <!-- User Profile & Logout -->
       <div class="border-primary/10 flex flex-col gap-4 border-t pt-6">
         <div class="gap-fluid flex items-center">
           <div

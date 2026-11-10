@@ -11,7 +11,6 @@ const localItems = ref<typeof itemStore.items>([]);
 const isSaving = ref(false);
 const draggedIndex = ref<number | null>(null);
 
-// مراقبة حالة فتح المودال لتهيئة البيانات وتحديثها
 watch(isOpen, (open) => {
   if (open) {
     const firstCategory = categoryStore.categories[0];
@@ -38,7 +37,6 @@ watch(selectedCategoryId, () => {
   loadCategoryItems();
 });
 
-// أحداث السحب والإفلات (Native HTML5 Drag & Drop)
 const onDragStart = (index: number) => {
   draggedIndex.value = index;
 };
@@ -50,7 +48,6 @@ const onDragOver = (event: DragEvent) => {
 const onDrop = (dropIndex: number) => {
   if (draggedIndex.value === null || draggedIndex.value === dropIndex) return;
 
-  // إعادة ترتيب المصفوفة محلياً بالسحب والإفلات
   const itemToMove = localItems.value.splice(draggedIndex.value, 1)[0];
 
   if (!itemToMove) {
@@ -62,13 +59,11 @@ const onDrop = (dropIndex: number) => {
   draggedIndex.value = null;
 };
 
-// حفظ الترتيب الجديد وإرساله للـ Backend
 const handleSaveReorder = async () => {
   if (localItems.value.length === 0 || !selectedCategoryId.value) return;
 
   isSaving.value = true;
   try {
-    // استخراج مصفوفة الـ ids فقط بالترتيب الحالي، مع إرسال category_id مطابقة للـ Backend Schema
     const payload = {
       category_id: selectedCategoryId.value,
       ids: localItems.value.map((item) => item.id),
@@ -93,7 +88,6 @@ const handleSaveReorder = async () => {
     <div
       class="bg-card border-primary/10 flex max-h-[85vh] w-full max-w-lg flex-col rounded-2xl border p-6 text-right shadow-2xl"
     >
-      <!-- الهيدر -->
       <div
         class="border-primary/10 mb-4 flex items-center justify-between border-b pb-4"
       >
@@ -110,7 +104,6 @@ const handleSaveReorder = async () => {
         </button>
       </div>
 
-      <!-- اختيار القسم -->
       <div class="mb-4">
         <label class="text-text/80 mb-1 block text-xs font-bold"
           >اختر القسم لإعادة ترتيب أصنافه:</label
@@ -129,7 +122,6 @@ const handleSaveReorder = async () => {
         </select>
       </div>
 
-      <!-- قائمة الأصناف القابلة للسحب والإفلات -->
       <div class="min-h-[250px] flex-1 space-y-2 overflow-y-auto pr-1">
         <div
           v-if="localItems.length === 0"
@@ -175,7 +167,6 @@ const handleSaveReorder = async () => {
         </div>
       </div>
 
-      <!-- الأزرار -->
       <div class="border-primary/10 mt-4 flex gap-2 border-t pt-4">
         <button
           type="button"

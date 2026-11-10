@@ -1,16 +1,11 @@
 import { z } from "zod";
 
-// ---------------------------------------------------------------
-// Reusable fields
-// ---------------------------------------------------------------
-// No regex on purpose: "Tea & Coffee", "Burger (Large)", "كنافة - بالقشطة" are valid
 const titleField = z
   .string({ error: "اسم الصنف مطلوب" })
   .trim()
   .min(1, "اسم الصنف مطلوب")
   .max(150, "اسم الصنف طويل جداً (الحد الأقصى 150 حرف)");
 
-// "" is stored as NULL. null clears the description.
 const descriptionField = z
   .string({ error: "الوصف يجب أن يكون نصاً" })
   .trim()
@@ -18,7 +13,6 @@ const descriptionField = z
   .transform((v) => (v === "" ? null : v))
   .nullable();
 
-// Max 2 decimals, matches NUMERIC(10,2). The epsilon avoids float noise (e.g. 1.1 * 100).
 const priceField = z
   .number({ error: "السعر يجب أن يكون رقماً" })
   .min(1, "السعر لا يمكن أن يكون سالباً او صفر")
@@ -36,10 +30,6 @@ const itemIdParams = z.object({
   itemId: z.uuid("معرّف الصنف غير صالح"),
 });
 
-// ---------------------------------------------------------------
-// GET /api/menu-items?category_id=&is_available=
-// Query values are strings, so is_available is transformed to a boolean
-// ---------------------------------------------------------------
 const listMenuItemsSchema = z.object({
   query: z.strictObject({
     category_id: categoryIdField.optional(),
@@ -52,13 +42,6 @@ const listMenuItemsSchema = z.object({
   }),
 });
 
-// ---------------------------------------------------------------
-// POST /api/menu-items
-// No restaurant_id, no image_url, no display_order:
-//   - restaurant_id comes from req.restaurantId
-//   - the image is uploaded through its own endpoint
-//   - the item is appended at the end of its category
-// ---------------------------------------------------------------
 const createMenuItemSchema = z.object({
   body: z.strictObject({
     category_id: categoryIdField,
@@ -69,10 +52,6 @@ const createMenuItemSchema = z.object({
   }),
 });
 
-// ---------------------------------------------------------------
-// PATCH /api/menu-items/:itemId
-// category_id here = move the item to another category (of the same restaurant)
-// ---------------------------------------------------------------
 const updateMenuItemSchema = z.object({
   params: itemIdParams,
   body: z
@@ -88,9 +67,6 @@ const updateMenuItemSchema = z.object({
     }),
 });
 
-// ---------------------------------------------------------------
-// PATCH /api/menu-items/:itemId/availability  (quick "out of stock" toggle)
-// ---------------------------------------------------------------
 const setAvailabilitySchema = z.object({
   params: itemIdParams,
   body: z.strictObject({
@@ -98,17 +74,10 @@ const setAvailabilitySchema = z.object({
   }),
 });
 
-// ---------------------------------------------------------------
-// GET / DELETE /api/menu-items/:itemId  (+ DELETE /:itemId/image)
-// ---------------------------------------------------------------
 const itemIdSchema = z.object({
   params: itemIdParams,
 });
 
-// ---------------------------------------------------------------
-// PATCH /api/menu-items/reorder
-// Reorders the items of ONE category: ids[0] -> 0, ids[1] -> 1, ...
-// ---------------------------------------------------------------
 const reorderMenuItemsSchema = z.object({
   body: z.strictObject({
     category_id: categoryIdField,

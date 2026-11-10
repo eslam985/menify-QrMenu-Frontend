@@ -18,11 +18,8 @@ onMounted(async () => {
   <div
     class="gap-fluid mx-auto flex w-full max-w-6xl min-w-0 flex-col overflow-x-hidden"
   >
-    <!-- هيدر الملف الشخصي العلوي -->
     <DashboardProfileHeader />
-    <!-- مرساة ثابتة دائماً في الـ DOM ليقفز إليها المتصفح فوراً دون انتظار رندرة الفورم -->
 
-    <!-- حاوية الفورمات الموزعة هندسياً بدقة عبر الـ Grid -->
     <div
       class="my-section-fluid gap-fluid grid grid-cols-1 items-start sm:grid-cols-2"
     >
@@ -30,7 +27,6 @@ onMounted(async () => {
       <DashboardProfilePasswordForm class="h-full" />
     </div>
 
-    <!-- جدول الجلسات النشطة في الأسفل -->
     <div class="">
       <DashboardProfileActiveSessionsList />
     </div>
