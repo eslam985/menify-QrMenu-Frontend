@@ -11,7 +11,7 @@ const categoryStore = useCategoryStore();
 // 1. إنشاء نسخة مستقلة ومحمية من الـ Composable الخاص بالفورم
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, resetForm } = formInstance;
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 // 2. حقن الـ Instance للـ BaseForm الابن عبر الـ Provide النقية بدون Props
 provide("current_form_instance", formInstance);
 
@@ -49,7 +49,6 @@ const categoryFieldsConfig: FormField[] = [
     colspan: "col-span-3",
   },
 ];
-
 
 const handleSubmit = async () => {
   const isEditing = Boolean(
@@ -112,40 +111,38 @@ watch(
 </script>
 
 <template>
-
-<div v-if="authStore?.isEditorAndAbove">
-  <div
-    v-if="isOpen"
-    @click.self="closeModal"
-    class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-  >
-    <div 
-      class="bg-card rounded-card border-primary/10 gap-fluid flex w-full max-w-md flex-col border p-6 text-right shadow-2xl"
+  <div v-if="authStore?.isEditorAndAbove">
+    <div
+      v-if="isOpen"
+      @click.self="closeModal"
+      class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
     >
-      <!-- عنوان المودال الديناميكي -->
-      <h3
-        class="text-fluid-h3 text-primary border-primary/5 border-b pb-2 font-bold"
-      >
-        {{ editingCategory ? "تعديل التصنيف" : "إضافة تصنيف جديد" }}
-      </h3>
-
-      <!-- استدعاء الفورم العام الموحد بالنظام ليقوم بالرسم التلقائي المنسق -->
-      <UiBaseForm />
-
-      <!-- زر الإلغاء الإضافي الخاص بـ الـ Modal التفاعلي متمم لزر الحفظ بالأسفل -->
       <div
-        class="pr-fluid pointer-events-none -mt-12 flex w-full justify-start"
+        class="bg-card rounded-card border-primary/10 gap-fluid flex w-full max-w-md flex-col border p-6 text-right shadow-2xl"
       >
-        <button
-          type="button"
-          @click="closeModal"
-          class="bg-card border-primary/10 text-text hover:bg-primary/5 pointer-events-auto cursor-pointer rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+        <!-- عنوان المودال الديناميكي -->
+        <h3
+          class="text-fluid-h3 text-primary border-primary/5 border-b pb-2 font-bold"
         >
-          إلغاء
-        </button>
+          {{ editingCategory ? "تعديل التصنيف" : "إضافة تصنيف جديد" }}
+        </h3>
+
+        <!-- استدعاء الفورم العام الموحد بالنظام ليقوم بالرسم التلقائي المنسق -->
+        <UiBaseForm />
+
+        <!-- زر الإلغاء الإضافي الخاص بـ الـ Modal التفاعلي متمم لزر الحفظ بالأسفل -->
+        <div
+          class="pr-fluid pointer-events-none -mt-12 flex w-full justify-start"
+        >
+          <button
+            type="button"
+            @click="closeModal"
+            class="bg-card border-primary/10 text-text hover:bg-primary/5 pointer-events-auto cursor-pointer rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+          >
+            إلغاء
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
 </template>

@@ -8,7 +8,7 @@ const { openModal: openReorderModal } = useItemReorderModal();
 const { openModal: openItemModal } = useItemModal();
 const itemStore = useItemStore();
 const categoryStore = useCategoryStore();
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 const {
   searchQuery,
@@ -94,7 +94,8 @@ const handleRefresh = async () => {
       </button>
 
       <!-- زر الإضافة -->
-      <button v-if="authStore?.isEditorAndAbove"
+      <button
+        v-if="authStore?.isEditorAndAbove"
         @click="openItemModal()"
         class="btn-primary flex justify-between gap-1"
       >

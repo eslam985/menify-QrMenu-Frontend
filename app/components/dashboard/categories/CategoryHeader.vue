@@ -1,7 +1,7 @@
 <!-- app/components/dashboard/categories/CategoryHeader.vue -->
 <script setup lang="ts">
 import { useCategoryModal } from "~/composables/useCategoryModal";
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 const { openModal } = useCategoryModal();
 const categoryStore = useCategoryStore();
@@ -44,7 +44,11 @@ const handleRefresh = async () => {
         />
       </button>
 
-      <button  v-if="authStore?.isEditorAndAbove" @click="openModal" class="btn-primary flex justify-between gap-1">
+      <button
+        v-if="authStore?.isEditorAndAbove"
+        @click="openModal"
+        class="btn-primary flex justify-between gap-1"
+      >
         <span>إضافة تصنيف جديد</span>
         <Icon name="lucide:plus" class="h-4 w-4 self-center" />
       </button>
