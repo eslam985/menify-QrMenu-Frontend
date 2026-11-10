@@ -8,7 +8,7 @@ const authStore = useAuthStore();
 
 <template>
   <header
-    class="mb-section-fluid border-primary/15 p-fluid bg-card sticky top-0 z-30 flex w-full shrink-0 items-center justify-between border-b shadow-xs"
+    class="border-primary/15 p-fluid bg-card sticky top-0 z-30 flex w-full shrink-0 items-center justify-between border-b shadow-xs"
   >
     <!-- يمين الهيدر: زر القائمة للموبايل + الشعار والعنوان -->
     <div class="flex items-center gap-4">

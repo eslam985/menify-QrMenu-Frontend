@@ -11,7 +11,7 @@ const categoryStore = useCategoryStore();
 // 1. إنشاء نسخة مستقلة ومحمية من الـ Composable الخاص بالفورم
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, resetForm } = formInstance;
-
+const authStore = useAuthStore()
 // 2. حقن الـ Instance للـ BaseForm الابن عبر الـ Provide النقية بدون Props
 provide("current_form_instance", formInstance);
 
@@ -36,7 +36,7 @@ const categoryFieldsConfig: FormField[] = [
       { label: "طعام (Food)", value: "food" },
       { label: "مشروبات (Drinks)", value: "drinks" },
       { label: "حلويات (Desserts)", value: "desserts" },
-      { label: "شيشة", value: "shisha" }, // قمت بتعديل القيمة المكررة لـ shisha لضمان دقة البيانات
+      { label: "شيشة", value: "shisha" },
       { label: "أخرى (Other)", value: "other" },
     ],
   },
@@ -50,7 +50,7 @@ const categoryFieldsConfig: FormField[] = [
   },
 ];
 
-// 4. دالة الإرسال الموحدة (تتعرف تلقائياً على وضع التعديل أو الإضافة)
+
 const handleSubmit = async () => {
   const isEditing = Boolean(
     (editingCategory.value as { id?: unknown } | null)?.id,
@@ -112,12 +112,14 @@ watch(
 </script>
 
 <template>
+
+<div v-if="authStore?.isEditorAndAbove">
   <div
     v-if="isOpen"
     @click.self="closeModal"
     class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
   >
-    <div
+    <div 
       class="bg-card rounded-card border-primary/10 gap-fluid flex w-full max-w-md flex-col border p-6 text-right shadow-2xl"
     >
       <!-- عنوان المودال الديناميكي -->
@@ -144,4 +146,6 @@ watch(
       </div>
     </div>
   </div>
+</div>
+
 </template>

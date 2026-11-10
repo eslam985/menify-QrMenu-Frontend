@@ -10,7 +10,7 @@
     <div class="flex min-h-screen min-w-0 flex-1 flex-col overflow-x-hidden">
       <DashboardHeader />
 
-      <main class="px-fluid flex-1 overflow-y-auto">
+      <main class="px-fluid flex-1 overflow-y-auto my-section-fluid">
         <CommonNotificationAlert />
         <slot />
       </main>

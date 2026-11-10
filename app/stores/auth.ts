@@ -154,7 +154,8 @@ export const useAuthStore = defineStore("auth", () => {
       typeof body !== "object" || Object.keys(body)?.length < 2;
     if (isLoading.value || isNotValid) return false;
 
-    resetState();
+    successMessage.value = ''
+    errorMessage.value = ''
     isLoading.value = true;
     try {
       const res = await authService.login(body);

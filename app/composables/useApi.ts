@@ -15,6 +15,7 @@ const refreshAccessToken = (apiBase: string): Promise<string | null> => {
     .finally(() => {
       refreshPromise = null;
     });
+
   return refreshPromise;
 };
 
@@ -40,61 +41,71 @@ export const useApi = () => {
     // 🌟 🌟 هنا بديل interceptors.response.use الخاص بـ Axios للأخطاء 🌟 🌟
     onResponseError({ response }) {
       const status = response.status;
-      const errorData = response._data;
+      const errorMsg = response?._data?.message;
+      const errorDAta = response?._data;
 
       // 1. التقاط خطأ 429 (Rate Limit)
       if (status === 429) {
         const retryAfterHeader =
           response.headers.get("retry-after") ||
           response.headers.get("Retry-After");
+
         const retryAfter = parseInt(retryAfterHeader || "60", 10) || 60;
         const mins = Math.ceil(retryAfter / 60);
-        notiStore.show(
-          `طلبات كثيرة جداً - برجاء المحاولة مرة أخرى بعد ${mins} دقائق`,
-          "error",
-        );
+
+        const msg =
+          errorMsg ||
+          `طلبات كثيرة جداً - برجاء المحاولة مرة أخرى بعد ${mins} دقائق`;
+
+        notiStore.show(msg, "error");
+
         return;
       }
 
       // 2. التقاط خطأ 404 (Not Found)
       if (status === 404) {
-        notiStore.show(
-          errorData?.message || "عذراً، لم نتمكن من العثور على ما تبحث عنه.",
-          "error",
-        );
+        const msg = errorMsg || "عذراً، لم نتمكن من العثور على ما تبحث عنه.";
+        notiStore.show(msg, "error");
+
         return;
       }
 
       // 3. التقاط خطأ 413 (Payload Too Large)
       if (status === 413) {
-        notiStore.show(
-          errorData?.message || "حجم الملف المرفوع كبير جداً!",
-          "error",
-        );
+        const msg = errorMsg || "حجم الملف المرفوع كبير جداً!";
+        notiStore.show(msg, "error");
+
         return;
       }
 
       // 4. التقاط خطأ 504 (Gateway Timeout)
       if (status === 504) {
-        notiStore.show(
-          "انتهت مهلة الاتصال بالخادم، العملية استغرقت وقتاً طويلاً.",
-          "error",
-        );
+        const msg =
+          errorMsg ||
+          "انتهت مهلة الاتصال بالخادم، العملية استغرقت وقتاً طويلاً.";
+        notiStore.show(msg, "error");
+
         return;
       }
 
       // 5. التقاط خطأ 503 (Database/Server Offline قادم من إكسبريس)
       if (status === 503) {
-        notiStore.show(
-          errorData?.message || "حدثت مشكلة في الاتصال من جانبنا جرب مرة اخري",
-          "error",
-        );
+        const msg = errorMsg || "حدثت مشكلة في الاتصال من جانبنا جرب مرة اخري";
+        notiStore.show(msg, "error");
+
         return;
       }
       // 6. 🌟 السحر كله هنا: معالجة أخطاء الـ Validation وبقية الأخطاء تلقائياً قبل وصولها للستور
       // داخل onResponseError في useApi.ts
       if (status !== 401 && status !== 403) {
-        handleGlobalError(response, "حدث خطأ أثناء تنفيذ العملية"); // تستدعى طبيعياً دون الحاجة لتخزين مرجعها
+        // 🌟 الحل: نمرر كائن يحمل الـ data والـ response لكي تقرأه الدالة بنقاء كما صممناها
+        const fakeErrorContext = {
+          status,
+          data: errorDAta,
+        };
+
+        const msg = errorMsg || "حدث خطأ أثناء تنفيذ العملية";
+        handleGlobalError(fakeErrorContext, msg);
       }
     },
   });
@@ -111,22 +122,11 @@ export const useApi = () => {
     try {
       return await base<T>(url, opts);
     } catch (err: unknown) {
-      // دعم قراءة الـ Status والـ Data سواء من ofetch أو أي هيكل آخر
-      const apiError = err as {
-        status?: number;
-        statusCode?: number;
-        data?: { code?: string; message?: string };
-        response?: {
-          status?: number;
-          _data?: { code?: string; message?: string };
-        };
-      };
-      const status =
-        apiError.status || apiError.statusCode || apiError.response?.status;
-      const errorData = apiError.data || apiError.response?._data;
+      const { status, code } = handleGlobalError(err, "", false);
 
-      if (status === 403 && errorData?.code === "SUBSCRIPTION_INACTIVE") {
+      if (status === 403 && code === "SUBSCRIPTION_INACTIVE") {
         authStore.subscriptionInactive = true;
+
         await navigateTo("/subscription-inactive");
         // إرجاع undefined لمنع وصول الخطأ للستور أو إظهار شاشة الخطأ الحمراء
         return undefined as T;
@@ -135,17 +135,22 @@ export const useApi = () => {
       if (status !== 401 || url.includes("/auth/")) throw err;
 
       const token = await refreshAccessToken(config.public.apiBase);
+
       if (!token) {
         authStore.clearSession();
+
         if (!route.path.startsWith("/auth/")) {
           await navigateTo({
             path: "/auth/login",
             query: { redirect: route.fullPath },
           });
         }
+
         throw err;
       }
+
       authStore.accessToken = token;
+
       return await base<T>(url, opts);
     }
   };

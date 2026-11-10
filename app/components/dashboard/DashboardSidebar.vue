@@ -21,7 +21,7 @@ const visibleNavLinks = computed(() => {
     ? `${authStore.user.restaurant_name} Details`
     : "Restaurant Details";
   const restaurantSlug = authStore.user?.restaurant_slug || "";
-  const userName = authStore.user?.username + "profile" || "Profile";
+  const userName = `Profile ${authStore.user?.username}` || "Profile";
 
   const allLinks = [
     {
@@ -30,12 +30,7 @@ const visibleNavLinks = computed(() => {
       iconName: "lucide:home",
       show: true,
     },
-    {
-      label: restaurantName,
-      path: `/dashboard/${restaurantSlug}`,
-      iconName: "lucide:info",
-      show: authStore.isEditorAndAbove,
-    },
+
     {
       label: "التصنيفات",
       path: "/dashboard/categories",
@@ -71,6 +66,12 @@ const visibleNavLinks = computed(() => {
       path: "/dashboard/staff",
       iconName: "lucide:users",
       show: authStore.isAdmin,
+    },
+    {
+      label: restaurantName,
+      path: `/dashboard/${restaurantSlug}`,
+      iconName: "lucide:info",
+      show: authStore.isEditorAndAbove,
     },
   ];
 

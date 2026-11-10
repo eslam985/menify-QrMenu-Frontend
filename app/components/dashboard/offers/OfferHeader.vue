@@ -6,6 +6,7 @@ const offerStore = useOfferStore();
 const { searchQuery, statusFilter, setSearchQuery, setStatusFilter } =
   useOfferSearch();
 const notiStore = useNotificationStore();
+const authStore = useAuthStore()
 
 const handleRefresh = async () => {
   try {
@@ -78,7 +79,7 @@ const handleRefresh = async () => {
       </button>
 
       <!-- زر الإضافة -->
-      <button @click="navigateTo('/dashboard/offers/new')" class="btn-primary">
+      <button v-if="authStore?.isEditorAndAbove" @click="navigateTo('/dashboard/offers/new')" class="btn-primary">
         <Icon name="lucide:plus" class="h-4 w-4" />
         <span>إضافة عرض جديد</span>
       </button>

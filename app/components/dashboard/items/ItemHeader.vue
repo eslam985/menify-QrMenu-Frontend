@@ -8,6 +8,8 @@ const { openModal: openReorderModal } = useItemReorderModal();
 const { openModal: openItemModal } = useItemModal();
 const itemStore = useItemStore();
 const categoryStore = useCategoryStore();
+const authStore = useAuthStore()
+
 const {
   searchQuery,
   selectedCategoryFilter,
@@ -92,7 +94,7 @@ const handleRefresh = async () => {
       </button>
 
       <!-- زر الإضافة -->
-      <button
+      <button v-if="authStore?.isEditorAndAbove"
         @click="openItemModal()"
         class="btn-primary flex justify-between gap-1"
       >
@@ -100,7 +102,7 @@ const handleRefresh = async () => {
         <Icon name="lucide:plus" class="h-4 w-4 self-center" />
       </button>
 
-      <div>
+      <div v-if="authStore?.isEditorAndAbove">
         <!-- زر فتح مودال الترتيب -->
         <button
           type="button"
