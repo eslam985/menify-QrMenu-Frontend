@@ -45,9 +45,12 @@ const handleRefresh = async () => {
         />
       </button>
 
-      <NuxtLink href="/dashboard/staff/new-employee" class="btn-primary">
-        <Icon name="lucide:plus" class="h-4 w-4" />
+      <NuxtLink
+        href="/dashboard/staff/new-employee"
+        class="btn-primary flex justify-between gap-1"
+      >
         <span>إضافة موظف جديد</span>
+        <Icon name="lucide:plus" class="h-4 w-4 self-center" />
       </NuxtLink>
     </div>
   </div>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 const restaurantsStore = usePublicRestaurantsStore();
 const { restaurants, isLoading } = storeToRefs(restaurantsStore);
+const loadRestaurants = () => restaurantsStore.fetchRestaurants();
 
 onMounted(() => {
-  restaurantsStore.fetchRestaurants();
+  loadRestaurants();
 });
 </script>
 
@@ -12,10 +13,7 @@ onMounted(() => {
     <main
       class="px-fluid p-section-fluid gap-section mx-auto my-auto flex w-full flex-col items-center text-center 2xl:max-w-[80%]"
     >
-      <div class="flex flex-wrap items-center justify-center gap-4">
-        <img src="/imgs/hero.webp" alt="tabloz Hero Image" class="w-[400px] h-auto" />
-        <span class="sr-only">tabloz Demo Image</span>
-      </div>
+      
 
       <div class="flex max-w-3xl flex-col gap-4">
         <h1
@@ -43,9 +41,22 @@ onMounted(() => {
             تصفح القوائم الرقمية للمطاعم أو الكـافيهات المتاحة فوراً
           </p>
         </div>
-
+        
+        <div
+          v-if="!isLoading && restaurants.length === 0"
+          class="flex justify-center gap-1"
+        >
+          <button @click="loadRestaurants" class="text-primary">
+            حاول مجددا من هنا
+          </button>
+          <span
+            class="text-text/50 py-fluid text-fluid-xs col-span-full text-center"
+          >
+            لا توجد مطاعم متاحة حالياً</span
+          >
+        </div>
         <div class="gap-fluid grid grid-cols-1 sm:grid-cols-2">
-          <!-- Loading skeletons -->
+          
           <template v-if="isLoading">
             <div
               v-for="i in 2"
@@ -62,7 +73,7 @@ onMounted(() => {
             </div>
           </template>
 
-          <!-- Restaurant cards -->
+          
           <nuxt-link
             v-for="res in restaurants"
             v-else
@@ -98,14 +109,6 @@ onMounted(() => {
               class="text-text/40 group-hover:text-primary h-5 w-5 transition"
             />
           </nuxt-link>
-
-          <!-- Empty state -->
-          <p
-            v-if="!isLoading && restaurants.length === 0"
-            class="text-text/50 col-span-full py-4 text-center text-sm"
-          >
-            لا توجد مطاعم متاحة حالياً
-          </p>
         </div>
       </div>
 
@@ -298,4 +301,3 @@ onMounted(() => {
     </main>
   </div>
 </template>
-

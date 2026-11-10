@@ -43,10 +43,8 @@ export const useItemStore = defineStore("item", () => {
     }
 
     if (body.price < 1) {
-      notiStore.show(
-        `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون 0`,
-        "error",
-      );
+      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون 0`;
+      notiStore.show(error.value, "error");
       return false;
     }
 
@@ -57,16 +55,16 @@ export const useItemStore = defineStore("item", () => {
       const res = await itemService.createItem(body);
 
       if (!res.success || !res.data) {
-        notiStore.show(res.message || "فشل إضافة الصنف", "error");
+        const msg = res.message || "فشل إضافة الصنف";
+        notiStore.show(msg, "error");
         return false;
       }
 
-      items.value.unshift(res.data);
-      notiStore.show(
-        res.message || `تم إضافة الصنف "${body.title}" بنجاح!`,
-        "success",
-      );
-      return res.data;
+      items.value.push(res.data);
+      const msg = res.message || `تم إضافة الصنف "${body.title}" بنجاح!`;
+      notiStore.show(msg, "success");
+
+      return res.success;
     } catch (err: unknown) {
       return false;
     } finally {
@@ -76,10 +74,8 @@ export const useItemStore = defineStore("item", () => {
 
   async function updateItem(id: string, body: UpdateMenuItemType["body"]) {
     if (!authStore.isEditorAndAbove) {
-      notiStore.show(
-        "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!",
-        "error",
-      );
+      const msg = "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!";
+      notiStore.show(msg, "error");
       return false;
     }
 
@@ -89,12 +85,13 @@ export const useItemStore = defineStore("item", () => {
     try {
       const res = await itemService.updateItem(id, body);
 
+      if (!res || !res.success || !res.data) return false;
       const index = items.value.findIndex((i) => i.id === id);
 
       if (index !== -1 && res.data) items.value[index] = res.data;
 
       notiStore.show(res.message || "تم تحديث الصنف بنجاح!", "success");
-      return true;
+      return res.success;
     } catch (err: unknown) {
       return false;
     } finally {

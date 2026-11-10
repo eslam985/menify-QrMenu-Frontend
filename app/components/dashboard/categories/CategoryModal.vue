@@ -9,7 +9,8 @@ const { isOpen, editingCategory, closeModal } = useCategoryModal();
 const categoryStore = useCategoryStore();
 
 const formInstance = useForm();
-const { setFormConfig, formDataPayload, resetForm } = formInstance;
+const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
+  formInstance;
 const authStore = useAuthStore();
 
 provide("current_form_instance", formInstance);
@@ -49,6 +50,10 @@ const categoryFieldsConfig: FormField[] = [
 ];
 
 const handleSubmit = async () => {
+  if (isSubmitting.value || categoryStore.isLoading) return;
+
+  isSubmitting.value = true;
+
   const isEditing = Boolean(
     (editingCategory.value as { id?: unknown } | null)?.id,
   );

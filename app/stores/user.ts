@@ -34,11 +34,6 @@ export const useUserStore = defineStore("user", () => {
 
       return res.data;
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      errorMessage.value =
-        error.data?.message ?? "An unexpected error occurred";
-      notiStore.show(errorMessage.value, "error");
-      console.error(err);
       return false;
     } finally {
       isLoading.value = false;
@@ -64,11 +59,6 @@ export const useUserStore = defineStore("user", () => {
 
       return res.data;
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      errorMessage.value =
-        error.data?.message ?? "An unexpected error occurred";
-      notiStore.show(errorMessage.value, "error");
-      console.error(err);
       return false;
     } finally {
       isLoading.value = false;
@@ -89,11 +79,6 @@ export const useUserStore = defineStore("user", () => {
 
       return res.success;
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      errorMessage.value =
-        error.data?.message ?? "An unexpected error occurred";
-      notiStore.show(errorMessage.value, "error");
-      console.error(err);
       return false;
     } finally {
       isLoading.value = false;
@@ -113,11 +98,6 @@ export const useUserStore = defineStore("user", () => {
 
       return res.data;
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      errorMessage.value =
-        error.data?.message ?? "An unexpected error occurred";
-      notiStore.show(errorMessage.value, "error");
-      console.error(err);
       return false;
     } finally {
       isLoading.value = false;
@@ -147,15 +127,11 @@ export const useUserStore = defineStore("user", () => {
 
       if (index !== -1) {
         sessions.value = sessions.value.splice(index, 1);
+        console.log("sessions.value: ", sessions.value);
       }
 
       return res.success;
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      errorMessage.value =
-        error.data?.message ?? "An unexpected error occurred";
-      notiStore.show(errorMessage.value, "error");
-      console.error(err);
       return false;
     } finally {
       isLoading.value = false;
@@ -181,11 +157,6 @@ export const useUserStore = defineStore("user", () => {
 
       return res.success;
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      errorMessage.value =
-        error.data?.message ?? "An unexpected error occurred";
-      notiStore.show(errorMessage.value, "error");
-      console.error(err);
       return false;
     } finally {
       isLoading.value = false;
@@ -212,11 +183,6 @@ export const useUserStore = defineStore("user", () => {
 
       return res.success;
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      errorMessage.value =
-        error.data?.message ?? "An unexpected error occurred";
-      notiStore.show(errorMessage.value, "error");
-      console.error(err);
       return false;
     } finally {
       isLoading.value = false;
@@ -242,11 +208,6 @@ export const useUserStore = defineStore("user", () => {
 
       return res.success;
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      errorMessage.value =
-        error.data?.message ?? "An unexpected error occurred";
-      notiStore.show(errorMessage.value, "error");
-      console.error(err);
       return false;
     } finally {
       isLoading.value = false;

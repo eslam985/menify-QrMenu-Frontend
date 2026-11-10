@@ -9,7 +9,8 @@ const authStore = useAuthStore();
 const route = useRoute();
 
 const formInstance = useForm();
-const { setFormConfig, formDataPayload, resetForm } = formInstance;
+const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
+  formInstance;
 
 provide("current_form_instance", formInstance);
 
@@ -40,8 +41,9 @@ const safeRedirect = (): string => {
 };
 
 const handleLoginSubmit = async () => {
-  if (authStore.isLoading) return;
+  if (authStore.isLoading || isSubmitting.value) return;
 
+  isSubmitting.value = true;
   const payload = formDataPayload.value;
 
   const payloadLogin = {
@@ -58,6 +60,7 @@ const handleLoginSubmit = async () => {
     await navigateTo(safeRedirect());
   } else if (authStore.subscriptionInactive) {
     await navigateTo("/subscription-inactive");
+    resetForm();
   }
 };
 

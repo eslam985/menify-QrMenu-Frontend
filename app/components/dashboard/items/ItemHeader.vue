@@ -91,7 +91,10 @@ const handleRefresh = async () => {
 
       <button
         v-if="authStore?.isEditorAndAbove"
-        @click="openItemModal()"
+        @click="
+          openItemModal();
+          itemStore.error = '';
+        "
         class="btn-primary flex justify-between gap-1"
       >
         <span>إضافة صنف جديد</span>

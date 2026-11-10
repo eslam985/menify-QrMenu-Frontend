@@ -77,10 +77,10 @@ const handleRefresh = async () => {
       <button
         v-if="authStore?.isEditorAndAbove"
         @click="navigateTo('/dashboard/offers/new')"
-        class="btn-primary"
+        class="btn-primary flex justify-between gap-1"
       >
-        <Icon name="lucide:plus" class="h-4 w-4" />
         <span>إضافة عرض جديد</span>
+        <Icon name="lucide:plus" class="h-4 w-4 self-center" />
       </button>
     </div>
   </div>

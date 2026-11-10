@@ -1,22 +1,26 @@
 <!-- app/components/dashboard/items/ItemModal.vue -->
 <script setup lang="ts">
-import type { CreateMenuItemType } from "@/schemas/menuItemSchema/menuItemSchema.js";
-import { useForm, type FormField } from "~/composables/useForm";
-import { useItemModal } from "~/composables/useItemModal";
+import type {
+  CreateMenuItemType,
+  UpdateMenuItemType,
+} from "@/schemas/menuItemSchema/menuItemSchema.js";
 import type { MenuItemResponse } from "~/types/dataType/menuItemType";
+import { useForm, type FormField } from "~/composables/useForm";
+
+import { useItemModal } from "~/composables/useItemModal";
+
 const { isOpen, selectedItem: editingItem, closeModal } = useItemModal();
-const itemStore = useItemStore();
 const categoryStore = useCategoryStore();
-
+const itemStore = useItemStore();
 const formInstance = useForm();
-const { setFormConfig, formDataPayload, resetForm } = formInstance;
 
+const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
+  formInstance;
 provide("current_form_instance", formInstance);
 
 const selectedFile = ref<File | null>(null);
 const imagePreview = ref<string | null>(null);
 const isAvailable = ref<boolean>(true);
-const errorMessage = ref("");
 
 const handleFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement;
@@ -66,54 +70,48 @@ const itemFieldsConfig = computed<FormField[]>(() => [
 ]);
 
 const handleSubmit = async () => {
-  errorMessage.value = "";
+  if (isSubmitting.value || itemStore.isLoading) return;
 
-  const payload: CreateMenuItemType["body"] = {
-    category_id: formDataPayload.value.category_id as string,
-    title: String(
-      formDataPayload.value.title ?? "",
-    ).trim() as CreateMenuItemType["body"]["title"],
-    description: String(
-      formDataPayload.value.description ?? "",
-    ).trim() as CreateMenuItemType["body"]["description"],
+  isSubmitting.value = true;
+
+  const payload = {
+    category_id: formDataPayload.value.category_id,
+    title: String(formDataPayload.value.title ?? "").trim(),
+    description: String(formDataPayload.value.description ?? "").trim(),
     price: Number(formDataPayload.value.price || 0),
     is_available: isAvailable.value,
   };
 
-  if (payload.price < 1) {
-    const notiStore = useNotificationStore();
-    notiStore.show(
-      `سعر  '  ${payload.title ?? "الصنف"}  '  لا يجب ان يكون 0`,
-      "error",
+  const existingItem = editingItem.value as MenuItemResponse | null;
+  let itemId = existingItem?.id;
+
+  if (existingItem) {
+    const isSuccess = await itemStore.updateItem(
+      existingItem.id,
+      payload as UpdateMenuItemType["body"],
     );
-    return;
+
+    if (isSuccess) {
+      closeModal();
+      resetForm();
+    }
+  } else {
+    const isSuccess = await itemStore.addItem(
+      payload as CreateMenuItemType["body"],
+    );
+
+    if (isSuccess) {
+      closeModal();
+      resetForm();
+    }
   }
 
-  try {
-    const existingItem = editingItem.value as MenuItemResponse | null;
-    let itemId = existingItem?.id;
-
-    if (existingItem) {
-      await itemStore.updateItem(existingItem.id, payload);
-    } else {
-      const newItem = await itemStore.addItem(payload);
-      if (newItem && newItem.id) {
-        itemId = newItem.id;
-      }
-    }
-
-    if (selectedFile.value && itemId) {
-      const formData = new FormData();
-      formData.append("image", selectedFile.value);
-      await itemStore.uploadImage(itemId, formData);
-    }
-
-    closeModal();
-    resetForm();
-  } catch (err: unknown) {
-    const error = err as { data?: { message?: string } };
-    errorMessage.value = error.data?.message || "فشل حفظ الصنف";
+  if (selectedFile.value && itemId) {
+    const formData = new FormData();
+    formData.append("image", selectedFile.value);
+    await itemStore.uploadImage(itemId, formData);
   }
+  isSubmitting.value = false;
 };
 
 watch(
@@ -171,7 +169,12 @@ watch(
       >
         {{ editingItem ? "تعديل صنف" : "إضافة صنف جديد" }}
       </h3>
-
+      <p
+        v-if="itemStore.error"
+        class="text-danger mt-2 rounded-lg bg-red-500/10 p-2.5 text-xs"
+      >
+        {{ itemStore.error }}
+      </p>
       <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
         <UiBaseForm>
           <template #extra-fields>
@@ -239,13 +242,6 @@ watch(
             </button>
           </template>
         </UiBaseForm>
-
-        <p
-          v-if="errorMessage"
-          class="mt-2 rounded-lg bg-red-500/10 p-2.5 text-xs text-red-500"
-        >
-          {{ errorMessage }}
-        </p>
       </form>
     </div>
   </div>

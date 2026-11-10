@@ -3,18 +3,18 @@ import { handleGlobalError } from "~/utils/apiError";
 let refreshPromise: Promise<string | null> | null = null;
 
 const refreshAccessToken = (apiBase: string): Promise<string | null> => {
-  // deduplicate concurrent refresh calls
+
   if (refreshPromise) return refreshPromise;
 
-  refreshPromise = $fetch<{ data: string }>(`${apiBase}/auth/refresh`, {
+  refreshPromise = $fetch<{data: string;}>(`${apiBase}/auth/refresh`, {
     method: "POST",
-    credentials: "include",
-  })
-    .then((r) => r.data)
-    .catch(() => null)
-    .finally(() => {
-      refreshPromise = null;
-    });
+    credentials: "include"
+  }).
+  then((r) => r.data).
+  catch(() => null).
+  finally(() => {
+    refreshPromise = null;
+  });
 
   return refreshPromise;
 };
@@ -45,15 +45,15 @@ export const useApi = () => {
 
       if (status === 429) {
         const retryAfterHeader =
-          response.headers.get("retry-after") ||
-          response.headers.get("Retry-After");
+        response.headers.get("retry-after") ||
+        response.headers.get("Retry-After");
 
         const retryAfter = parseInt(retryAfterHeader || "60", 10) || 60;
         const mins = Math.ceil(retryAfter / 60);
 
         const msg =
-          errorMsg ||
-          `طلبات كثيرة جداً - برجاء المحاولة مرة أخرى بعد ${mins} دقائق`;
+        errorMsg ||
+        `طلبات كثيرة جداً - برجاء المحاولة مرة أخرى بعد ${mins} دقائق`;
 
         notiStore.show(msg, "error");
 
@@ -76,8 +76,8 @@ export const useApi = () => {
 
       if (status === 504) {
         const msg =
-          errorMsg ||
-          "انتهت مهلة الاتصال بالخادم، العملية استغرقت وقتاً طويلاً.";
+        errorMsg ||
+        "انتهت مهلة الاتصال بالخادم، العملية استغرقت وقتاً طويلاً.";
         notiStore.show(msg, "error");
 
         return;
@@ -93,19 +93,19 @@ export const useApi = () => {
       if (status !== 401 && status !== 403) {
         const fakeErrorContext = {
           status,
-          data: errorDAta,
+          data: errorDAta
         };
 
         const msg = errorMsg || "حدث خطأ أثناء تنفيذ العملية";
         handleGlobalError(fakeErrorContext, msg);
       }
-    },
+    }
   });
 
-  const apiFetch = async <T = unknown>(
-    url: string,
-    opts: Record<string, unknown> = {},
-  ): Promise<T> => {
+  const apiFetch = async <T = unknown,>(
+  url: string,
+  opts: Record<string, unknown> = {})
+  : Promise<T> => {
     try {
       return await base<T>(url, opts);
     } catch (err: unknown) {
@@ -129,7 +129,7 @@ export const useApi = () => {
         if (!route.path.startsWith("/auth/")) {
           await navigateTo({
             path: "/auth/login",
-            query: { redirect: route.fullPath },
+            query: { redirect: route.fullPath }
           });
         }
 
