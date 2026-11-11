@@ -168,30 +168,30 @@ onMounted(async () => {
 
 <template>
   <div class="mx-auto max-w-4xl pb-12">
-    <div class="mb-6 flex items-center justify-between">
+    <div class="mb-section-fluid flex items-center justify-between">
       <div>
         <h1 class="text-fluid-h3 text-primary font-bold">
           {{ isEditMode ? "تعديل العرض" : "إضافة عرض جديد" }}
         </h1>
-        <p class="text-text/60 mt-1 text-xs">
+        <p class="text-text/60 text-fluid-xs mt-1">
           قم بملء البيانات وتحديد بنود العرض بدقة
         </p>
       </div>
       <NuxtLink
         to="/dashboard/offers"
-        class="bg-card border-primary/10 text-text hover:bg-primary/5 rounded-xl border px-4 py-2 text-xs font-bold transition"
+        class="bg-card border-primary/10 text-text hover:bg-primary/5 px-fluid text-fluid-xs rounded-xl border py-2 font-bold transition"
       >
         ← العودة للعروض
       </NuxtLink>
     </div>
 
     <div
-      class="bg-card rounded-card border-primary/10 border p-6 shadow-lg md:p-8"
+      class="bg-card rounded-card border-primary/10 p-section-fluid border shadow-lg md:p-8"
     >
       <UiBaseForm>
         <template #extra-fields>
-          <div class="mt-2 flex flex-col gap-6">
-            <div class="grid grid-cols-1 items-end gap-4 md:grid-cols-3">
+          <div class="gap-section-fluid mt-2 flex flex-col">
+            <div class="gap-fluid grid grid-cols-1 items-end md:grid-cols-3">
               <div>
                 <label
                   class="text-fluid-xs text-primary mb-1.5 block font-medium"
@@ -236,10 +236,10 @@ onMounted(async () => {
 
             <div class="border-primary/10 border-t pt-6">
               <div
-                class="mb-4 flex flex-wrap items-center justify-between gap-3"
+                class="mb-fluid gap-fluid flex flex-wrap items-center justify-between"
               >
                 <div>
-                  <h3 class="text-primary text-sm font-bold">
+                  <h3 class="text-primary text-fluid-sm font-bold">
                     بنود ومكونات العرض
                   </h3>
                   <p class="text-text/60 text-[11px]">
@@ -250,14 +250,14 @@ onMounted(async () => {
                   <button
                     type="button"
                     @click="addMenuItemToOffer"
-                    class="bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer rounded-xl px-3 py-1.5 text-xs font-bold transition"
+                    class="bg-primary/10 text-primary hover:bg-primary/20 px-fluid text-fluid-xs cursor-pointer rounded-xl py-1.5 font-bold transition"
                   >
                     + صنف من المنيو
                   </button>
                   <button
                     type="button"
                     @click="addCustomItemToOffer"
-                    class="bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer rounded-xl px-3 py-1.5 text-xs font-bold transition"
+                    class="bg-primary/10 text-primary hover:bg-primary/20 px-fluid text-fluid-xs cursor-pointer rounded-xl py-1.5 font-bold transition"
                   >
                     + نص مخصص
                   </button>
@@ -266,25 +266,25 @@ onMounted(async () => {
 
               <div
                 v-if="items.length === 0"
-                class="bg-bg border-primary/20 text-text/40 rounded-2xl border border-dashed py-8 text-center text-xs"
+                class="bg-bg border-primary/20 text-text/40 py-section-fluid text-fluid-xs rounded-2xl border border-dashed text-center"
               >
                 لا توجد بنود مضافة لهذا العرض بعد. استخدم الأزرار بالأعلى لإضافة
                 محتويات العرض.
               </div>
 
-              <div class="flex flex-col gap-3">
+              <div class="gap-fluid flex flex-col">
                 <div
                   v-for="(item, index) in items"
                   :key="index"
-                  class="bg-bg border-primary/10 flex flex-col items-center gap-3 rounded-2xl border p-4 shadow-2xs md:flex-row"
+                  class="bg-bg border-primary/10 gap-fluid p-fluid flex flex-col items-center rounded-2xl border shadow-2xs md:flex-row"
                 >
                   <template v-if="'menu_item_id' in item">
                     <div
-                      class="grid w-full flex-1 grid-cols-1 gap-3 md:grid-cols-2"
+                      class="gap-fluid grid w-full flex-1 grid-cols-1 md:grid-cols-2"
                     >
                       <select
                         v-model="item.selected_category_id"
-                        class="bg-card border-primary/10 text-text focus:border-primary w-full rounded-xl border p-3 text-xs focus:outline-none"
+                        class="bg-card border-primary/10 text-text focus:border-primary p-fluid text-fluid-xs w-full rounded-xl border focus:outline-none"
                       >
                         <option value="">
                           جميع التصنيفات ({{ categoryStore.categories.length }})
@@ -301,7 +301,7 @@ onMounted(async () => {
                       <select
                         v-model="item.menu_item_id"
                         required
-                        class="bg-card border-primary/10 text-text focus:border-primary w-full rounded-xl border p-3 text-xs focus:outline-none"
+                        class="bg-card border-primary/10 text-text focus:border-primary p-fluid text-fluid-xs w-full rounded-xl border focus:outline-none"
                       >
                         <option value="" disabled>اختر الصنف المطلوب</option>
                         <option
@@ -326,16 +326,16 @@ onMounted(async () => {
                         type="text"
                         required
                         placeholder="مثال: مشروب غازي مجاني، توصيل مجاني..."
-                        class="bg-card border-primary/10 text-text focus:border-primary w-full rounded-xl border p-3 text-xs focus:outline-none"
+                        class="bg-card border-primary/10 text-text focus:border-primary p-fluid text-fluid-xs w-full rounded-xl border focus:outline-none"
                       />
                     </div>
                   </template>
 
                   <div
-                    class="flex w-full items-center justify-between gap-3 md:w-auto"
+                    class="gap-fluid flex w-full items-center justify-between md:w-auto"
                   >
                     <div class="flex items-center gap-2">
-                      <span class="text-text/70 text-xs font-bold"
+                      <span class="text-text/70 text-fluid-xs font-bold"
                         >الكمية:</span
                       >
                       <input
@@ -344,14 +344,14 @@ onMounted(async () => {
                         min="1"
                         max="99"
                         required
-                        class="bg-card border-primary/10 text-text focus:border-primary w-20 rounded-xl border p-3 text-center text-xs font-bold focus:outline-none"
+                        class="bg-card border-primary/10 text-text focus:border-primary p-fluid text-fluid-xs w-20 rounded-xl border text-center font-bold focus:outline-none"
                       />
                     </div>
 
                     <button
                       type="button"
                       @click="removeItemFromOffer(index)"
-                      class="cursor-pointer rounded-xl bg-red-500/10 p-3 text-xs text-red-500 transition hover:bg-red-500/20"
+                      class="bg-danger/10 p-fluid text-fluid-xs text-danger hover:bg-danger/20 cursor-pointer rounded-xl transition"
                     >
                       <Icon name="lucide:trash-2" class="h-4 w-4" />
                     </button>
@@ -362,7 +362,7 @@ onMounted(async () => {
 
             <p
               v-if="errorMessage"
-              class="rounded-xl bg-red-500/10 p-3 text-xs text-red-500"
+              class="bg-danger/10 p-fluid text-fluid-xs text-danger rounded-xl"
             >
               {{ errorMessage }}
             </p>
@@ -372,7 +372,7 @@ onMounted(async () => {
         <template #actions>
           <NuxtLink
             to="/dashboard/offers"
-            class="bg-bg border-primary/10 text-text hover:bg-primary/5 rounded-xl border px-5 py-2.5 text-xs font-bold transition"
+            class="bg-bg border-primary/10 text-text hover:bg-primary/5 px-fluid text-fluid-xs rounded-xl border py-2.5 font-bold transition"
           >
             إلغاء
           </NuxtLink>

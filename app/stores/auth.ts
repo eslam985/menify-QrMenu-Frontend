@@ -1,7 +1,7 @@
 import type {
   LoginUserType,
-  RegisterRestaurantType } from
-"@/schemas/userSchema/userSchema";
+  RegisterRestaurantType,
+} from "@/schemas/userSchema/userSchema";
 import { useAuthService } from "@/services/authService";
 import type { UserProfileResponse } from "@/types/userType/userType";
 import { defineStore } from "pinia";
@@ -18,7 +18,7 @@ export const useAuthStore = defineStore("auth", () => {
   const sessionCookie = useCookie<string | null>(COOKIE_NAME, {
     maxAge: 30 * 24 * 60 * 60,
     path: "/",
-    sameSite: "lax"
+    sameSite: "lax",
   });
 
   function getSessionCookie(): boolean {
@@ -41,7 +41,7 @@ export const useAuthStore = defineStore("auth", () => {
   const errorMessage = ref("");
   const successMessage = ref("");
   const userRole = computed(() =>
-  user.value ? Number(user.value.roles) : null
+    user.value ? Number(user.value.roles) : null,
   );
 
   function resetState() {
@@ -56,7 +56,7 @@ export const useAuthStore = defineStore("auth", () => {
   const isAdmin = computed(() => userRole.value === RolesList.Admin);
   const isEditorAndAbove = computed(
     () =>
-    userRole.value === RolesList.Editor || userRole.value === RolesList.Admin
+      userRole.value === RolesList.Editor || userRole.value === RolesList.Admin,
   );
 
   const hasRole = computed(() => (required: number): boolean => {
@@ -87,7 +87,7 @@ export const useAuthStore = defineStore("auth", () => {
       const { status, code } = handleGlobalError(
         err,
         "فشل تحميل الملف الشخصي",
-        false
+        false,
       );
 
       if (status === 403 && code === "SUBSCRIPTION_INACTIVE") {
@@ -119,7 +119,7 @@ export const useAuthStore = defineStore("auth", () => {
       const { status, message } = handleGlobalError(
         err,
         "فشل عملية التسجيل",
-        false
+        false,
       );
 
       if (status === 403) {
@@ -143,7 +143,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function login(body: LoginUserType["body"]) {
     const isNotValid =
-    typeof body !== "object" || Object.keys(body)?.length < 2;
+      typeof body !== "object" || Object.keys(body)?.length < 2;
     if (isLoading.value || isNotValid) return false;
 
     successMessage.value = "";
@@ -169,7 +169,7 @@ export const useAuthStore = defineStore("auth", () => {
       const { status, code, message } = handleGlobalError(
         err,
         "فشل تسجيل الدخول",
-        false
+        false,
       );
 
       const inactive = status === 403 && code === "SUBSCRIPTION_INACTIVE";
@@ -219,18 +219,14 @@ export const useAuthStore = defineStore("auth", () => {
 
   let initPromise: Promise<void> | null = null;
   function init(): Promise<void> {
-
     if (isInitialized.value) return Promise.resolve();
 
-
     if (import.meta.server) return Promise.resolve();
-
 
     if (!getSessionCookie()) {
       isInitialized.value = true;
       return Promise.resolve();
     }
-
 
     if (initPromise) return initPromise;
 
@@ -256,7 +252,7 @@ export const useAuthStore = defineStore("auth", () => {
         const { status, code } = handleGlobalError(
           err,
           "فشل تهيئة الجلسة",
-          false
+          false,
         );
         const inactive = status === 403 && code === "SUBSCRIPTION_INACTIVE";
 
@@ -296,6 +292,6 @@ export const useAuthStore = defineStore("auth", () => {
     init,
     clearSession,
     loadProfile,
-    register
+    register,
   };
 });

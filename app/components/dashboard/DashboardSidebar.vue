@@ -95,7 +95,7 @@ const visibleNavLinks = computed(() => {
       ]"
     >
       <div>
-        <div class="mb-8 flex items-center justify-between">
+        <div class="mb-section-fluid flex items-center justify-between">
           <div class="gap-fluid flex items-center">
             <div
               class="bg-bg text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl font-bold"
@@ -131,15 +131,15 @@ const visibleNavLinks = computed(() => {
         </nav>
       </div>
 
-      <div class="border-primary/10 flex flex-col gap-4 border-t pt-6">
+      <div class="border-primary/10 gap-fluid flex flex-col border-t pt-6">
         <div class="gap-fluid flex items-center">
           <div
-            class="bg-primary/20 text-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+            class="bg-primary/20 text-primary text-fluid-xs flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-bold"
           >
             {{ authStore.user?.username?.[0]?.toUpperCase() || "A" }}
           </div>
           <div class="overflow-hidden">
-            <p class="truncate text-xs font-bold">
+            <p class="text-fluid-xs truncate font-bold">
               {{ authStore.user?.username || "مشرف النظام" }}
             </p>
             <p class="text-text/60 truncate text-[10px]">
@@ -149,7 +149,7 @@ const visibleNavLinks = computed(() => {
         </div>
         <button
           @click="handleLogout"
-          class="w-full cursor-pointer rounded-xl bg-red-500/10 py-2.5 text-center text-xs font-bold text-red-500 transition hover:bg-red-500/20"
+          class="bg-danger/10 text-fluid-xs text-danger hover:bg-danger/20 w-full cursor-pointer rounded-xl py-2.5 text-center font-bold transition"
         >
           تسجيل الخروج
         </button>

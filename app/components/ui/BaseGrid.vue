@@ -14,7 +14,7 @@ defineSlots<{
   <div class="relative w-full">
     <div
       v-if="isLoading"
-      class="text-text/60 flex flex-col items-center justify-center gap-3 py-20"
+      class="text-text/60 gap-fluid flex flex-col items-center justify-center py-20"
     >
       loading...
     </div>
@@ -33,7 +33,7 @@ defineSlots<{
       <div
         v-for="(row, index) in rows"
         :key="String(row.id ?? index)"
-        class="bg-card border-primary/10 shadow-soft hover:border-primary/40 group flex max-h-[400px] flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:shadow-md"
+        class="bg-card border-primary/10 shadow-soft hover:border-primary/40 group flex max-h-[400px] flex-col overflow-hidden rounded-2xl border duration-300 hover:shadow-md"
       >
         <slot name="card" :row="row"></slot>
       </div>

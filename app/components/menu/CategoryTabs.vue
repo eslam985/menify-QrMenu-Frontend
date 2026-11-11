@@ -1,14 +1,52 @@
 <script setup lang="ts">
+const route = useRoute();
+
 const publicMenuStore = usePublicMenuStore();
+
 const activeCategory = ref<string | number | null>(null);
+const selectedsection = ref("كل الاقسام");
+const isSticky = ref(false);
+
+const sections = computed(() => publicMenuStore.sections);
 
 const scrollToCategory = (categoryId: string | number) => {
+  if (!categoryId) return;
+
   activeCategory.value = categoryId;
+
   const element = document.getElementById(`category-${categoryId}`);
-  if (element) {
-    element.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+
+  if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
 };
+
+// 💡 الخاصية الجديدة لفلترة الأقسام بناءً على السيكشن المختار
+const filteredCategories = computed(() => {
+  const res =
+    selectedsection.value === "كل الاقسام"
+      ? publicMenuStore.categories
+      : publicMenuStore.categories.filter(
+          (category) => category.section === selectedsection.value,
+        );
+
+  return res;
+});
+
+// 💡 وظيفة تفحص مكان الاسكرول وتحدد متى يلتصق الشريط بالظبط
+const handleScroll = () =>
+  window.scrollY > 1000 ? (isSticky.value = true) : (isSticky.value = false);
+
+// إذا تغير السيكشن، نجعل التحديد يبدأ من أول عنصر متاح في الفلتر الجديد
+watch(selectedsection, () => (activeCategory.value = null));
+
+onMounted(() => {
+  const slug = route.params.slug;
+  const menuSlug = Array.isArray(slug) ? slug[0] : slug;
+  menuSlug ? publicMenuStore.fetchMenu(menuSlug) : null;
+
+  window.addEventListener("scroll", handleScroll, true);
+});
+
+onUnmounted(() => window.removeEventListener("scroll", handleScroll, true));
 </script>
 
 <template>
@@ -25,18 +63,37 @@ const scrollToCategory = (categoryId: string | number) => {
         <span>قائمة الأقسام والمنتجات</span>
       </h2>
       <span
-        class="text-fluid-xs text-primary/60 bg-card border-primary/10 rounded-xl border px-3 py-1.5 font-bold"
+        class="text-fluid-xs text-primary/60 bg-card border-primary/10 px-fluid rounded-xl border py-1.5 font-bold"
       >
         {{ publicMenuStore.categories.length }} أقسام
       </span>
     </div>
 
-    <div class="sticky top-4 z-30">
+    <!-- 💡 الحاوية هنا تتغير ديناميكياً بناءً على الاسكرول وتأخذ العرض المناسب لشاشات الموبايل والديسك توب -->
+    <div
+      :class="[
+        'z-50 w-full transition-all duration-300',
+        isSticky
+          ? 'px-fluid bg-bg/95 fixed top-0 right-0 left-0 py-3 shadow-md backdrop-blur-md'
+          : 'my-fluid relative',
+      ]"
+    >
+      <!-- شريط التصنيفات الدائري -->
       <div
-        class="p-fluid no-scrollbar bg-card/80 border-primary/30 shadow-soft flex items-center gap-2 overflow-x-auto rounded-full border backdrop-blur-md"
+        :class="[
+          'p-fluid no-scrollbar bg-card/80 border-primary/30 flex items-center gap-2 overflow-x-auto border-y',
+          isSticky ? 'mx-auto max-w-5xl md:rounded-xl' : 'md:rounded-full',
+        ]"
       >
+        <select v-model="selectedsection" class="select-primary">
+          <option value="كل الاقسام">كل الاقسام</option>
+          <option v-for="sec in sections" :key="sec" :value="sec">
+            {{ sec }}
+          </option>
+        </select>
+
         <button
-          v-for="category in publicMenuStore.categories"
+          v-for="category in filteredCategories"
           :key="category.id"
           @click="scrollToCategory(category.id)"
           :class="[

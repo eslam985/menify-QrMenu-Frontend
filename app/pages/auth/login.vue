@@ -1,7 +1,7 @@
 <!-- app/pages/auth/login.vue -->
 <script setup lang="ts">
-import { useForm, type FormField } from "~/composables/useForm";
 import type { LoginUserType } from "@/schemas/userSchema/userSchema";
+import { useForm, type FormField } from "~/composables/useForm";
 
 definePageMeta({ middleware: "guest" });
 
@@ -73,14 +73,14 @@ onMounted(() => {
 
 <template>
   <div
-    class="mx-auto flex min-h-[80vh] w-full items-center justify-center px-4 2xl:max-w-[90%]"
+    class="px-fluid mx-auto flex min-h-[80vh] w-full items-center justify-center 2xl:max-w-[90%]"
   >
     <div
       class="bg-card border-primary/10 shadow-soft w-full max-w-md rounded-2xl border p-8 text-right"
     >
-      <div class="mb-6">
-        <h1 class="text-primary text-2xl font-bold">تسجيل الدخول</h1>
-        <p class="text-text/60 mt-1 text-xs">
+      <div class="mb-section-fluid">
+        <h1 class="text-primary text-fluid-p font-bold">تسجيل الدخول</h1>
+        <p class="text-text/60 text-fluid-xs mt-1">
           أدخل بيانات الحساب للوصول الآمن إلى لوحة التحكم
         </p>
       </div>
@@ -90,12 +90,12 @@ onMounted(() => {
           <div class="gap-fluid mt-2 flex flex-col">
             <p
               v-if="authStore.errorMessage"
-              class="rounded-xl bg-red-500/10 p-3 text-sm text-red-500"
+              class="bg-danger/10 p-fluid text-fluid-sm text-danger rounded-xl"
             >
               {{ authStore.errorMessage }}
             </p>
 
-            <div class="text-text/60 mt-2 text-center text-xs">
+            <div class="text-text/60 text-fluid-xs mt-2 text-center">
               ليس لديك مطعم مسجل؟
               <NuxtLink
                 to="/auth/register"

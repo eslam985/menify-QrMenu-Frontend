@@ -64,7 +64,7 @@ const handleDelete = async (categoryId: string) => {
         <button
           type="button"
           @click="openModal(row)"
-          class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary cursor-pointer rounded-xl border px-3 py-1.5 text-xs font-medium transition-all active:scale-95"
+          class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary text-fluid-xs px-fluid cursor-pointer rounded-xl border py-1.5 font-medium active:scale-95"
         >
           تعديل
         </button>
@@ -74,7 +74,7 @@ const handleDelete = async (categoryId: string) => {
           type="button"
           @click="handleDelete(row.id as string)"
           :disabled="categoryStore.isLoading"
-          class="cursor-pointer rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-1.5 text-xs font-medium text-red-500 transition-all hover:bg-red-500/10 active:scale-95 disabled:opacity-50"
+          class="bg-danger/5 text-fluid-xs hover:bg-danger/10 px-fluid text-danger cursor-pointer rounded-xl border border-red-500/20 py-1.5 font-medium active:scale-95 disabled:opacity-50"
         >
           حذف
         </button>

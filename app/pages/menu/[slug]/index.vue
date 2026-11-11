@@ -42,10 +42,10 @@ const notFound = computed(() => {
 <template>
   <div class="px-fluid mx-auto w-full pb-16 2xl:max-w-[90%]">
     <div v-if="publicMenuStore.error" class="py-24 text-center" dir="rtl">
-      <h1 class="text-primary mb-2 text-2xl font-bold">
+      <h1 class="text-primary text-fluid-p mb-2 font-bold">
         {{ notFound ? "المنيو غير متاح" : "تعذّر تحميل المنيو" }}
       </h1>
-      <p class="text-text/60 mb-6 text-sm">
+      <p class="text-text/60 mb-section-fluid text-fluid-sm">
         {{
           notFound
             ? "تأكد من الرابط، أو أن المطعم غير متاح حالياً."

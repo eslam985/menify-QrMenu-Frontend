@@ -28,6 +28,10 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
   let loadedSlug: string | null = null;
   const categoriesCount = computed(() => categories.value?.length);
 
+  const sections = computed(() => [
+    ...new Set(categories.value.map((c) => c.section)),
+  ]);
+
   async function fetchMenu(slug: string) {
     if (!slug || isLoading.value) return;
     if (loadedSlug === slug && restaurant.value) return;
@@ -90,6 +94,7 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
     isLoaded,
     error,
     categoriesCount,
+    sections,
     fetchMenu,
     clearMenu,
   };

@@ -7,15 +7,15 @@ const { toggleMobile } = useDashboardLayout();
 
 <template>
   <header
-    class="bg-card border-primary/10 flex shrink-0 items-center justify-between border-b p-4 md:hidden"
+    class="bg-card border-primary/10 p-fluid flex shrink-0 items-center justify-between border-b md:hidden"
   >
     <button
       @click="toggleMobile"
-      class="bg-primary/10 text-primary flex cursor-pointer items-center gap-2 rounded-xl p-2 text-sm font-bold focus:outline-none"
+      class="bg-primary/10 text-primary text-fluid-sm flex cursor-pointer items-center gap-2 rounded-xl p-2 font-bold focus:outline-none"
     >
       <span>☰ القائمة</span>
     </button>
-    <span class="text-primary text-sm font-bold">{{
+    <span class="text-primary text-fluid-sm font-bold">{{
       authStore.user?.restaurant_name + " " + "Dashboard"
     }}</span>
   </header>

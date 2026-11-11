@@ -41,9 +41,9 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
 
 <template>
   <div v-if="publicMenuStore.categories?.length > 0" dir="rtl">
-    <div class="relative mb-6">
+    <div class="mb-section-fluid relative">
       <div
-        class="text-text/40 pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4"
+        class="text-text/40 pointer-events-none absolute inset-y-0 right-0 flex w-full items-center pr-4"
       >
         <Icon name="lucide:search" class="h-5 w-5" />
       </div>
@@ -51,7 +51,7 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
         v-model="searchQuery"
         type="text"
         placeholder="ابحث عن وجبتك المفضلة (مثل: برجر، بيتزا، مشروب...)"
-        class="text-text focus:border-primary shadow-soft text-fluid-sm bg-card border-primary/10 placeholder:text-text/40 rounded-2xl border py-3.5 pr-12 pl-10 transition focus:outline-none"
+        class="text-text focus:border-primary shadow-soft text-fluid-sm bg-card border-primary/10 placeholder:text-text/40 w-full rounded-2xl border py-3.5 pr-12 pl-10 transition focus:outline-none"
       />
       <button
         v-if="searchQuery"
@@ -66,12 +66,12 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
     <div class="mt-8 flex flex-col gap-10">
       <div
         v-if="publicMenuStore.isLoading"
-        class="flex flex-col items-center justify-center gap-4 py-20"
+        class="gap-fluid flex flex-col items-center justify-center py-20"
       >
         <div
           class="border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent"
         ></div>
-        <p class="text-text/60 animate-pulse text-sm">
+        <p class="text-text/60 text-fluid-sm animate-pulse">
           جاري تحضير قائمة المطعم...
         </p>
       </div>
@@ -84,10 +84,10 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
           name="lucide:search-x"
           class="text-text/30 mx-auto mb-3 h-12 w-12"
         />
-        <h3 class="text-text text-lg font-bold">
+        <h3 class="text-text text-fluid-p font-bold">
           عذراً، لم نجد نتائج مطابقة لـ "{{ searchQuery }}"
         </h3>
-        <p class="text-text/60 mt-1 text-sm">
+        <p class="text-text/60 text-fluid-sm mt-1">
           جرب البحث بكلمات أخرى أو مسح حقل البحث.
         </p>
       </div>
@@ -113,14 +113,14 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
           </h2>
 
           <div
-            class="scrollbar-thumb-primary/20 flex snap-x snap-mandatory scrollbar-thin scrollbar-track-transparent gap-4 overflow-x-auto pt-1 pb-4"
+            class="scrollbar-thumb-primary/20 gap-fluid flex snap-x snap-mandatory scrollbar-thin scrollbar-track-transparent overflow-x-auto pt-1 pb-4"
           >
             <div
               v-for="item in category.items"
               :key="item.id"
               @click="openItem(category, item)"
               :class="[
-                'bg-card text-text p-fluid border-primary/25 group hover:border-primary/50 flex w-[260px] shrink-0 snap-start flex-col justify-between rounded-3xl border shadow-xl transition-all sm:w-[280px] md:w-[320px]',
+                'bg-card text-text p-fluid border-primary/25 group hover:border-primary/50 flex w-[260px] shrink-0 snap-start flex-col justify-between rounded-3xl border shadow-xl sm:w-[280px] md:w-[320px]',
                 item.is_available
                   ? 'cursor-pointer hover:scale-[1.02]'
                   : 'cursor-not-allowed opacity-60',
@@ -128,7 +128,7 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
             >
               <div>
                 <div
-                  class="bg-bg border-primary/10 relative mb-4 flex h-36 w-full items-center justify-center overflow-hidden rounded-2xl border shadow-inner md:h-40"
+                  class="bg-bg border-primary/10 mb-fluid relative flex h-36 w-full items-center justify-center overflow-hidden rounded-2xl border shadow-inner md:h-40"
                 >
                   <img
                     v-if="
@@ -151,7 +151,7 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
 
                   <span
                     v-if="!item.is_available"
-                    class="absolute top-3 left-3 rounded-full bg-red-500 px-2.5 py-1 text-xs font-bold text-white shadow-md"
+                    class="top-fluid bg-danger text-fluid-xs absolute left-3 rounded-full px-2.5 py-1 font-bold text-white shadow-md"
                   >
                     غير متوفر حاليا
                   </span>
@@ -173,12 +173,12 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
               </div>
 
               <div
-                class="border-primary/10 mt-4 flex items-center justify-between border-t pt-3"
+                class="border-primary/10 mt-fluid flex items-center justify-between border-t pt-3"
               >
                 <span class="text-fluid-xs text-text/50 font-bold">السعر</span>
                 <span class="text-primary text-xl font-black">
                   {{ formatPrice(item.price) }}
-                  <span class="text-xs">{{
+                  <span class="ext-fluid-xs">{{
                     publicMenuStore.restaurant?.currency || "ج.م"
                   }}</span>
                 </span>

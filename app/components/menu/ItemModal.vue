@@ -40,13 +40,13 @@ const handleAddToCart = () => {
 
         <button
           @click="emit('close')"
-          class="absolute top-4 left-4 cursor-pointer rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70"
+          class="top-fluid absolute left-4 cursor-pointer rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70"
         >
           <Icon name="lucide:x" class="h-5 w-5" />
         </button>
       </div>
 
-      <div class="flex flex-col gap-4 p-6">
+      <div class="gap-fluid p-section-fluid flex flex-col">
         <div>
           <h2 class="text-text text-(length:--text-fluid-h2) font-bold">
             {{ item.title }}

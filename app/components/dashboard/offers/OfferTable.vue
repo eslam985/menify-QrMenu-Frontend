@@ -77,7 +77,7 @@ const formatDate = (dateStr: string) => {
 
     <template #cell-title="{ row }">
       <div>
-        <p class="text-text text-xs font-bold">{{ row.title }}</p>
+        <p class="text-text text-fluid-xs font-bold">{{ row.title }}</p>
         <p
           v-if="row.description"
           class="text-text/60 max-w-[150px] truncate text-[10px]"
@@ -115,11 +115,11 @@ const formatDate = (dateStr: string) => {
           row.savings !== undefined &&
           Number(row.savings) > 0
         "
-        class="rounded-md bg-green-500/10 px-2 py-0.5 text-xs font-bold text-green-500"
+        class="text-fluid-xs rounded-md bg-green-500/10 px-2 py-0.5 font-bold text-green-500"
       >
         وفّر {{ row.savings }} ج.م
       </span>
-      <span v-else class="text-text/40 text-xs">—</span>
+      <span v-else class="text-text/40 text-fluid-xs">—</span>
     </template>
 
     <template #cell-status="{ row }">
@@ -132,7 +132,7 @@ const formatDate = (dateStr: string) => {
 
     <template #cell-items="{ row }">
       <div class="flex max-w-[180px] flex-col gap-1">
-        <span class="text-text text-xs font-bold">
+        <span class="text-text text-fluid-xs font-bold">
           {{ Array.isArray(row.items) ? row.items.length : 0 }} بند(ود)
         </span>
         <div class="flex flex-wrap gap-1">
@@ -168,10 +168,10 @@ const formatDate = (dateStr: string) => {
     <template #cell-is_active="{ row }">
       <span
         :class="[
-          'rounded-full px-3 py-1 text-xs font-bold',
+          'px-fluid text-fluid-xs rounded-full py-1 font-bold',
           row.is_active
             ? 'bg-green-500/10 text-green-500'
-            : 'bg-red-500/10 text-red-500',
+            : 'bg-danger/10 text-danger',
         ]"
       >
         {{ row.is_active ? "نشط" : "متوقف" }}
@@ -179,18 +179,18 @@ const formatDate = (dateStr: string) => {
     </template>
 
     <template #cell-starts_at="{ row }">
-      <span class="text-text/60 text-xs">{{
+      <span class="text-text/60 text-fluid-xs">{{
         formatDate(row.starts_at as OfferResponse["starts_at"])
       }}</span>
     </template>
     <template #cell-ends_at="{ row }">
-      <span class="text-text/60 text-xs">{{
+      <span class="text-text/60 text-fluid-xs">{{
         formatDate(row.ends_at as OfferResponse["ends_at"])
       }}</span>
     </template>
 
     <template #cell-created_at="{ row }">
-      <span class="text-text/60 text-xs">{{
+      <span class="text-text/60 text-fluid-xs">{{
         formatDate(row.created_at as OfferResponse["created_at"])
       }}</span>
     </template>
@@ -200,7 +200,7 @@ const formatDate = (dateStr: string) => {
         <button
           type="button"
           @click="navigateTo(`/dashboard/offers/${row.id}`)"
-          class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary cursor-pointer rounded-xl border px-3 py-1.5 text-xs font-medium transition-all active:scale-95"
+          class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary px-fluid text-fluid-xs cursor-pointer rounded-xl border py-1.5 font-medium active:scale-95"
         >
           تعديل
         </button>
@@ -209,7 +209,7 @@ const formatDate = (dateStr: string) => {
           type="button"
           @click="offerStore.removeOffer((row as unknown as OfferResponse).id)"
           :disabled="offerStore.isLoading"
-          class="cursor-pointer rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-1.5 text-xs font-medium text-red-500 transition-all hover:bg-red-500/10 active:scale-95 disabled:opacity-50"
+          class="bg-danger/5 px-fluid text-fluid-xs text-danger hover:bg-danger/10 cursor-pointer rounded-xl border border-red-500/20 py-1.5 font-medium active:scale-95 disabled:opacity-50"
         >
           حذف
         </button>

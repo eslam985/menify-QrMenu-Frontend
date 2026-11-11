@@ -1,8 +1,8 @@
 <!-- app/components/dashboard/items/ItemHeader.vue -->
 <script setup lang="ts">
 import { useItemModal } from "~/composables/useItemModal";
-import { useItemSearch } from "~/composables/useItemSearch";
 import { useItemReorderModal } from "~/composables/useItemReorderModal";
+import { useItemSearch } from "~/composables/useItemSearch";
 
 const { openModal: openReorderModal } = useItemReorderModal();
 const { openModal: openItemModal } = useItemModal();
@@ -30,32 +30,29 @@ const handleRefresh = async () => {
 
 <template>
   <div
-    class="mx-auto mb-8 flex w-full flex-col items-start justify-between gap-4 lg:flex-row lg:items-center 2xl:max-w-[90%]"
+    class="mb-section-fluid gap-fluid mx-auto flex w-full flex-col flex-wrap items-start justify-between lg:flex-row lg:items-center 2xl:max-w-[90%]"
   >
-    <div class="w-full lg:max-w-[30%]">
-      <h1 class="text-primary text-2xl font-bold">إدارة أصناف المنيو</h1>
-      <p class="text-text/60 mt-1 text-xs">
-        تحكم في الوجبات والأطباق، الأسعار، وحالة التوفر للعملاء
-      </p>
-    </div>
+    <h1 class="text-primary text-fluid-h3 font-bold">إدارة أصناف المنيو</h1>
 
-    <div class="flex w-full flex-wrap items-center gap-3 lg:w-auto">
+    <div class="gap-fluid flex w-full flex-wrap items-center lg:w-auto">
       <div class="relative w-full sm:w-60">
         <span
-          class="text-text/40 pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-xs"
-          >🔍</span
+          class="text-primary text-fluid-sm pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5"
         >
+          <Icon name="lucide:search"></Icon>
+        </span>
+
         <input
           :value="searchQuery"
           @input="setSearchQuery(($event.target as HTMLInputElement).value)"
           type="text"
           placeholder="بحث في الأصناف..."
-          class="bg-card border-primary/10 text-text focus:border-primary w-full rounded-xl border py-2.5 pr-9 pl-8 text-xs shadow-xs transition focus:outline-none"
+          class="bg-card border-primary/10 text-text focus:border-primary text-fluid-xs w-full rounded-xl border py-2.5 pr-9 pl-8 shadow-xs transition focus:outline-none"
         />
         <button
           v-if="searchQuery"
           @click="setSearchQuery('')"
-          class="text-text/40 hover:text-text absolute inset-y-0 left-0 flex cursor-pointer items-center pl-3 text-xs"
+          class="text-text/40 hover:text-text text-fluid-xs absolute inset-y-0 left-0 flex cursor-pointer items-center pl-3"
         >
           ✕
         </button>
@@ -64,7 +61,7 @@ const handleRefresh = async () => {
       <select
         :value="selectedCategoryFilter"
         @change="setCategoryFilter(($event.target as HTMLSelectElement).value)"
-        class="bg-card border-primary/10 text-text focus:border-primary cursor-pointer rounded-xl border p-2.5 text-xs shadow-xs focus:outline-none"
+        class="bg-card border-primary/10 text-text focus:border-primary text-fluid-xs cursor-pointer rounded-xl border p-2.5 shadow-xs focus:outline-none"
       >
         <option value="">جميع التصنيفات</option>
         <option

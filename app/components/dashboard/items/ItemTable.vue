@@ -94,14 +94,14 @@ watchEffect(() => {
     </template>
 
     <template #cell-created_at="{ value }">
-      <span class="text-text/60 text-xs">{{
+      <span class="text-text/60 text-fluid-xs">{{
         formatDate(String(value ?? ""))
       }}</span>
     </template>
 
     <template #cell-category="{ row }">
       <span
-        class="bg-primary/10 text-primary rounded-lg px-2.5 py-1 text-xs font-semibold"
+        class="bg-primary/10 text-primary text-fluid-xs rounded-lg px-2.5 py-1 font-semibold"
       >
         {{ getCategoryName(row.category_id as string) }}
       </span>
@@ -122,10 +122,10 @@ watchEffect(() => {
           )
         "
         :class="[
-          'cursor-pointer rounded-full px-3 py-1 text-xs font-bold transition',
+          'px-fluid text-fluid-xs cursor-pointer rounded-full py-1 font-bold transition',
           row.is_available
             ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20'
-            : 'bg-red-500/10 text-red-500 hover:bg-red-500/20',
+            : 'bg-danger/10 text-danger hover:bg-danger/20',
         ]"
       >
         {{ row.is_available ? "متوفر" : "غير متوفر" }}
@@ -133,7 +133,7 @@ watchEffect(() => {
     </template>
 
     <template #cell-updated_at="{ row }">
-      <span class="text-text/60 text-xs">{{
+      <span class="text-text/60 text-fluid-xs">{{
         formatDate(row.updated_at as string)
       }}</span>
     </template>
@@ -143,7 +143,7 @@ watchEffect(() => {
         <button
           type="button"
           @click="openModal(row)"
-          class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary cursor-pointer rounded-xl border px-3 py-1.5 text-xs font-medium transition-all active:scale-95"
+          class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary px-fluid text-fluid-xs cursor-pointer rounded-xl border py-1.5 font-medium active:scale-95"
         >
           تعديل
         </button>
@@ -152,7 +152,7 @@ watchEffect(() => {
           type="button"
           @click="itemStore.removeItem(row.id as string)"
           :disabled="itemStore.isLoading"
-          class="cursor-pointer rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-1.5 text-xs font-medium text-red-500 transition-all hover:bg-red-500/10 active:scale-95 disabled:opacity-50"
+          class="bg-danger/5 px-fluid text-fluid-xs text-danger hover:bg-danger/10 cursor-pointer rounded-xl border border-red-500/20 py-1.5 font-medium active:scale-95 disabled:opacity-50"
         >
           حذف
         </button>

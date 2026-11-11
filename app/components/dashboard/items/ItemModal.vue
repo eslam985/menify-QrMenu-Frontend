@@ -4,8 +4,8 @@ import type {
   CreateMenuItemType,
   UpdateMenuItemType,
 } from "@/schemas/menuItemSchema/menuItemSchema.js";
-import type { MenuItemResponse } from "~/types/dataType/menuItemType";
 import { useForm, type FormField } from "~/composables/useForm";
+import type { MenuItemResponse } from "~/types/dataType/menuItemType";
 
 import { useItemModal } from "~/composables/useItemModal";
 
@@ -159,10 +159,10 @@ watch(
   <div
     v-if="isOpen"
     @click.self="closeModal"
-    class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+    class="animate-fade-in p-fluid fixed inset-0 z-50 flex items-center justify-center bg-black/60"
   >
     <div
-      class="bg-card rounded-card border-primary/10 gap-fluid flex max-h-[90vh] w-full max-w-lg flex-col overflow-y-auto border p-6 text-right shadow-2xl"
+      class="bg-card rounded-card border-primary/10 gap-fluid px-section-fluid py-fluid flex max-h-[90vh] w-full max-w-lg flex-col overflow-y-auto border text-right shadow-2xl"
     >
       <h3
         class="text-fluid-h3 text-primary border-primary/5 border-b pb-2 font-bold"
@@ -171,11 +171,11 @@ watch(
       </h3>
       <p
         v-if="itemStore.error"
-        class="text-danger mt-2 rounded-lg bg-red-500/10 p-2.5 text-xs"
+        class="text-danger bg-danger/10 text-fluid-xs mt-2 rounded-lg p-2.5"
       >
         {{ itemStore.error }}
       </p>
-      <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
+      <form @submit.prevent="handleSubmit" class="gap-fluid flex flex-col">
         <UiBaseForm>
           <template #extra-fields>
             <div
@@ -185,7 +185,7 @@ watch(
                 <label class="text-fluid-xs text-primary block font-medium"
                   >صورة الصنف</label
                 >
-                <div class="flex items-center gap-3">
+                <div class="gap-fluid flex items-center">
                   <div
                     v-if="imagePreview"
                     class="border-primary/20 relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border"
@@ -202,7 +202,7 @@ watch(
                           selectedFile = null;
                         }
                       "
-                      class="absolute inset-0 flex items-center justify-center bg-black/40 text-sm font-bold text-white opacity-0 transition-opacity hover:opacity-100"
+                      class="text-fluid-sm absolute inset-0 flex items-center justify-center bg-black/40 font-bold text-white opacity-0 transition-opacity hover:opacity-100"
                     >
                       ×
                     </button>
@@ -236,7 +236,7 @@ watch(
             <button
               type="button"
               @click="closeModal"
-              class="bg-bg border-primary/10 text-text hover:bg-primary/5 cursor-pointer rounded-xl border px-5 py-2.5 text-xs font-bold transition-colors"
+              class="bg-bg border-primary/10 text-text hover:bg-primary/5 text-fluid-xs px-fluid cursor-pointer rounded-xl border py-2.5 font-bold transition-colors"
             >
               إلغاء
             </button>

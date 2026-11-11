@@ -249,7 +249,7 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
           class="md:gap-fluid grid grid-cols-3 gap-2 self-center md:flex md:flex-col"
         >
           <span
-            class="text-fluid-xs bg-success/10 text-success flex items-center justify-center gap-1 self-center rounded-full px-3 py-1.5 text-nowrap"
+            class="text-fluid-xs bg-success/10 text-success px-fluid flex items-center justify-center gap-1 self-center rounded-full py-1.5 text-nowrap"
           >
             <span
               class="bg-success animate-pulse-glow h-2 w-2 self-center rounded-full text-center"
@@ -257,12 +257,12 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
             Active
           </span>
           <span
-            class="text-fluid-xs bg-bg text-primary self-center rounded-full px-3 py-1.5 text-center text-nowrap transition-transform lg:hover:scale-105"
+            class="text-fluid-xs bg-bg text-primary px-fluid self-center rounded-full py-1.5 text-center text-nowrap transition-transform lg:hover:scale-105"
           >
             {{ role() }}
           </span>
           <p
-            class="text-text/80 text-fluid-xs bg-bg self-center rounded-full px-3 py-2 text-nowrap transition-transform lg:hover:scale-105"
+            class="text-text/80 text-fluid-xs bg-bg px-fluid self-center rounded-full py-2 text-nowrap transition-transform lg:hover:scale-105"
           >
             Active Sessions
             <span class="text-primary">{{ userStore.sessions.length }}</span>
@@ -300,7 +300,7 @@ const role = (): "Admin" | "Editor" | "User" | "N/A" =>
           <div
             v-for="(url, index) in authStore.user?.avatar_history"
             :key="index"
-            class="border-primary/30 group hover:border-primary/30 relative aspect-square cursor-pointer overflow-hidden rounded-full border shadow-sm transition-all duration-300"
+            class="border-primary/30 group hover:border-primary/30 relative aspect-square cursor-pointer overflow-hidden rounded-full border shadow-sm duration-300"
             @click="handleSelectHistory(url)"
           >
             <img

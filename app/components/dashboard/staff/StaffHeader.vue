@@ -24,12 +24,14 @@ const handleRefresh = async () => {
           إدارة الموظفين
         </h1>
       </div>
-      <p class="text-text/60 border-primary/10 mt-1 border-b pb-3 text-xs">
+      <p
+        class="text-text/60 border-primary/10 text-fluid-xs mt-1 border-b pb-3"
+      >
         تحكم في عرض الموظفين وصلاحيتهم
       </p>
     </div>
 
-    <div class="flex w-full flex-wrap items-center gap-3 md:w-auto">
+    <div class="gap-fluid flex w-full flex-wrap items-center md:w-auto">
       <CommonBaseSearchInput />
 
       <button

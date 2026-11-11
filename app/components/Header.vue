@@ -17,7 +17,7 @@
       </NuxtLink>
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="gap-fluid flex items-center">
       <nuxt-link
         to="/auth/login"
         class="px-fluid bg-card border-primary/10 shadow-soft flex items-center gap-2 rounded-xl border py-2 text-(length:--text-fluid-sm) font-bold transition hover:text-white"

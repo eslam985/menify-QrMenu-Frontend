@@ -3,8 +3,8 @@
 import { useCategoryModal } from "~/composables/useCategoryModal";
 import { useForm, type FormField } from "~/composables/useForm";
 
-import type { CategorySection } from "@/types/dataType/categoryType";
 import type { CreateCategoryType } from "@/schemas/categorySchema/categorySchema";
+import type { CategorySection } from "@/types/dataType/categoryType";
 const { isOpen, editingCategory, closeModal } = useCategoryModal();
 const categoryStore = useCategoryStore();
 
@@ -114,10 +114,10 @@ watch(
     <div
       v-if="isOpen"
       @click.self="closeModal"
-      class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      class="animate-fade-in p-fluid fixed inset-0 z-50 flex items-center justify-center bg-black/60"
     >
       <div
-        class="bg-card rounded-card border-primary/10 gap-fluid flex w-full max-w-md flex-col border p-6 text-right shadow-2xl"
+        class="bg-card rounded-card border-primary/10 gap-fluid p-section-fluid flex w-full max-w-md flex-col border text-right shadow-2xl"
       >
         <h3
           class="text-fluid-h3 text-primary border-primary/5 border-b pb-2 font-bold"
@@ -133,7 +133,7 @@ watch(
           <button
             type="button"
             @click="closeModal"
-            class="bg-card border-primary/10 text-text hover:bg-primary/5 pointer-events-auto cursor-pointer rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+            class="bg-card border-primary/10 text-text hover:bg-primary/5 text-fluid-xs px-fluid pointer-events-auto cursor-pointer rounded-xl border py-2 font-bold transition-colors"
           >
             إلغاء
           </button>

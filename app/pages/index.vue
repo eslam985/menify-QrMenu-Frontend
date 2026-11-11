@@ -13,9 +13,7 @@ onMounted(() => {
     <main
       class="px-fluid p-section-fluid gap-section mx-auto my-auto flex w-full flex-col items-center text-center 2xl:max-w-[80%]"
     >
-      
-
-      <div class="flex max-w-3xl flex-col gap-4">
+      <div class="gap-fluid flex max-w-3xl flex-col">
         <h1
           class="text-(length:--text-fluid-h1) leading-tight font-black tracking-tighter"
         >
@@ -31,17 +29,17 @@ onMounted(() => {
       </div>
 
       <div
-        class="bg-card p-fluid shadow-soft border-primary/10 flex w-full flex-col gap-4 rounded-xl border 2xl:max-w-[80%]"
+        class="bg-card p-fluid shadow-soft border-primary/10 gap-fluid flex w-full flex-col rounded-xl border 2xl:max-w-[80%]"
       >
         <div class="text-right">
           <h3 class="text-(length:--text-fluid-h3) font-bold">
             اختـر المطاعـم أو الكـافيهات الممـيزه لـدينــا
           </h3>
-          <p class="text-text/60 mt-1 text-xs">
+          <p class="text-text/60 text-fluid-xs mt-1">
             تصفح القوائم الرقمية للمطاعم أو الكـافيهات المتاحة فوراً
           </p>
         </div>
-        
+
         <div
           v-if="!isLoading && restaurants.length === 0"
           class="flex justify-center gap-1"
@@ -56,14 +54,13 @@ onMounted(() => {
           >
         </div>
         <div class="gap-fluid grid grid-cols-1 sm:grid-cols-2">
-          
           <template v-if="isLoading">
             <div
               v-for="i in 2"
               :key="i"
               class="p-fluid bg-bg animate-pulse rounded-xl border border-white/5 shadow-sm"
             >
-              <div class="flex items-center gap-3">
+              <div class="gap-fluid flex items-center">
                 <div class="bg-primary/10 h-10 w-10 rounded-lg" />
                 <div class="flex-1 space-y-2">
                   <div class="bg-primary/10 h-3 w-2/3 rounded" />
@@ -73,7 +70,6 @@ onMounted(() => {
             </div>
           </template>
 
-          
           <nuxt-link
             v-for="res in restaurants"
             v-else
@@ -81,7 +77,7 @@ onMounted(() => {
             :to="`/menu/${res.slug}`"
             class="p-fluid bg-bg hover:border-primary group flex cursor-pointer items-center justify-between rounded-xl border border-white/5 shadow-sm transition"
           >
-            <div class="flex items-center gap-3 text-right">
+            <div class="gap-fluid flex items-center text-right">
               <div
                 class="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-bold"
               >
@@ -99,7 +95,7 @@ onMounted(() => {
                 >
                   {{ res.name }}
                 </h4>
-                <span class="text-text/60 text-xs">{{
+                <span class="text-text/60 text-fluid-xs">{{
                   res.description ?? "تصفح القائمة الآن"
                 }}</span>
               </div>
@@ -113,11 +109,11 @@ onMounted(() => {
       </div>
 
       <div class="mt-12 w-full text-right">
-        <div class="mb-8">
+        <div class="mb-section-fluid">
           <h2 class="text-primary text-(length:--text-fluid-h2) font-bold">
             باقات الأسعار والاشتراكات
           </h2>
-          <p class="text-text/60 mt-1 text-sm">
+          <p class="text-text/60 text-fluid-sm mt-1">
             اختر الباقة المناسبة لمطعمك وابدأ رحلتك الرقمية معنا
           </p>
         </div>
@@ -127,7 +123,7 @@ onMounted(() => {
             class="bg-card p-fluid border-primary/10 shadow-soft relative flex flex-col justify-between overflow-hidden rounded-xl border"
           >
             <div
-              class="bg-primary/20 text-primary absolute top-0 left-0 rounded-br-xl px-3 py-1 text-xs font-bold"
+              class="bg-primary/20 text-primary px-fluid text-fluid-xs absolute top-0 left-0 rounded-br-xl py-1 font-bold"
             >
               تجربة مرنة
             </div>
@@ -135,19 +131,21 @@ onMounted(() => {
               <h3 class="mb-2 text-(length:--text-fluid-h3) font-bold">
                 الاشتراك الشهري
               </h3>
-              <p class="text-text/60 mb-4 text-xs">
+              <p class="text-text/60 mb-fluid text-fluid-xs">
                 مثالي للبدء السريع بدون التزام طويل
               </p>
-              <div class="mb-4 flex items-baseline justify-end gap-2">
-                <span class="text-text/40 text-sm line-through"
+              <div class="mb-fluid flex items-baseline justify-end gap-2">
+                <span class="text-text/40 text-fluid-sm line-through"
                   >{{ formatPrice(300) }} ج</span
                 >
                 <span class="text-primary text-3xl font-black">مجاناً</span>
-                <span class="text-text/60 text-xs font-normal"
+                <span class="text-text/60 text-fluid-xs font-normal"
                   >/ الشهر الأول</span
                 >
               </div>
-              <ul class="text-text/80 mb-6 space-y-2 text-right text-xs">
+              <ul
+                class="text-text/80 mb-section-fluid text-fluid-xs space-y-2 text-right"
+              >
                 <li>✓ أول شهر مجاناً بالكامل</li>
                 <li>✓ منيو إلكتروني غير محدود</li>
                 <li>✓ QR كود دائم ومخصص للمطعم</li>
@@ -157,7 +155,7 @@ onMounted(() => {
             <a
               href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في الباقة الشهرية (أول شهر مجاناً) لبرنامج tabloz"
               target="_blank"
-              class="bg-primary block w-full cursor-pointer rounded-xl py-2.5 text-center text-sm font-bold text-white transition hover:opacity-90"
+              class="bg-primary text-fluid-sm block w-full cursor-pointer rounded-xl py-2.5 text-center font-bold text-white transition hover:opacity-90"
             >
               اختر الشهري
             </a>
@@ -167,7 +165,7 @@ onMounted(() => {
             class="bg-card p-fluid border-primary/20 shadow-soft relative flex flex-col justify-between overflow-hidden rounded-xl border"
           >
             <div
-              class="bg-primary/70 absolute top-0 left-0 rounded-br-xl px-3 py-1 text-xs font-bold text-white"
+              class="bg-primary/70 px-fluid text-fluid-xs absolute top-0 left-0 rounded-br-xl py-1 font-bold text-white"
             >
               الأكثر توفيراً
             </div>
@@ -175,19 +173,23 @@ onMounted(() => {
               <h3 class="mb-2 text-(length:--text-fluid-h3) font-bold">
                 اشتراك نصف سنوي
               </h3>
-              <p class="text-text/60 mb-4 text-xs">
+              <p class="text-text/60 mb-fluid text-fluid-xs">
                 خصم شهرين كاملين (وفر 600 ج)
               </p>
-              <div class="mb-4 flex items-baseline justify-end gap-2">
-                <span class="text-text/40 text-sm line-through"
+              <div class="mb-fluid flex items-baseline justify-end gap-2">
+                <span class="text-text/40 text-fluid-sm line-through"
                   >{{ formatPrice(1800) }} ج</span
                 >
                 <span class="text-primary text-3xl font-black"
                   >{{ formatPrice(1200) }} ج</span
                 >
-                <span class="text-text/60 text-xs font-normal">/ 6 شهور</span>
+                <span class="text-text/60 text-fluid-xs font-normal"
+                  >/ 6 شهور</span
+                >
               </div>
-              <ul class="text-text/80 mb-6 space-y-2 text-right text-xs">
+              <ul
+                class="text-text/80 mb-section-fluid text-fluid-xs space-y-2 text-right"
+              >
                 <li>✓ إجمالي (300 × 6) - خصم شهرين</li>
                 <li>✓ لوحة تحكم كاملة وتعديل لحظي</li>
                 <li>✓ QR كود دائم ومخصص للمطعم</li>
@@ -198,7 +200,7 @@ onMounted(() => {
             <a
               href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في باقة النصف سنوي (1200 ج) لبرنامج tabloz"
               target="_blank"
-              class="bg-primary block w-full cursor-pointer rounded-xl py-2.5 text-center text-sm font-bold text-white transition hover:opacity-90"
+              class="bg-primary text-fluid-sm block w-full cursor-pointer rounded-xl py-2.5 text-center font-bold text-white transition hover:opacity-90"
             >
               اختر النصف سنوي
             </a>
@@ -208,7 +210,7 @@ onMounted(() => {
             class="bg-card p-fluid border-primary shadow-soft relative flex flex-col justify-between overflow-hidden rounded-xl border-2"
           >
             <div
-              class="bg-primary absolute top-0 left-0 rounded-br-xl px-3 py-1 text-xs font-bold text-white"
+              class="bg-primary px-fluid text-fluid-xs absolute top-0 left-0 rounded-br-xl py-1 font-bold text-white"
             >
               العضوية المميزة
             </div>
@@ -216,19 +218,23 @@ onMounted(() => {
               <h3 class="mb-2 text-(length:--text-fluid-h3) font-bold">
                 اشتراك سنوي
               </h3>
-              <p class="text-text/60 mb-4 text-xs">
+              <p class="text-text/60 mb-fluid text-fluid-xs">
                 خصم 3 شهور كاملة (وفر 900 ج)
               </p>
-              <div class="mb-4 flex items-baseline justify-end gap-2">
-                <span class="text-text/40 text-sm line-through"
+              <div class="mb-fluid flex items-baseline justify-end gap-2">
+                <span class="text-text/40 text-fluid-sm line-through"
                   >{{ formatPrice(3600) }} ج</span
                 >
                 <span class="text-primary text-3xl font-black"
                   >{{ formatPrice(2700) }} ج</span
                 >
-                <span class="text-text/60 text-xs font-normal">/ سنوياً</span>
+                <span class="text-text/60 text-fluid-xs font-normal"
+                  >/ سنوياً</span
+                >
               </div>
-              <ul class="text-text/80 mb-6 space-y-2 text-right text-xs">
+              <ul
+                class="text-text/80 mb-section-fluid text-fluid-xs space-y-2 text-right"
+              >
                 <li>✓ إجمالي (300 × 12) - خصم 3 شهور</li>
                 <li>✓ أولوية قصوى في الدعم الفني والتطويرات</li>
                 <li>✓ تصميم QR كود احترافي جاهز للطباعة</li>
@@ -240,7 +246,7 @@ onMounted(() => {
             <a
               href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في الباقة السنوية (2700 ج) لبرنامج tabloz"
               target="_blank"
-              class="bg-primary block w-full cursor-pointer rounded-xl py-2.5 text-center text-sm font-bold text-white transition hover:opacity-90"
+              class="bg-primary text-fluid-sm block w-full cursor-pointer rounded-xl py-2.5 text-center font-bold text-white transition hover:opacity-90"
             >
               اختر السنوي
             </a>
@@ -252,7 +258,7 @@ onMounted(() => {
         class="gap-fluid mt-12 grid w-full grid-cols-1 text-right md:grid-cols-3"
       >
         <div
-          class="bg-card p-fluid border-primary/10 shadow-soft flex flex-col gap-3 rounded-xl border"
+          class="bg-card p-fluid border-primary/10 shadow-soft gap-fluid flex flex-col rounded-xl border"
         >
           <div
             class="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl font-bold"
@@ -266,7 +272,7 @@ onMounted(() => {
         </div>
 
         <div
-          class="bg-card p-fluid border-primary/10 shadow-soft flex flex-col gap-3 rounded-xl border"
+          class="bg-card p-fluid border-primary/10 shadow-soft gap-fluid flex flex-col rounded-xl border"
         >
           <div
             class="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl font-bold"
@@ -282,7 +288,7 @@ onMounted(() => {
         </div>
 
         <div
-          class="bg-card p-fluid border-primary/10 shadow-soft flex flex-col gap-3 rounded-xl border"
+          class="bg-card p-fluid border-primary/10 shadow-soft gap-fluid flex flex-col rounded-xl border"
         >
           <div
             class="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl font-bold"

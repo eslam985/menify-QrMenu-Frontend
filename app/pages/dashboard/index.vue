@@ -115,11 +115,11 @@ const visibleCards = computed(() => {
 
 <template>
   <div class="mx-auto w-full 2xl:max-w-[90%]">
-    <div class="mb-8">
-      <h1 class="text-primary text-2xl font-bold">
+    <div class="mb-section-fluid">
+      <h1 class="text-primary text-fluid-p font-bold">
         أهلاً بك، {{ authStore.user?.username || "مشرف المطعم" }} 👋
       </h1>
-      <p class="text-text/60 mt-1 text-xs">
+      <p class="text-text/60 text-fluid-xs mt-1">
         نظرة عامة على لوحة تحكم
         {{ authStore.user?.restaurant_name || "مشرف المطعم" }} وإدارته بكفاءة
       </p>

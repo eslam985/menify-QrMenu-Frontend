@@ -102,7 +102,7 @@ const daysTranslation: Record<string, string> = {
               ? 'border-primary/20 bg-card'
               : 'border-denger/10 bg-denger/5 opacity-70'
           "
-          class="p-fluid shadow-soft flex flex-col items-stretch gap-3 rounded-2xl border transition-all duration-300"
+          class="p-fluid shadow-soft gap-fluid flex flex-col items-stretch rounded-2xl border duration-300"
         >
           <div
             class="border-primary/5 flex items-center justify-between border-b pb-2"
@@ -180,13 +180,13 @@ const daysTranslation: Record<string, string> = {
       <slot name="extra-fields" />
     </div>
 
-    <div class="mt-fluid col-span-3 flex items-center justify-end gap-3">
+    <div class="mt-fluid gap-fluid col-span-3 flex items-center justify-end">
       <slot name="actions" />
 
       <button
         type="submit"
         :disabled="isSubmitting"
-        class="btn-primary flex items-center gap-2 font-bold transition-all disabled:cursor-not-allowed disabled:opacity-50"
+        class="btn-primary flex items-center gap-2 font-bold disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Icon
           v-if="isSubmitting"

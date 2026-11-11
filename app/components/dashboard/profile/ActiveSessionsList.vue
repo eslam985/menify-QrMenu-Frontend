@@ -145,7 +145,7 @@ watchEffect(() => {
                 handleRevokeSession((row as unknown as SessionResponse).id)
               "
               :disabled="userStore.isLoading"
-              class="bg-danger/5 border-danger/20 hover:bg-danger/10 text-danger flex cursor-pointer items-center gap-1 rounded-xl border px-3 py-1 text-xs font-medium transition-all active:scale-95 disabled:opacity-50"
+              class="bg-danger/5 border-danger/20 hover:bg-danger/10 text-danger px-fluid text-fluid-xs flex cursor-pointer items-center gap-1 rounded-xl border py-1 font-medium active:scale-95 disabled:opacity-50"
             >
               <Icon name="lucide:user-x" class="h-3.5 w-3.5" />
               <span>إنهاء الجلسة</span>

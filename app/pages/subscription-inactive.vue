@@ -35,20 +35,22 @@ const retry = async () => {
 
 <template>
   <div
-    class="mx-auto flex min-h-[80vh] w-full items-center justify-center px-4 2xl:max-w-[90%]"
+    class="px-fluid mx-auto flex min-h-[80vh] w-full items-center justify-center 2xl:max-w-[90%]"
   >
     <div
       class="bg-card border-primary/10 shadow-soft w-full max-w-md rounded-2xl border p-8 text-center"
     >
-      <div class="mb-4 text-5xl">⏸️</div>
-      <h1 class="text-primary mb-2 text-2xl font-bold">اشتراك المطعم متوقف</h1>
-      <p class="text-text/70 text-sm leading-relaxed">
+      <div class="mb-fluid text-5xl">⏸️</div>
+      <h1 class="text-primary text-fluid-p mb-2 font-bold">
+        اشتراك المطعم متوقف
+      </h1>
+      <p class="text-text/70 text-fluid-sm leading-relaxed">
         تم إيقاف لوحة التحكم لهذا المطعم لانتهاء الاشتراك أو لإيقافه من الإدارة.
         يرجى التواصل مع الدعم لتجديد الاشتراك. المنيو العام متوقف أيضاً حتى يتم
         التجديد.
       </p>
 
-      <div class="mt-6 flex flex-col gap-3">
+      <div class="gap-fluid mt-6 flex flex-col">
         <a
           v-if="whatsapp"
           :href="`https://wa.me/${whatsapp}`"
@@ -73,13 +75,13 @@ const retry = async () => {
         >
           {{ checking ? "جاري التحقق..." : "تم التجديد؟ أعد المحاولة" }}
         </button>
-        <p v-if="stillInactive" class="text-xs text-red-500">
+        <p v-if="stillInactive" class="text-fluid-xs text-danger">
           الاشتراك ما زال متوقفاً.
         </p>
 
         <button
           @click="auth.logout()"
-          class="text-text/60 mt-1 cursor-pointer text-xs hover:underline"
+          class="text-text/60 text-fluid-xs mt-1 cursor-pointer hover:underline"
         >
           تسجيل الخروج
         </button>

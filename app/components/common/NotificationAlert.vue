@@ -7,7 +7,7 @@ const typeClasses = computed(() => {
     case "success":
       return "bg-green-500/10 border-green-500/20 text-green-500";
     case "error":
-      return "bg-red-500/10 border-red-500/20 text-red-500";
+      return "bg-danger/10 border-red-500/20 text-danger";
     case "warning":
       return "bg-amber-500/10 border-amber-500/20 text-amber-500";
     case "info":
@@ -30,10 +30,10 @@ const typeClasses = computed(() => {
       v-if="notificationStore.isVisible"
       @mouseenter="notificationStore.pauseTimer()"
       @mouseleave="notificationStore.resumeTimer()"
-      class="shadow-soft relative mb-6 flex w-full items-center justify-between overflow-hidden rounded-xl border p-4 text-sm font-medium transition-all xl:max-w-[30%]"
+      class="shadow-soft mb-section-fluid text-fluid-sm p-fluid relative flex w-full items-center justify-between overflow-hidden rounded-xl border font-medium xl:max-w-[30%]"
       :class="typeClasses"
     >
-      <div class="z-10 flex items-center gap-3">
+      <div class="gap-fluid z-10 flex items-center">
         <span v-if="notificationStore.type === 'success'">✅</span>
         <span v-else-if="notificationStore.type === 'error'">❌</span>
         <span v-else-if="notificationStore.type === 'warning'">⚠️</span>
@@ -43,7 +43,7 @@ const typeClasses = computed(() => {
 
       <button
         @click="notificationStore.clear()"
-        class="z-10 cursor-pointer p-1 text-xs opacity-70 hover:opacity-100"
+        class="text-fluid-xs z-10 cursor-pointer p-1 opacity-70 hover:opacity-100"
       >
         ✕
       </button>

@@ -42,6 +42,14 @@
   padding: clamp(1rem, 4vw, 3rem);
 }
 
+@utility py-section-fluid {
+  padding-block: clamp(1.25rem, 4vw, 3rem) clamp(1rem, 5vw, 4rem);
+}
+
+@utility px-section-fluid {
+  padding-inline: clamp(1.25rem, 4vw, 3rem) clamp(1rem, 5vw, 4rem);
+}
+
 @utility m-fluid {
   margin: clamp(0.7rem, 2vw, 1rem);
 }
@@ -84,11 +92,15 @@
 
 @layer components {
   .btn-primary {
-    @apply text-primary bg-bg px-fluid text-fluid-p border-primary/30 md:hover:text-primary/70 md:hover:bg-card cursor-pointer rounded-lg border py-1.5 shadow-md transition-all active:scale-95;
+    @apply text-primary bg-bg px-fluid text-fluid-p border-primary/30 md:hover:text-primary/70 md:hover:bg-card cursor-pointer rounded-lg border py-1.5 shadow-md active:scale-95;
   }
 
   .btn-danger {
-    @apply px-fluid text-fluid-p text-danger bg-bg border-danger/10 md:hover:text-danger/70 md:hover:bg-card cursor-pointer rounded-lg border py-1.5 shadow-md transition-all active:scale-95;
+    @apply px-fluid text-fluid-p text-danger bg-bg border-danger/10 md:hover:text-danger/70 md:hover:bg-card cursor-pointer rounded-lg border py-1.5 shadow-md active:scale-95;
+  }
+
+  .select-primary {
+    @apply text-primary bg-bg px-fluid mx-fluid text-fluid-p border-primary/30 cursor-pointer rounded-lg border py-1.5 shadow-md outline-none;
   }
 }
 

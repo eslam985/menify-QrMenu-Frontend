@@ -2,11 +2,10 @@
 <script setup lang="ts">
 const authStore = useAuthStore();
 
-
-
 onMounted(() => {
   authStore.init();
-});</script>
+});
+</script>
 
 <template>
   <div class="bg-bg text-text relative flex min-h-screen w-full flex-col">

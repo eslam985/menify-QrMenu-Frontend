@@ -20,13 +20,13 @@ const totalItemsCount = computed(() =>
         @click="isCartOpen = true"
         class="bg-primary p-fluid shadow-glow flex w-full cursor-pointer flex-row-reverse items-center justify-between rounded-xl font-bold text-white transition hover:opacity-95 dark:text-black"
       >
-        <div class="flex items-center gap-3">
-          <span class="rounded-lg bg-white/20 px-3 py-1 text-sm">
+        <div class="gap-fluid flex items-center">
+          <span class="px-fluid text-fluid-sm rounded-lg bg-white/20 py-1">
             {{ totalItemsCount }}
           </span>
           <span>عرض الفاتورة</span>
         </div>
-        <span class="text-lg">
+        <span class="text-fluid-p">
           اجمالي الفاتورة ({{ formatPrice(cartStore.totalPrice) }}
           {{ publicMenuStore.restaurant?.currency || "EGP" }})
         </span>
@@ -53,13 +53,13 @@ const totalItemsCount = computed(() =>
           <h3 class="text-(length:--text-fluid-h3) font-bold">الحساب</h3>
           <button
             @click="cartStore.clearCart()"
-            class="flex cursor-pointer items-center gap-1 text-xs font-semibold text-red-400 hover:text-red-500"
+            class="text-fluid-xs hover:text-danger flex cursor-pointer items-center gap-1 font-semibold text-red-400"
           >
             <Icon name="lucide:trash-2" class="h-4 w-4" /> مسح الكل
           </button>
         </div>
 
-        <div class="flex flex-1 flex-col gap-3 overflow-y-auto py-4">
+        <div class="gap-fluid flex flex-1 flex-col overflow-y-auto py-4">
           <div
             v-for="item in cartStore.items"
             :key="item.id"
@@ -69,7 +69,7 @@ const totalItemsCount = computed(() =>
               <h4 class="text-(length:--text-fluid-sm) font-bold">
                 {{ item.title }}
               </h4>
-              <div class="mt-1 flex items-center justify-between text-xs">
+              <div class="text-fluid-xs mt-1 flex items-center justify-between">
                 <span class="text-text/70">
                   {{ item.quantity }} × {{ formatPrice(item.price) }}
                   {{ publicMenuStore.restaurant?.currency || "EGP" }}
@@ -84,11 +84,11 @@ const totalItemsCount = computed(() =>
             <div class="flex items-center gap-2">
               <button
                 @click="cartStore.removeItem(item.id)"
-                class="bg-card flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg font-bold transition hover:bg-red-500 hover:text-white"
+                class="bg-card hover:bg-danger flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg font-bold transition hover:text-white"
               >
                 -
               </button>
-              <span class="w-4 text-center text-sm font-bold">{{
+              <span class="text-fluid-sm w-4 text-center font-bold">{{
                 item.quantity
               }}</span>
               <button
@@ -101,8 +101,10 @@ const totalItemsCount = computed(() =>
           </div>
         </div>
 
-        <div class="border-primary/10 flex flex-col gap-3 border-t pt-4">
-          <div class="flex items-center justify-between text-lg font-black">
+        <div class="border-primary/10 gap-fluid flex flex-col border-t pt-4">
+          <div
+            class="text-fluid-p flex items-center justify-between font-black"
+          >
             <span>الإجمالي الكلي:</span>
             <span class="text-primary"
               >{{ cartStore.totalPrice }}

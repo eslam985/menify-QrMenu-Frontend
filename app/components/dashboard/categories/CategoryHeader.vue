@@ -18,16 +18,16 @@ const handleRefresh = async () => {
 
 <template>
   <div
-    class="mx-auto mb-8 flex w-full flex-col items-start justify-between gap-4 lg:flex-row lg:items-center 2xl:max-w-[90%]"
+    class="mb-section-fluid gap-fluid mx-auto flex w-full flex-col items-start justify-between lg:flex-row lg:items-center 2xl:max-w-[90%]"
   >
     <div class="w-full md:max-w-[40%]">
-      <h1 class="text-primary text-2xl font-bold">إدارة التصنيفات</h1>
-      <p class="text-text/60 mt-1 text-xs">
+      <h1 class="text-primary text-fluid-p font-bold">إدارة التصنيفات</h1>
+      <p class="text-text/60 text-fluid-xs mt-1">
         تحكم في أقسام المنيو وترتيبها وعرض جميع التفاصيل للعملاء
       </p>
     </div>
 
-    <div class="flex w-full flex-wrap items-center gap-3 md:w-auto">
+    <div class="gap-fluid flex w-full flex-wrap items-center md:w-auto">
       <CommonBaseSearchInput />
 
       <button

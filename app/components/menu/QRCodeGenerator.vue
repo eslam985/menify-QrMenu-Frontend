@@ -61,7 +61,7 @@ watch(slug, () => {
       QR كود المنيو الخاص بك
     </h3>
 
-    <div class="bg-card rounded-2xl p-4 shadow-md">
+    <div class="bg-card p-fluid rounded-2xl shadow-md">
       <img
         v-if="qrCodeUrl"
         :src="qrCodeUrl"
@@ -76,16 +76,16 @@ watch(slug, () => {
     </div>
 
     <div
-      class="flex w-full flex-col items-center justify-center gap-3 sm:flex-row"
+      class="gap-fluid flex w-full flex-col items-center justify-center sm:flex-row"
     >
       <p
-        class="text-fluid-sm text-primary bg-card border-primary/10 rounded-lg border px-3 py-2 text-center break-all"
+        class="text-fluid-sm text-primary bg-card border-primary/10 px-fluid rounded-lg border py-2 text-center break-all"
       >
         {{ menuLink }}
       </p>
       <button
         @click="copyLink"
-        class="bg-card border-primary/20 text-text hover:bg-primary/10 flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition"
+        class="bg-card border-primary/20 text-text hover:bg-primary/10 px-fluid text-fluid-xs flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border py-2 font-medium transition"
       >
         <Icon
           :name="copied ? 'lucide:check' : 'lucide:copy'"
@@ -95,7 +95,7 @@ watch(slug, () => {
       </button>
     </div>
 
-    <div class="flex w-full flex-wrap items-center justify-center gap-3">
+    <div class="gap-fluid flex w-full flex-wrap items-center justify-center">
       <a
         v-if="qrCodeUrl"
         :href="qrCodeUrl"

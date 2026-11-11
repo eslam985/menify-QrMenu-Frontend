@@ -127,9 +127,9 @@ onMounted(() => {
     <div
       class="bg-card border-primary/10 shadow-soft p-section-fluid rounded-2xl border text-right"
     >
-      <div class="mb-6">
-        <h1 class="text-primary text-2xl font-bold">تسجيل مطعم جديد</h1>
-        <p class="text-text/60 mt-1 text-xs">
+      <div class="mb-section-fluid">
+        <h1 class="text-primary text-fluid-p font-bold">تسجيل مطعم جديد</h1>
+        <p class="text-text/60 text-fluid-xs mt-1">
           أدخل كود الدعوة الذي حصلت عليه وبيانات المطعم الأساسية لإطلاق لوحة
           التحكم
         </p>
@@ -138,7 +138,7 @@ onMounted(() => {
       <UiBaseForm>
         <template #extra-fields>
           <div class="mt-1 text-right" dir="rtl">
-            <p class="text-text/60 text-xs">
+            <p class="text-text/60 text-fluid-xs">
               رابط المنيو الخاص بك سيكون:
               <span class="text-primary mt-1 block font-bold" dir="ltr">
                 /menu/{{
@@ -149,7 +149,7 @@ onMounted(() => {
             </p>
             <p
               v-if="authStore.errorMessage"
-              class="mt-4 rounded-xl bg-red-500/10 p-3 text-sm text-red-500"
+              class="mt-fluid bg-danger/10 p-fluid text-fluid-sm text-danger rounded-xl"
             >
               {{ authStore.errorMessage }}
             </p>
@@ -158,12 +158,12 @@ onMounted(() => {
           <div class="gap-fluid mt-2 flex flex-col">
             <p
               v-if="authStore.errorMessage"
-              class="rounded-xl bg-red-500/10 p-3 text-sm text-red-500"
+              class="bg-danger/10 p-fluid text-fluid-sm text-danger rounded-xl"
             >
               {{ authStore.errorMessage }}
             </p>
 
-            <div class="text-text/60 mt-2 text-center text-xs">
+            <div class="text-text/60 text-fluid-xs mt-2 text-center">
               لديك مطعم مسجل؟
               <NuxtLink
                 to="/auth/login"

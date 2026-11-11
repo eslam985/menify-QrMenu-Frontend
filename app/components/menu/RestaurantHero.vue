@@ -47,11 +47,13 @@ const todayHours = computed(() => {
     </div>
 
     <div
-      v-else-if="publicMenuStore.error"
+      v-else-if="
+        typeof publicMenuStore.error === 'string' && publicMenuStore.error
+      "
       class="my-fluid bg-denger/10 border-denger/20 text-denger p-fluid m-auto mx-auto max-w-7xl self-center rounded-xl border text-center"
     >
       <p class="font-bold">حدث خطأ أثناء تحميل بيانات المطعم.</p>
-      <p class="mt-1 text-sm opacity-80">
+      <p class="text-fluid-sm mt-1 opacity-80">
         {{ publicMenuStore.error || "حاول تاني" }}
       </p>
     </div>
@@ -91,7 +93,7 @@ const todayHours = computed(() => {
             </h1>
             <p
               v-if="publicMenuStore.restaurant.slug"
-              class="mt-1 text-sm text-white/60"
+              class="text-fluid-sm mt-1 text-white/60"
             >
               @{{ publicMenuStore.restaurant.slug }}
             </p>
@@ -105,11 +107,11 @@ const todayHours = computed(() => {
           </p>
 
           <div
-            class="flex max-w-xl flex-wrap items-center gap-3 text-sm text-white/80"
+            class="gap-fluid text-fluid-sm flex max-w-xl flex-wrap items-center text-white/80"
           >
             <span
               v-if="publicMenuStore.restaurant.address"
-              class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5 backdrop-blur-md"
+              class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5"
             >
               <Icon name="lucide:map-pin" class="text-primary h-4 w-4" />
               {{ publicMenuStore.restaurant.address }}
@@ -117,7 +119,7 @@ const todayHours = computed(() => {
 
             <span
               v-if="todayHours"
-              class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5 backdrop-blur-md"
+              class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5"
             >
               <Icon name="lucide:clock" class="text-primary h-4 w-4" />
               <span>{{ todayHours.dayName }}:</span>
@@ -131,7 +133,7 @@ const todayHours = computed(() => {
 
             <span
               v-if="publicMenuStore.restaurant.timezone"
-              class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5 backdrop-blur-md"
+              class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5"
             >
               <Icon name="lucide:globe" class="text-primary h-4 w-4" />
               {{ publicMenuStore.restaurant.timezone }}
@@ -158,7 +160,7 @@ const todayHours = computed(() => {
               v-if="publicMenuStore.restaurant.maps_url"
               :href="publicMenuStore.restaurant.maps_url"
               target="_blank"
-              class="border-primary/20 flex self-center rounded-xl border bg-white/10 p-2.5 text-white backdrop-blur-md transition hover:bg-white/20"
+              class="border-primary/20 flex self-center rounded-xl border bg-white/10 p-2.5 text-white transition hover:bg-white/20"
               title="الخريطة"
             >
               <Icon name="lucide:navigation" class="h-5 w-5" />
@@ -167,7 +169,7 @@ const todayHours = computed(() => {
               v-if="publicMenuStore.restaurant.instagram_url"
               :href="publicMenuStore.restaurant.instagram_url"
               target="_blank"
-              class="border-primary/20 flex self-center rounded-xl border bg-white/10 p-2.5 text-white backdrop-blur-md transition hover:bg-white/20"
+              class="border-primary/20 flex self-center rounded-xl border bg-white/10 p-2.5 text-white transition hover:bg-white/20"
               title="Instagram"
             >
               <Icon name="simple-icons:instagram" class="h-5 w-5" />
@@ -176,7 +178,7 @@ const todayHours = computed(() => {
               v-if="publicMenuStore.restaurant.facebook_url"
               :href="publicMenuStore.restaurant.facebook_url"
               target="_blank"
-              class="border-primary/20 flex self-center rounded-xl border bg-white/10 p-2.5 text-white backdrop-blur-md transition hover:bg-white/20"
+              class="border-primary/20 flex self-center rounded-xl border bg-white/10 p-2.5 text-white transition hover:bg-white/20"
               title="Facebook"
             >
               <Icon name="simple-icons:facebook" class="h-5 w-5" />

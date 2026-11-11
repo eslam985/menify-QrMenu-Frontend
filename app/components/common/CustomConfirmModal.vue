@@ -15,29 +15,26 @@ const confirmStore = useConfirmStore();
     <div
       v-if="confirmStore.isOpen"
       @click.self="confirmStore.isOpen = false"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
+      class="p-fluid fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs"
     >
       <div
-        class="bg-card border-primary/10 w-full max-w-sm rounded-2xl border p-6 text-right shadow-2xl"
+        class="bg-card border-primary/10 p-section-fluid w-full max-w-sm rounded-2xl border text-right shadow-2xl"
       >
-        <h3 class="text-primary mb-2 text-lg font-bold">
+        <h3 class="text-primary text-fluid-p mb-2 font-bold">
           {{ confirmStore.title }}
         </h3>
-        <p class="text-text/80 mb-6 text-sm leading-relaxed">
+        <p class="text-text/80 mb-section-fluid text-fluid-sm leading-relaxed">
           {{ confirmStore.message }}
         </p>
 
-        <div class="flex gap-3">
+        <div class="gap-fluid flex">
           <button
             @click="confirmStore.handleConfirm"
-            class="flex-1 cursor-pointer rounded-xl bg-red-500 py-2.5 text-xs font-bold text-white transition hover:opacity-90"
+            class="btn-danger flex-1 transition"
           >
             تأكيد
           </button>
-          <button
-            @click="confirmStore.handleCancel"
-            class="bg-card border-primary/10 text-text hover:bg-primary/5 flex-1 cursor-pointer rounded-xl border py-2.5 text-xs font-bold transition"
-          >
+          <button @click="confirmStore.handleCancel" class="btn-primary flex-1">
             إلغاء
           </button>
         </div>

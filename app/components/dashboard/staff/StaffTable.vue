@@ -94,7 +94,7 @@ const role = (role: string): "Admin" | "Editor" | "User" | "N/A" => {
         class="flex items-center justify-center"
       >
         <span
-          class="bg-bg text-success border-primary/10 rounded-full border px-3 py-1 text-xs font-semibold"
+          class="bg-bg text-success border-primary/10 px-fluid text-fluid-xs rounded-full border py-1 font-semibold"
         >
           Admin
         </span>
@@ -106,7 +106,7 @@ const role = (role: string): "Admin" | "Editor" | "User" | "N/A" => {
       >
         <NuxtLink
           :to="`/dashboard/staff/edit-employee/${row.id}`"
-          class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary cursor-pointer rounded-xl border px-3 py-1.5 text-xs font-medium transition-all active:scale-95"
+          class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary px-fluid text-fluid-xs cursor-pointer rounded-xl border py-1.5 font-medium active:scale-95"
         >
           تعديل
         </NuxtLink>
@@ -115,7 +115,7 @@ const role = (role: string): "Admin" | "Editor" | "User" | "N/A" => {
           type="button"
           @click="handleDelete((row as unknown as UserResponse).id)"
           :disabled="staffStore.isLoading"
-          class="cursor-pointer rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-1.5 text-xs font-medium text-red-500 transition-all hover:bg-red-500/10 active:scale-95 disabled:opacity-50"
+          class="bg-danger/5 px-fluid text-fluid-xs text-danger hover:bg-danger/10 cursor-pointer rounded-xl border border-red-500/20 py-1.5 font-medium active:scale-95 disabled:opacity-50"
         >
           حذف
         </button>
