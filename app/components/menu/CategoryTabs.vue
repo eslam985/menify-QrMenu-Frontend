@@ -1,52 +1,28 @@
 <script setup lang="ts">
+import { usePublicMenuState } from "@/composables/usePublicMenu";
+
 const route = useRoute();
 
-const publicMenuStore = usePublicMenuStore();
-
-const activeCategory = ref<string | number | null>(null);
-const selectedsection = ref("كل الاقسام");
-const isSticky = ref(false);
-
-const sections = computed(() => publicMenuStore.sections);
-
-const scrollToCategory = (categoryId: string | number) => {
-  if (!categoryId) return;
-
-  activeCategory.value = categoryId;
-
-  const element = document.getElementById(`category-${categoryId}`);
-
-  if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
-};
-
-// 💡 الخاصية الجديدة لفلترة الأقسام بناءً على السيكشن المختار
-const filteredCategories = computed(() => {
-  const res =
-    selectedsection.value === "كل الاقسام"
-      ? publicMenuStore.categories
-      : publicMenuStore.categories.filter(
-          (category) => category.section === selectedsection.value,
-        );
-
-  return res;
-});
-
-// 💡 وظيفة تفحص مكان الاسكرول وتحدد متى يلتصق الشريط بالظبط
-const handleScroll = () =>
-  window.scrollY > 1000 ? (isSticky.value = true) : (isSticky.value = false);
-
-// إذا تغير السيكشن، نجعل التحديد يبدأ من أول عنصر متاح في الفلتر الجديد
-watch(selectedsection, () => (activeCategory.value = null));
+const {
+  activeCategory,
+  targetCategories,
+  publicMenuStore,
+  selectedsection,
+  sections,
+  isSticky,
+  scrollToCategory,
+  handleScroll,
+} = usePublicMenuState();
 
 onMounted(() => {
-  const slug = route.params.slug;
-  const menuSlug = Array.isArray(slug) ? slug[0] : slug;
-  menuSlug ? publicMenuStore.fetchMenu(menuSlug) : null;
-
+  const slug = fromRouteQuery(route.params.slug);
+  publicMenuStore.fetchMenu(fromRouteQuery(slug));
   window.addEventListener("scroll", handleScroll, true);
 });
 
 onUnmounted(() => window.removeEventListener("scroll", handleScroll, true));
+
+watch(selectedsection, () => (activeCategory.value = null));
 </script>
 
 <template>
@@ -69,7 +45,6 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll, true));
       </span>
     </div>
 
-    <!-- 💡 الحاوية هنا تتغير ديناميكياً بناءً على الاسكرول وتأخذ العرض المناسب لشاشات الموبايل والديسك توب -->
     <div
       :class="[
         'z-50 w-full transition-all duration-300',
@@ -78,7 +53,6 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll, true));
           : 'my-fluid relative',
       ]"
     >
-      <!-- شريط التصنيفات الدائري -->
       <div
         :class="[
           'p-fluid no-scrollbar bg-card/80 border-primary/30 flex items-center gap-2 overflow-x-auto border-y',
@@ -93,7 +67,7 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll, true));
         </select>
 
         <button
-          v-for="category in filteredCategories"
+          v-for="category in targetCategories"
           :key="category.id"
           @click="scrollToCategory(category.id)"
           :class="[

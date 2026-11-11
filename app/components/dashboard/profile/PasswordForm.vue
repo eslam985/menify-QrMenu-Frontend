@@ -1,16 +1,15 @@
 <!-- app/components/dashboard/profile/PasswordForm.vue -->
 <script setup lang="ts">
-import { useForm, type FormField } from "~/composables/useForm";
-
 import type { ChangePasswordType } from "@/schemas/userSchema/userSchema";
+import { useProfileState } from "@/composables/profile/useProfileState";
+import { useForm } from "~/composables/useForm";
 
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
   formInstance;
-
 provide("current_form_instance", formInstance);
 
-const userStore = useUserStore();
+const { handleSubmit, userStore, notiStore } = useProfileState();
 
 const passwordFieldsConfig: FormField[] = [
   {
@@ -39,41 +38,45 @@ const passwordFieldsConfig: FormField[] = [
   },
 ];
 
-const handlePasswordSubmit = async () => {
-  const payload = formDataPayload.value;
+const onSuccessReset = (isSuccess: boolean) => {
+  if (!isSuccess) return;
 
-  if (Object.keys(payload)?.length < 1) return;
+  resetForm();
+  handleSetFormConfig();
+};
 
-  if (payload.newPassword !== payload.confirmPassword) {
-    const notiStore = useNotificationStore();
-    notiStore.show("كلمة المرور الجديدة وتأكيدها غير متطابقين!", "error");
+const submit = () => {
+  const newPassword = formDataPayload.value.newPassword;
+  const confirmPassword = formDataPayload.value.confirmPassword;
+  const isPasswordExist = newPassword && confirmPassword;
+  const isPasswordNotMatch = isPasswordExist && newPassword !== confirmPassword;
+
+  if (isPasswordNotMatch) {
+    const msg = "كلمة المرور الجديدة وتأكيدها غير متطابقين!";
+    notiStore.show(msg, "error");
     return;
   }
 
-  isSubmitting.value = true;
+  handleSubmit(
+    formDataPayload.value as ChangePasswordType["body"] & {
+      confirmPassword: string;
+    },
+    isSubmitting,
+    () =>
+      userStore.changePassword(
+        formDataPayload.value as ChangePasswordType["body"],
+      ),
+    onSuccessReset,
+  );
+};
 
-  const paylod = {
-    currentPassword: payload.currentPassword,
-    newPassword: payload.newPassword,
-  };
-
-  try {
-    const isSuccess = await userStore.changePassword(
-      paylod as ChangePasswordType["body"],
-    );
-
-    if (isSuccess) {
-      resetForm();
-      setFormConfig(passwordFieldsConfig, handlePasswordSubmit);
-    }
-  } finally {
-    isSubmitting.value = false;
-  }
+const handleSetFormConfig = () => {
+  setFormConfig(passwordFieldsConfig, () => submit());
 };
 
 onMounted(() => {
   resetForm();
-  setFormConfig(passwordFieldsConfig, handlePasswordSubmit);
+  handleSetFormConfig();
 });
 </script>
 

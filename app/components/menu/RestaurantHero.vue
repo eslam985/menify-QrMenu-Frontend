@@ -1,38 +1,7 @@
 <script setup lang="ts">
-const publicMenuStore = usePublicMenuStore();
+import { usePublicMenuState } from "@/composables/usePublicMenu";
 
-const daysMap: Record<string, string> = {
-  sun: "الأحد",
-  mon: "الإثنين",
-  tue: "الثلاثاء",
-  wed: "الأربعاء",
-  thu: "الخميس",
-  fri: "الجمعة",
-  sat: "السبت",
-};
-
-const todayHours = computed(() => {
-  const hours = publicMenuStore.restaurant?.working_hours;
-  if (!hours || typeof hours !== "object") return null;
-
-  const daysKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
-  const currentDayKey = daysKeys[new Date().getDay()];
-
-  if (!currentDayKey) return null;
-
-  const todayData = hours[currentDayKey];
-  const dayName = daysMap[currentDayKey];
-
-  if (!todayData || !todayData.open || !todayData.close) {
-    return { dayName, text: "مغلق اليوم", isOpen: false };
-  }
-
-  return {
-    dayName,
-    text: `${todayData.open} ${todayData.close}`,
-    isOpen: true,
-  };
-});
+const { publicMenuStore, todayHours } = usePublicMenuState();
 </script>
 
 <template>

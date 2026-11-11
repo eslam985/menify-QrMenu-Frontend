@@ -1,6 +1,6 @@
 <!-- app/components/dashboard/categories/CategoryTable.vue -->
 <script setup lang="ts">
-import { useCategorySearch } from "~/composables/useCategorySearch";
+import { useCategorySearch } from "~/composables/category/useCategorySearch";
 import { useTable } from "~/composables/useTable";
 import type { UserResponse } from "~/types/userType/userType";
 

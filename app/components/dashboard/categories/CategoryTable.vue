@@ -1,26 +1,16 @@
 <!-- app/components/dashboard/categories/CategoryTable.vue -->
 <script setup lang="ts">
-import { useCategorySearch } from "~/composables/useCategorySearch";
+import { useCategoryState } from "@/composables/category/useCategoryState";
 import { useTable } from "~/composables/useTable";
 
-const categoryStore = useCategoryStore();
-const authStore = useAuthStore();
-
-const { searchQuery } = useCategorySearch();
-const { openModal } = useCategoryModal();
+const {
+  authStore,
+  categoryStore,
+  filteredCategories,
+  openModal,
+  handleDelete,
+} = useCategoryState();
 const { setTableConfig } = useTable();
-
-const filteredCategories = computed(() => {
-  if (!searchQuery.value) return categoryStore.categories;
-
-  const query = searchQuery.value.toLowerCase().trim();
-
-  return categoryStore.categories.filter(
-    (cat) =>
-      cat.name.toLowerCase().includes(query) ||
-      cat.section.toLowerCase().includes(query),
-  );
-});
 
 const tableColumns = [
   { key: "name", label: "اسم التصنيف" },
@@ -39,11 +29,6 @@ watchEffect(() => {
     categoryStore.isLoading,
   );
 });
-
-const handleDelete = async (categoryId: string) => {
-  if (!categoryId) return;
-  await categoryStore.removeCategory(categoryId);
-};
 </script>
 
 <template>

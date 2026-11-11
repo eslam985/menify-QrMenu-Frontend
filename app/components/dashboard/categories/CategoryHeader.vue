@@ -1,19 +1,8 @@
 <!-- app/components/dashboard/categories/CategoryHeader.vue -->
 <script setup lang="ts">
-import { useCategoryModal } from "~/composables/useCategoryModal";
-const authStore = useAuthStore();
-
-const { openModal } = useCategoryModal();
-const categoryStore = useCategoryStore();
-const notiStore = useNotificationStore();
-
-const handleRefresh = async () => {
-  const isSuccess = await categoryStore.fetchCategories();
-
-  if (isSuccess) {
-    notiStore.show("تم تحديث البيانات بنجاح", "success");
-  }
-};
+import { useCategoryState } from "@/composables/category/useCategoryState";
+const { authStore, categoryStore, handleRefresh, openModal } =
+  useCategoryState();
 </script>
 
 <template>

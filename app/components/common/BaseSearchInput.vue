@@ -1,6 +1,6 @@
 <!-- app/components/common/BaseSearchInput.vue -->
 <script setup lang="ts">
-import { useCategorySearch } from "~/composables/useCategorySearch";
+import { useCategorySearch } from "~/composables/category/useCategorySearch";
 
 const { searchQuery, setSearchQuery } = useCategorySearch();
 

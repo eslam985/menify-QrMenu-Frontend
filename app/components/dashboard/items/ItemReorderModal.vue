@@ -1,88 +1,38 @@
 <!-- app/components/dashboard/items/ItemReorderModal.vue -->
 <script setup lang="ts">
-import { useItemReorderModal } from "~/composables/useItemReorderModal";
+import { useItemState } from "@/composables/item/useItemState";
 
-const { isOpen, closeModal } = useItemReorderModal();
-const itemStore = useItemStore();
-const categoryStore = useCategoryStore();
-
-const selectedCategoryId = ref("");
-const localItems = ref<typeof itemStore.items>([]);
-const isSaving = ref(false);
-const draggedIndex = ref<number | null>(null);
-
-watch(isOpen, (open) => {
-  if (open) {
-    const firstCategory = categoryStore.categories[0];
-
-    if (firstCategory && !selectedCategoryId.value) {
-      selectedCategoryId.value = firstCategory.id;
-    }
-
-    loadCategoryItems();
-  }
-});
-
-const loadCategoryItems = () => {
-  if (!selectedCategoryId.value) {
-    localItems.value = [];
-    return;
-  }
-  localItems.value = itemStore.items
-    .filter((item) => item.category_id === selectedCategoryId.value)
-    .sort((a, b) => a.display_order - b.display_order);
-};
+const {
+  categoryStore,
+  selectedCategoryId,
+  localItems,
+  isSaving,
+  draggedIndex,
+  isOpenItemReorderModal,
+  closeModalItemReorderModal,
+  loadCategoryItems,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  handleSaveReorder,
+  initializeModal,
+} = useItemState();
 
 watch(selectedCategoryId, () => {
   loadCategoryItems();
 });
 
-const onDragStart = (index: number) => {
-  draggedIndex.value = index;
-};
-
-const onDragOver = (event: DragEvent) => {
-  event.preventDefault();
-};
-
-const onDrop = (dropIndex: number) => {
-  if (draggedIndex.value === null || draggedIndex.value === dropIndex) return;
-
-  const itemToMove = localItems.value.splice(draggedIndex.value, 1)[0];
-
-  if (!itemToMove) {
-    draggedIndex.value = null;
-    return;
+watch(isOpenItemReorderModal, (open) => {
+  if (open) {
+    initializeModal();
   }
-
-  localItems.value.splice(dropIndex, 0, itemToMove);
-  draggedIndex.value = null;
-};
-
-const handleSaveReorder = async () => {
-  if (localItems.value.length === 0 || !selectedCategoryId.value) return;
-
-  isSaving.value = true;
-  try {
-    const payload = {
-      category_id: selectedCategoryId.value,
-      ids: localItems.value.map((item) => item.id),
-    };
-
-    const success = await itemStore.reorderItems(payload);
-    if (success) {
-      closeModal();
-    }
-  } finally {
-    isSaving.value = false;
-  }
-};
+});
 </script>
 
 <template>
   <div
-    v-if="isOpen"
-    @click.self="closeModal"
+    v-if="isOpenItemReorderModal"
+    @click.self="closeModalItemReorderModal"
     class="p-fluid fixed inset-0 z-50 flex items-center justify-center bg-black/60"
   >
     <div
@@ -97,7 +47,7 @@ const handleSaveReorder = async () => {
         </h3>
         <button
           type="button"
-          @click="closeModal"
+          @click="closeModalItemReorderModal"
           class="text-text/50 hover:text-text cursor-pointer"
         >
           <Icon name="lucide:x" class="h-5 w-5" />
@@ -181,7 +131,11 @@ const handleSaveReorder = async () => {
           />
           {{ isSaving ? "جاري الحفظ..." : "حفظ الترتيب الجديد" }}
         </button>
-        <button type="button" @click="closeModal" class="btn-danger">
+        <button
+          type="button"
+          @click="closeModalItemReorderModal"
+          class="btn-danger"
+        >
           إلغاء
         </button>
       </div>

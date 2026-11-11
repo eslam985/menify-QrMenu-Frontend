@@ -1,20 +1,8 @@
 <!-- app/components/menu/PublicOffersSection.vue -->
 <script setup lang="ts">
-import type { OfferItemResponse } from "@/types/dataType/offerType";
-import type { PublicOffer } from "@/types/dataType/publicMenuType";
-const publicMenuStore = usePublicMenuStore();
+import { usePublicMenuState } from "@/composables/usePublicMenu";
 
-const getOriginalTotal = (offer: PublicOffer) => {
-  if (offer.original_total) return offer.original_total;
-
-  if (!offer.items || !offer.items.length) return 0;
-
-  return offer.items.reduce((sum: number, item: OfferItemResponse) => {
-    const unitPrice = item.unit_price || 0;
-    const qty = item.quantity || 0;
-    return sum + unitPrice * qty;
-  }, 0);
-};
+const { publicMenuStore, getOriginalTotal } = usePublicMenuState();
 </script>
 
 <template>

@@ -1,18 +1,17 @@
 <!-- app/components/dashboard/categories/CategoryModal.vue -->
 <script setup lang="ts">
-import { useCategoryModal } from "~/composables/useCategoryModal";
-import { useForm, type FormField } from "~/composables/useForm";
-
 import type { CreateCategoryType } from "@/schemas/categorySchema/categorySchema";
 import type { CategorySection } from "@/types/dataType/categoryType";
-const { isOpen, editingCategory, closeModal } = useCategoryModal();
-const categoryStore = useCategoryStore();
+import { useForm, type FormField } from "~/composables/useForm";
+
+import { useCategoryState } from "@/composables/category/useCategoryState";
+
+const { authStore, categoryStore, isOpen, editingCategory, closeModal } =
+  useCategoryState();
 
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
   formInstance;
-const authStore = useAuthStore();
-
 provide("current_form_instance", formInstance);
 
 const categoryFieldsConfig: FormField[] = [

@@ -1,17 +1,16 @@
 <!-- app/components/dashboard/profile/ProfileInfoForm.vue -->
 <script setup lang="ts">
+import { useProfileState } from "@/composables/profile/useProfileState";
 import { useForm, type FormField } from "~/composables/useForm";
-import type { UserResponse } from "~/types/userType/userType";
 import type { UpdateUserByIdType } from "@/schemas/userSchema/userSchema";
 
-const formInstance = useForm();
+const formInstanceProfile = useForm();
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
-  formInstance;
+  formInstanceProfile;
 
-provide("current_form_instance", formInstance);
+provide("current_form_instance", formInstanceProfile);
 
-const userStore = useUserStore();
-const authStore = useAuthStore();
+const { handleSubmit, userStore, authStore } = useProfileState();
 
 const profileFieldsConfig: FormField[] = [
   {
@@ -33,17 +32,14 @@ const profileFieldsConfig: FormField[] = [
 ];
 
 const handleProfileSubmit = async () => {
-  const payload = formDataPayload.value;
-
-  if (Object.keys(payload)?.length < 1) return;
-
-  isSubmitting.value = true;
-
-  try {
-    await userStore.updateUserInfo(payload as UpdateUserByIdType["body"]);
-  } finally {
-    isSubmitting.value = false;
-  }
+  handleSubmit(
+    formDataPayload.value as UpdateUserByIdType["body"],
+    isSubmitting,
+    () =>
+      userStore.updateUserInfo(
+        formDataPayload.value as UpdateUserByIdType["body"],
+      ),
+  );
 };
 
 onMounted(async () => {
@@ -51,7 +47,7 @@ onMounted(async () => {
 
   userStore.isLoading = true;
   try {
-    const currentInfo = authStore.user as UserResponse;
+    const currentInfo = authStore.user;
 
     if (currentInfo) {
       setFormConfig(profileFieldsConfig, handleProfileSubmit, {

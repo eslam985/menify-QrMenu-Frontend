@@ -1,34 +1,12 @@
 <!-- app/components/dashboard/offers/OfferTable.vue -->
 <script setup lang="ts">
-import { useOfferSearch } from "~/composables/useOfferSearch";
-import { useTable } from "~/composables/useTable";
 import type { OfferResponse } from "~/types/dataType/offerType";
 
-const offerStore = useOfferStore();
-const { searchQuery, statusFilter } = useOfferSearch();
+import { useOfferState } from "@/composables/offer/useOfferState";
+import { useTable } from "~/composables/useTable";
+
+const { authStore, offerStore, filteredOffers } = useOfferState();
 const { setTableConfig } = useTable();
-const authStore = useAuthStore();
-
-const filteredOffers = computed(() => {
-  let result = offerStore.offers;
-
-  if (statusFilter.value === "active") {
-    result = result.filter((o) => o.is_active);
-  } else if (statusFilter.value === "paused") {
-    result = result.filter((o) => !o.is_active);
-  }
-
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase().trim();
-    result = result.filter(
-      (o) =>
-        o.title.toLowerCase().includes(query) ||
-        (o.description && o.description.toLowerCase().includes(query)),
-    );
-  }
-
-  return result;
-});
 
 const tableColumns = [
   { key: "image_url", label: "الصورة" },
@@ -49,11 +27,6 @@ const tableColumns = [
 watchEffect(() => {
   setTableConfig(tableColumns, filteredOffers.value, offerStore.isLoading);
 });
-
-const formatDate = (dateStr: string) => {
-  if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleString("ar-EG");
-};
 </script>
 
 <template>

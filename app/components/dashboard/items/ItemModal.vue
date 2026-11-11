@@ -7,28 +7,25 @@ import type {
 import { useForm, type FormField } from "~/composables/useForm";
 import type { MenuItemResponse } from "~/types/dataType/menuItemType";
 
-import { useItemModal } from "~/composables/useItemModal";
+import { useItemState } from "@/composables/item/useItemState";
 
-const { isOpen, selectedItem: editingItem, closeModal } = useItemModal();
-const categoryStore = useCategoryStore();
-const itemStore = useItemStore();
+const {
+  isOpenItem,
+  selectedItem: editingItem,
+  closeItemModal,
+  categoryStore,
+  itemStore,
+  isAvailable,
+  selectedFile,
+  imagePreview,
+  handleFileChange,
+} = useItemState();
+
 const formInstance = useForm();
 
 const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
   formInstance;
 provide("current_form_instance", formInstance);
-
-const selectedFile = ref<File | null>(null);
-const imagePreview = ref<string | null>(null);
-const isAvailable = ref<boolean>(true);
-
-const handleFileChange = (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  if (target.files && target.files[0]) {
-    selectedFile.value = target.files[0];
-    imagePreview.value = URL.createObjectURL(target.files[0]);
-  }
-};
 
 const itemFieldsConfig = computed<FormField[]>(() => [
   {
@@ -50,6 +47,7 @@ const itemFieldsConfig = computed<FormField[]>(() => [
       label: cat.name,
       value: cat.id,
     })),
+    isOpenItem,
   },
   {
     column: "price",
@@ -68,19 +66,17 @@ const itemFieldsConfig = computed<FormField[]>(() => [
     colspan: "col-span-3",
   },
 ]);
+const onSuccessReset = (isSuccess: boolean) => {
+  if (isSuccess) {
+    closeItemModal();
+    resetForm();
+  }
+};
 
 const handleSubmit = async () => {
   if (isSubmitting.value || itemStore.isLoading) return;
 
   isSubmitting.value = true;
-
-  const payload = {
-    category_id: formDataPayload.value.category_id,
-    title: String(formDataPayload.value.title ?? "").trim(),
-    description: String(formDataPayload.value.description ?? "").trim(),
-    price: Number(formDataPayload.value.price || 0),
-    is_available: isAvailable.value,
-  };
 
   const existingItem = editingItem.value as MenuItemResponse | null;
   let itemId = existingItem?.id;
@@ -88,22 +84,16 @@ const handleSubmit = async () => {
   if (existingItem) {
     const isSuccess = await itemStore.updateItem(
       existingItem.id,
-      payload as UpdateMenuItemType["body"],
+      formDataPayload.value as UpdateMenuItemType["body"],
     );
 
-    if (isSuccess) {
-      closeModal();
-      resetForm();
-    }
+    onSuccessReset(isSuccess);
   } else {
     const isSuccess = await itemStore.addItem(
-      payload as CreateMenuItemType["body"],
+      formDataPayload.value as CreateMenuItemType["body"],
     );
 
-    if (isSuccess) {
-      closeModal();
-      resetForm();
-    }
+    onSuccessReset(isSuccess);
   }
 
   if (selectedFile.value && itemId) {
@@ -111,11 +101,12 @@ const handleSubmit = async () => {
     formData.append("image", selectedFile.value);
     await itemStore.uploadImage(itemId, formData);
   }
+
   isSubmitting.value = false;
 };
 
 watch(
-  [isOpen, editingItem],
+  [isOpenItem, editingItem],
   ([open, item]) => {
     if (!open) {
       resetForm();
@@ -157,8 +148,8 @@ watch(
 
 <template>
   <div
-    v-if="isOpen"
-    @click.self="closeModal"
+    v-if="isOpenItem"
+    @click.self="closeItemModal"
     class="animate-fade-in p-fluid fixed inset-0 z-50 flex items-center justify-center bg-black/60"
   >
     <div
@@ -235,7 +226,7 @@ watch(
           <template #actions>
             <button
               type="button"
-              @click="closeModal"
+              @click="closeItemModal"
               class="bg-bg border-primary/10 text-text hover:bg-primary/5 text-fluid-xs px-fluid cursor-pointer rounded-xl border py-2.5 font-bold transition-colors"
             >
               إلغاء

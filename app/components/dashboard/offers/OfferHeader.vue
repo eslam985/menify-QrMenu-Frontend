@@ -1,21 +1,15 @@
 <!-- app/components/dashboard/offers/OfferHeader.vue -->
 <script setup lang="ts">
-import { useOfferSearch } from "~/composables/useOfferSearch";
-
-const offerStore = useOfferStore();
-const { searchQuery, statusFilter, setSearchQuery, setStatusFilter } =
-  useOfferSearch();
-const notiStore = useNotificationStore();
-const authStore = useAuthStore();
-
-const handleRefresh = async () => {
-  try {
-    await offerStore.fetchOffers();
-    notiStore.show("تم تحديث العروض بنجاح", "success");
-  } catch (err: unknown) {
-    notiStore.show("فشل تحديث العروض", "error");
-  }
-};
+import { useOfferState } from "@/composables/offer/useOfferState";
+const {
+  authStore,
+  offerStore,
+  handleRefresh,
+  searchQuery,
+  statusFilter,
+  setSearchQuery,
+  setStatusFilter,
+} = useOfferState();
 </script>
 
 <template>

@@ -2,13 +2,13 @@
 <script setup lang="ts">
 import CategorySection from "~/components/menu/CategorySection.vue";
 import PublicOffersSection from "~/components/menu/PublicOffersSection.vue";
-import { useItemModal } from "~/composables/useItemModal";
+import { useItemState } from "~/composables/item/useItemState";
 
 import type { CartItem } from "@/types/dataType/menuItemType";
 
 const route = useRoute();
 const publicMenuStore = usePublicMenuStore();
-const { isOpen, selectedItem, closeModal } = useItemModal();
+const { isOpenItem, selectedItem, closeItemModal } = useItemState();
 
 const slug = computed(() => {
   const s = route.params.slug;
@@ -68,9 +68,9 @@ const notFound = computed(() => {
       <CategorySection />
 
       <MenuItemModal
-        v-if="isOpen && selectedItem"
+        v-if="isOpenItem && selectedItem"
         :item="selectedItem as CartItem"
-        @close="closeModal"
+        @close="closeItemModal"
       />
       <CartDrawer />
     </template>

@@ -1,5 +1,5 @@
 export const useItemModal = () => {
-  const isOpen = useState("public_item_modal_open", () => false);
+  const isOpenItem = useState("public_item_modal_open", () => false);
   const selectedItem = useState<unknown | null>(
     "public_selected_item",
     () => null,
@@ -13,22 +13,22 @@ export const useItemModal = () => {
     activeCategoryItems.value = items || [];
   };
 
-  const openModal = (item: unknown | null = null) => {
+  const openItemModal = (item: unknown | null = null) => {
     if (item) selectedItem.value = item;
-    isOpen.value = true;
+    isOpenItem.value = true;
   };
 
-  const closeModal = () => {
+  const closeItemModal = () => {
     selectedItem.value = null;
-    isOpen.value = false;
+    isOpenItem.value = false;
   };
 
   return {
-    isOpen,
+    isOpenItem,
     selectedItem,
     activeCategoryItems,
     setActiveCategoryItems,
-    openModal,
-    closeModal,
+    openItemModal,
+    closeItemModal,
   };
 };

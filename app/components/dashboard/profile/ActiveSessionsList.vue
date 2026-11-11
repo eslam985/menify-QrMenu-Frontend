@@ -1,59 +1,18 @@
 <!-- app/components/dashboard/profile/ActiveSessionsList.vue -->
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-
 import type { SessionResponse } from "@/types/userType/userType";
-import { useTable } from "~/composables/useTable";
-const userStore = useUserStore();
-const { sessions, isLoading } = storeToRefs(userStore);
-const { setTableConfig } = useTable();
 
-const parseUserAgent = (ua: SessionResponse["user_agent"]) => {
-  if (!ua) return "جهاز غير معروف";
+import { useProfileState } from "@/composables/profile/useProfileState";
 
-  if (ua.includes("Windows")) return "Windows • Chrome";
-  if (ua.includes("Linux") && !ua.includes("Android"))
-    return "Linux • Chrome / Firefox";
-  if (ua.includes("Macintosh")) return "Mac • Safari";
-  if (ua.includes("iPhone")) return "iPhone • Safari";
-  if (ua.includes("Android")) {
-    const match = ua.match(/\(([^;]+);([^;]+);([^)]+)\)/);
-    return match ? `Android • ${match[1]?.trim()}` : "Android Device";
-  }
-
-  return "جهاز غير معروف";
-};
-
-const isCurrentSession = (session: SessionResponse) => {
-  if (!import.meta.client) return false;
-
-  const isUAMatch = session.user_agent === navigator.userAgent;
-
-  if (sessions.value.length === 1) return isUAMatch;
-
-  const isMostRecent =
-    session.id ===
-    sessions.value.reduce<SessionResponse>(
-      (max, s) => (new Date(s.updated_at) > new Date(max.updated_at) ? s : max),
-      sessions.value[0] as SessionResponse,
-    ).id;
-
-  return isUAMatch && isMostRecent;
-};
-
-const sessionTableColumns = [
-  { key: "device_info", label: "الجهاز / المتصفح" },
-  { key: "ip_address", label: "عنوان الـ IP" },
-  { key: "created_at", label: "تاريخ انشاء الجلسه" },
-  { key: "updated_at", label: "اخر تحديث" },
-  { key: "expires_at", label: "تاريخ انتهاء الجلسه" },
-  { key: "status", label: "الحالة" },
-  { key: "actions", label: "الإجراءات الأمنية" },
-];
-
-const handleRevokeSession = async (sessionId: string) => {
-  await userStore.removeSessionById(sessionId);
-};
+const {
+  setTableConfig,
+  sessionTableColumns,
+  sessions,
+  isLoading,
+  isCurrentSession,
+  parseUserAgent,
+  handleRevokeSession,
+} = useProfileState();
 
 watchEffect(() => {
   setTableConfig(sessionTableColumns, sessions.value, isLoading.value);
@@ -144,7 +103,7 @@ watchEffect(() => {
               @click="
                 handleRevokeSession((row as unknown as SessionResponse).id)
               "
-              :disabled="userStore.isLoading"
+              :disabled="isLoading"
               class="bg-danger/5 border-danger/20 hover:bg-danger/10 text-danger px-fluid text-fluid-xs flex cursor-pointer items-center gap-1 rounded-xl border py-1 font-medium active:scale-95 disabled:opacity-50"
             >
               <Icon name="lucide:user-x" class="h-3.5 w-3.5" />

@@ -4,38 +4,19 @@ import type {
   PublicMenuCategory,
   PublicMenuItem,
 } from "@/types/dataType/publicMenuType";
-import { useItemModal } from "~/composables/useItemModal";
-const publicMenuStore = usePublicMenuStore();
-const { openModal, setActiveCategoryItems } = useItemModal();
-const searchQuery = ref("");
 
-const filteredCategories = computed(() => {
-  if (!searchQuery.value.trim()) return publicMenuStore.categories;
-  const query = searchQuery.value.toLowerCase().trim();
+import { useItemState } from "~/composables/item/useItemState";
 
-  return publicMenuStore.categories
-    .map((category: PublicMenuCategory) => {
-      if (category.name?.toLowerCase().includes(query)) return category;
+const { publicMenuStore, filteredCategories, searchQuery } =
+  usePublicMenuState();
 
-      const filteredItems = category.items?.filter(
-        (item: PublicMenuItem) =>
-          item.title?.toLowerCase().includes(query) ||
-          item.description?.toLowerCase().includes(query),
-      );
-
-      return { ...category, items: filteredItems };
-    })
-    .filter(
-      (category: PublicMenuCategory) =>
-        category.items && category.items.length > 0,
-    );
-});
+const { openItemModal, setActiveCategoryItems } = useItemState();
 
 const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
   if (!item.is_available) return;
 
   setActiveCategoryItems(category.items);
-  openModal(item);
+  openItemModal(item);
 };
 </script>
 

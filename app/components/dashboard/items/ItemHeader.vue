@@ -1,31 +1,19 @@
 <!-- app/components/dashboard/items/ItemHeader.vue -->
 <script setup lang="ts">
-import { useItemModal } from "~/composables/useItemModal";
-import { useItemReorderModal } from "~/composables/useItemReorderModal";
-import { useItemSearch } from "~/composables/useItemSearch";
-
-const { openModal: openReorderModal } = useItemReorderModal();
-const { openModal: openItemModal } = useItemModal();
-const itemStore = useItemStore();
-const categoryStore = useCategoryStore();
-const authStore = useAuthStore();
+import { useItemState } from "@/composables/item/useItemState";
 
 const {
-  searchQuery,
   selectedCategoryFilter,
-  setSearchQuery,
+  categoryStore,
+  searchQuery,
+  authStore,
+  itemStore,
+  openModalItemReorderModal,
   setCategoryFilter,
-} = useItemSearch();
-const notiStore = useNotificationStore();
-
-const handleRefresh = async () => {
-  try {
-    await itemStore.fetchItems();
-    notiStore.show("تم تحديث الأصناف بنجاح", "success");
-  } catch (err: unknown) {
-    notiStore.show("فشل تحديث الأصناف", "error");
-  }
-};
+  setSearchQuery,
+  openItemModal,
+  handleRefresh,
+} = useItemState();
 </script>
 
 <template>
@@ -101,7 +89,7 @@ const handleRefresh = async () => {
       <div v-if="authStore?.isEditorAndAbove">
         <button
           type="button"
-          @click="openReorderModal"
+          @click="openModalItemReorderModal"
           class="btn-primary text-text"
         >
           <Icon name="lucide:arrow-up-down" class="h-4 w-4" />

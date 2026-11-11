@@ -1,61 +1,20 @@
 <script setup lang="ts">
-const userStore = useUserStore();
-const authStore = useAuthStore();
+import { useProfileState } from "@/composables/profile/useProfileState";
 
-const selectedFile = ref<File | null>(null);
-const avatarPreview = ref<string | null>(null);
-const isDropdownOpen = ref<boolean>(false);
-const isModalOpen = ref<boolean>(false);
-const DEFAULT_AVATAR: string =
-  "https://res.cloudinary.com/dbahqgo8j/image/upload/blogger/iaeclevshfanh5j6x9ew.webp";
-
-const handleFileChange = (event: Event) => {
-  if (!event) return;
-  const file: File | undefined = (event.target as HTMLInputElement | null)
-    ?.files?.[0];
-  if (!file) return;
-
-  selectedFile.value = file;
-
-  avatarPreview.value = URL.createObjectURL(file);
-};
-
-const handleUpload = async (): Promise<void | null> => {
-  if (!selectedFile.value) return null;
-
-  const formData: FormData = new FormData();
-  formData.append("profileImage", selectedFile.value);
-
-  await userStore.uploadAvatar(formData);
-
-  selectedFile.value = null;
-};
-
-const handleDelete = async () => {
-  await userStore.deleteAvatar();
-};
-
-const handleSelectHistory = async (url: string): Promise<null | undefined> => {
-  const isSuccess = await userStore.setAvatarFromHistory(url);
-
-  if (!isSuccess) {
-    return null;
-  } else {
-    isModalOpen.value = false;
-    await userStore.findUserById();
-  }
-
-  return null;
-};
-
-const role = (): "Admin" | "Editor" | "User" | "N/A" =>
-  authStore.user?.roles === "5150"
-    ? "Admin"
-    : authStore.user?.roles === "1984"
-      ? "Editor"
-      : authStore.user?.roles === "2001"
-        ? "User"
-        : "N/A";
+const {
+  userStore,
+  authStore,
+  selectedFile,
+  avatarPreview,
+  isDropdownOpen,
+  isModalOpen,
+  DEFAULT_AVATAR,
+  handleFileChange,
+  handleUpload,
+  handleDelete,
+  handleSelectHistory,
+  role,
+} = useProfileState();
 </script>
 
 <template>

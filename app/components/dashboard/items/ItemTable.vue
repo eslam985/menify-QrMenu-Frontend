@@ -1,59 +1,17 @@
 <!-- app/components/dashboard/items/ItemTable.vue -->
 <script setup lang="ts">
-import { useItemModal } from "~/composables/useItemModal";
-import { useItemSearch } from "~/composables/useItemSearch";
+import { useItemState } from "@/composables/item/useItemState";
 import { useTable } from "~/composables/useTable";
 
-const { searchQuery, selectedCategoryFilter } = useItemSearch();
 const { setTableConfig } = useTable();
-const { openModal } = useItemModal();
-
-const publicMenuStore = usePublicMenuStore();
-const categoryStore = useCategoryStore();
-const itemStore = useItemStore();
-const authStore = useAuthStore();
-
-const getCategoryName = (categoryId: string) => {
-  const cat = categoryStore.categories.find((c) => c.id === categoryId);
-  return cat ? cat.name : "—";
-};
-
-const filteredItems = computed(() => {
-  let result = itemStore.items;
-
-  if (selectedCategoryFilter.value) {
-    result = result.filter(
-      (item) => item.category_id === selectedCategoryFilter.value,
-    );
-  }
-
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase().trim();
-
-    result = result.filter((item) => {
-      const category = categoryStore.categories.find(
-        (c) => c.id === item.category_id,
-      );
-
-      const titleMatch = item.title.toLowerCase().includes(query);
-      const descMatch = item.description
-        ? item.description.toLowerCase().includes(query)
-        : false;
-      const categoryNameMatch = category
-        ? category.name.toLowerCase().includes(query)
-        : false;
-      const categorySectionMatch = category
-        ? category.section.toLowerCase().includes(query)
-        : false;
-
-      return (
-        titleMatch || descMatch || categoryNameMatch || categorySectionMatch
-      );
-    });
-  }
-
-  return result;
-});
+const {
+  itemStore,
+  authStore,
+  publicMenuStore,
+  filteredItems,
+  openItemModal,
+  getCategoryName,
+} = useItemState();
 
 const tableColumns = [
   { key: "image_url", label: "الصورة" },
@@ -142,7 +100,7 @@ watchEffect(() => {
       <div class="flex items-center justify-center gap-2">
         <button
           type="button"
-          @click="openModal(row)"
+          @click="openItemModal(row)"
           class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary px-fluid text-fluid-xs cursor-pointer rounded-xl border py-1.5 font-medium active:scale-95"
         >
           تعديل
