@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   telemetry: false,
   devtools: { enabled: true },
   spaLoadingTemplate: true, // a loader instead of a blank screen while the SPA boots
-    runtimeConfig: {
+  runtimeConfig: {
     public: {
       supportWhatsapp: process.env.NUXT_PUBLIC_SUPPORT_WHATSAPP ?? "",
       supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL ?? "",
@@ -17,8 +17,8 @@ export default defineNuxtConfig({
   routeRules: {
     "/dashboard/**": { ssr: false },
     //'/auth/**' : { ssr: false }, // stays WITHOUT ssr:false: login/register render instantly from the server
-    "/api/**": { 
-      proxy: "https://menify-qr-menu-backend.vercel.app/api/**" 
+    "/api/**": {
+      proxy: "https://menify-qr-menu-backend.vercel.app/api/**",
     },
   },
 
@@ -29,7 +29,9 @@ export default defineNuxtConfig({
   icon: {
     mode: "css",
     cssLayer: "base",
+    provider: "iconify",
   },
+
   router: {
     options: {
       scrollBehaviorType: "smooth",
