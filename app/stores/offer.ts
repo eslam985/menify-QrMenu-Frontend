@@ -50,6 +50,11 @@ export const useOfferStore = defineStore("offer", () => {
       );
       return false;
     }
+    if (body?.offer_price && body?.offer_price < 1) {
+      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
+      notiStore.show(error.value, "error");
+      return false;
+    }
 
     if (isLoading.value) return false;
 
@@ -84,6 +89,11 @@ export const useOfferStore = defineStore("offer", () => {
     }
 
     if (isLoading.value || !id) return false;
+    if (body?.offer_price && body?.offer_price < 1) {
+      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
+      notiStore.show(error.value, "error");
+      return false;
+    }
 
     isLoading.value = true;
     try {

@@ -5,10 +5,11 @@ import { RolesList } from "~/stores/auth";
 definePageMeta({
   layout: "dashboard",
   middleware: "auth",
-  requiredRole: RolesList.Editor,
+  requiredRole: RolesList.Admin,
 });
 
 import { useForm, type FormField } from "~/composables/useForm";
+const { handleSubmit } = useSubmitstate();
 
 const restaurantStore = useRestaurantStore();
 
@@ -107,44 +108,36 @@ const restaurantFieldsConfig: FormField[] = [
 ];
 
 const handleRestaurantSubmit = async () => {
-  isSubmitting.value = true;
-  try {
-    const payload = { ...formDataPayload.value };
-
-    await restaurantStore.updateRestaurant(payload);
-  } finally {
-    isSubmitting.value = false;
-  }
+  handleSubmit({
+    formDataPayload: formDataPayload.value,
+    isSubmitting,
+    apiCall: () => restaurantStore.updateRestaurant(formDataPayload.value),
+  });
 };
 
 onMounted(async () => {
-  restaurantStore.isLoading = true;
+  if (
+    !restaurantStore.restaurant ||
+    Object.keys(restaurantStore.restaurant).length < 1
+  ) {
+    await restaurantStore.fetchRestaurant();
+  }
 
-  try {
-    if (
-      !restaurantStore.restaurant ||
-      Object.keys(restaurantStore.restaurant).length < 1
-    ) {
-      await restaurantStore.fetchRestaurant();
+  const restaurantData = restaurantStore.restaurant;
+
+  if (restaurantData) {
+    setFormConfig(
+      restaurantFieldsConfig,
+      handleRestaurantSubmit,
+      restaurantData,
+    );
+
+    if (restaurantData.working_hours) {
+      setWorkingHoursConfig(restaurantData.working_hours);
     }
-
-    const restaurantData = restaurantStore.restaurant;
-
-    if (restaurantData) {
-      setFormConfig(
-        restaurantFieldsConfig,
-        handleRestaurantSubmit,
-        restaurantData,
-      );
-
-      if (restaurantData.working_hours) {
-        setWorkingHoursConfig(restaurantData.working_hours);
-      }
-    }
-  } finally {
-    restaurantStore.isLoading = false;
   }
 });
+
 onUnmounted(() => {
   resetForm();
 });
@@ -160,9 +153,18 @@ onUnmounted(() => {
   </div>
 
   <div
-    v-else-if="restaurantStore.restaurant"
-    class="my-fluid p-section-fluid bg-card rounded-card shadow-soft border-primary/5 mx-auto w-full max-w-6xl border"
+    v-else-if="restaurantStore.restaurant?.slug"
+    class="p-section-fluid bg-card rounded-card shadow-soft border-primary/5 mx-auto w-full max-w-6xl border"
   >
+    <h3
+      class="text-text md:hover:text-primary text-fluid-h3 mb-section-fluid border-primary/10 border-b pb-1.5"
+    >
+      بيانات
+      <span class="text-primary md:hover:text-text">
+        {{ restaurantStore.restaurant.name }}
+      </span>
+      الاساسية
+    </h3>
     <UiBaseForm />
   </div>
 </template>

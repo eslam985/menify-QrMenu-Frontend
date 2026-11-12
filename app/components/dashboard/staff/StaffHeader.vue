@@ -1,13 +1,7 @@
 <!-- /tabloz/frontend/app/components/dashboard/staff/StaffHeader.vue -->
 <script setup lang="ts">
-const staffStore = useStaffStore();
-const notiStore = useNotificationStore();
-
-const handleRefresh = async () => {
-  const isSuccess = await staffStore.getStaff();
-
-  if (isSuccess) notiStore.show("تم تحديث البيانات بنجاح", "success");
-};
+import { useStaffState } from "~/composables/staff/useStaffState";
+const { staffStore, handleRefresh } = useStaffState();
 </script>
 
 <template>

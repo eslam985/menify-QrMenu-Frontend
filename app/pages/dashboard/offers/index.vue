@@ -1,25 +1,23 @@
 <!-- app/pages/dashboard/offers/index.vue -->
 <script setup lang="ts">
-import OfferHeader from "~/components/dashboard/offers/OfferHeader.vue";
-import OfferTable from "~/components/dashboard/offers/OfferTable.vue";
-
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
 });
 
-const offerStore = useOfferStore();
+import { useOfferState } from "~/composables/offer/useOfferState";
+const { loadOfferData, offerStore } = useOfferState();
 
 onMounted(async () => {
   if (offerStore.offers?.length < 1) {
-    await offerStore.fetchOffers();
+    await loadOfferData();
   }
 });
 </script>
 
 <template>
   <div>
-    <OfferHeader />
-    <OfferTable />
+    <DashboardOffersOfferHeader />
+    <DashboardOffersOfferTable />
   </div>
 </template>

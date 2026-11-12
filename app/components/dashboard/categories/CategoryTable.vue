@@ -19,8 +19,11 @@ const tableColumns = [
   { key: "display_order", label: "الترتيب" },
   { key: "updated_at", label: "آخر تحديث" },
   { key: "created_at", label: "تاريخ الانشاء" },
-  { key: "actions", label: "الإجراءات" },
 ];
+
+if (authStore.isEditorAndAbove) {
+  tableColumns.push({ key: "actions", label: "الإجراءات" });
+}
 
 watchEffect(() => {
   setTableConfig(
@@ -45,10 +48,13 @@ watchEffect(() => {
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end gap-2">
+      <div
+        v-if="authStore.isEditorAndAbove"
+        class="flex items-center justify-end gap-2"
+      >
         <button
           type="button"
-          @click="openModal(row)"
+          @click="(openModal(row), (categoryStore.error = ''))"
           class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary text-fluid-xs px-fluid cursor-pointer rounded-xl border py-1.5 font-medium active:scale-95"
         >
           تعديل

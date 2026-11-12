@@ -5,11 +5,20 @@ import type {
 } from "@/types/dataType/publicMenuType";
 import type { PublicOffer } from "@/types/dataType/publicMenuType";
 import type { OfferItemResponse } from "@/types/dataType/offerType";
+import { useItemState } from "~/composables/item/useItemState";
+import type { CartItem } from "@/types/dataType/menuItemType";
 
 export const usePublicMenuState = () => {
+  const route = useRoute();
+
+  const { openItemModal, setActiveCategoryItems } = useItemState();
+
   const publicMenuStore = usePublicMenuStore();
   const authStore = useAuthStore();
+  const cartStore = useCartStore();
 
+  const item = ref<CartItem>();
+  const closeItemModel = ref(false);
   const activeCategory = ref<string | number | null>(null);
   const selectedsection = ref("كل الاقسام");
   const isSticky = ref(false);
@@ -27,6 +36,7 @@ export const usePublicMenuState = () => {
   };
   const sections = computed(() => publicMenuStore.sections);
   const slug = computed(() => authStore.restaurantSlug);
+  const PublicSlug = fromRouteQuery(route.params.slug);
 
   const targetCategories = computed(() => {
     const res =
@@ -148,6 +158,32 @@ export const usePublicMenuState = () => {
     };
   });
 
+  const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
+    if (!item.is_available) return;
+
+    setActiveCategoryItems(category.items);
+    openItemModal(item);
+  };
+  const handleFetchMenu = async () => {
+    await publicMenuStore.fetchMenu(fromRouteQuery(PublicSlug));
+  };
+
+  const notFound = computed(() => {
+    const error = publicMenuStore.error;
+
+    if (typeof error !== "object" || error === null || !("response" in error)) {
+      return false;
+    }
+
+    const response = error.response;
+
+    return (
+      typeof response === "object" &&
+      response !== null &&
+      "status" in response &&
+      response.status === 404
+    );
+  });
   return {
     publicMenuStore,
     authStore,
@@ -164,10 +200,20 @@ export const usePublicMenuState = () => {
     copied,
     daysMap,
     todayHours,
+    route,
+    PublicSlug,
+    cartStore,
+    item,
+    closeItemModel,
+    notFound,
+    openItemModal,
+    setActiveCategoryItems,
     scrollToCategory,
+    openItem,
     handleScroll,
     getOriginalTotal,
     generateQr,
     copyLink,
+    handleFetchMenu,
   };
 };

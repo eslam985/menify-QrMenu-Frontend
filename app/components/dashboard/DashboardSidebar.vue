@@ -19,6 +19,7 @@ const visibleNavLinks = computed(() => {
   const restaurantName = authStore.user?.restaurant_name
     ? `${authStore.user.restaurant_name} Details`
     : "Restaurant Details";
+
   const restaurantSlug = authStore.user?.restaurant_slug || "";
   const userName = `Profile ${authStore.user?.username}` || "Profile";
 
@@ -70,7 +71,7 @@ const visibleNavLinks = computed(() => {
       label: restaurantName,
       path: `/dashboard/${restaurantSlug}`,
       iconName: "lucide:info",
-      show: authStore.isEditorAndAbove,
+      show: authStore.isAdmin,
     },
   ];
 

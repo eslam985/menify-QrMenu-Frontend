@@ -5,12 +5,10 @@ definePageMeta({
   middleware: ["auth"],
 });
 
-const route = useRoute();
-const offerId = computed(() =>
-  route.params.id !== "new" ? (route.params.id as string) : null,
-);
+import { useOfferState } from "~/composables/offer/useOfferState";
+const { id } = useOfferState();
 </script>
 
 <template>
-  <DashboardOffersOfferForm :offer-id="offerId" />
+  <DashboardOffersOfferForm :offer-id="id" />
 </template>

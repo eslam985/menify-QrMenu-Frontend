@@ -116,24 +116,6 @@ export const useProfileState = () => {
           ? "User"
           : "N/A";
 
-  const handleSubmit = async <TData extends object>(
-    formDataPayload: TData,
-    isSubmitting: Ref<boolean>,
-    apiCall: () => Promise<unknown>,
-    onSuccessReset?: (isSuccess: boolean) => void,
-  ) => {
-    if (Object.keys(formDataPayload)?.length < 1) return;
-
-    isSubmitting.value = true;
-    try {
-      const result = await apiCall();
-
-      if (onSuccessReset) onSuccessReset(Boolean(result));
-    } finally {
-      isSubmitting.value = false;
-    }
-  };
-
   return {
     isLoading,
     sessions,
@@ -155,6 +137,5 @@ export const useProfileState = () => {
     parseUserAgent,
     isCurrentSession,
     handleRevokeSession,
-    handleSubmit,
   };
 };

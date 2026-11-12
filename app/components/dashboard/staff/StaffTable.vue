@@ -1,34 +1,20 @@
 <!-- app/components/dashboard/categories/CategoryTable.vue -->
 <script setup lang="ts">
-import { useCategorySearch } from "~/composables/category/useCategorySearch";
-import { useTable } from "~/composables/useTable";
 import type { UserResponse } from "~/types/userType/userType";
 
-const staffStore = useStaffStore();
-const authStore = useAuthStore();
+import { useStaffState } from "~/composables/staff/useStaffState";
+import { useTable } from "~/composables/useTable";
 
-const { searchQuery } = useCategorySearch();
+const {
+  filteredEmployee,
+  DEFAULT_AVATAR,
+  staffStore,
+  authStore,
+  role,
+  loadData,
+  handleDelete,
+} = useStaffState();
 const { setTableConfig } = useTable();
-const DEFAULT_AVATAR: string =
-  "https://res.cloudinary.com/dbahqgo8j/image/upload/blogger/iaeclevshfanh5j6x9ew.webp";
-
-onMounted(async () => {
-  if (staffStore.staff?.length < 1) {
-    await staffStore.getStaff();
-  }
-});
-
-const filteredEmployee = computed(() => {
-  if (!searchQuery.value) return staffStore.staff;
-
-  const query = searchQuery.value.toLowerCase().trim();
-
-  return staffStore.staff.filter(
-    (user) =>
-      user.username.toLowerCase().includes(query) ||
-      user.email.toLowerCase().includes(query),
-  );
-});
 
 const tableColumns = [
   { key: "avatar_url", label: "الصورة" },
@@ -40,24 +26,15 @@ const tableColumns = [
   { key: "actions", label: "الإجراءات" },
 ];
 
+onMounted(() => {
+  if (staffStore.staff?.length < 1) {
+    loadData();
+  }
+});
+
 watchEffect(() => {
   setTableConfig(tableColumns, filteredEmployee.value, staffStore.isLoading);
 });
-
-const handleDelete = async (staffId: string) => {
-  if (!staffId) return;
-  await staffStore.deleteStaff(staffId);
-};
-
-const role = (role: string): "Admin" | "Editor" | "User" | "N/A" => {
-  if (!role) return "N/A";
-
-  if (role === "5150") return "Admin";
-  if (role === "1984") return "Editor";
-  if (role === "2001") return "User";
-
-  return "N/A";
-};
 </script>
 
 <template>

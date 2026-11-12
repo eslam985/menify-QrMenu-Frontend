@@ -1,18 +1,29 @@
 <!-- app/components/dashboard/categories/CategoryModal.vue -->
 <script setup lang="ts">
 import type { CreateCategoryType } from "@/schemas/categorySchema/categorySchema";
-import type { CategorySection } from "@/types/dataType/categoryType";
+import type {
+  CategorySection,
+  UpdateCategoryInput,
+} from "@/types/dataType/categoryType";
 import { useForm, type FormField } from "~/composables/useForm";
 
 import { useCategoryState } from "@/composables/category/useCategoryState";
 
-const { authStore, categoryStore, isOpen, editingCategory, closeModal } =
-  useCategoryState();
+const {
+  authStore,
+  categoryStore,
+  isOpen,
+  editingCategory,
+  closeModal,
+  isEditing,
+} = useCategoryState();
 
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
   formInstance;
 provide("current_form_instance", formInstance);
+import { useSubmitstate } from "#imports";
+const { handleSubmit } = useSubmitstate();
 
 const categoryFieldsConfig: FormField[] = [
   {
@@ -43,41 +54,41 @@ const categoryFieldsConfig: FormField[] = [
     value: 0,
     label: "ترتيب العرض (Display Order)",
     required: false,
-    type: "text",
+    type: "number",
     colspan: "col-span-3",
   },
 ];
 
-const handleSubmit = async () => {
+const handleSubmitCategory = async () => {
   if (isSubmitting.value || categoryStore.isLoading) return;
 
-  isSubmitting.value = true;
-
-  const isEditing = Boolean(
-    (editingCategory.value as { id?: unknown } | null)?.id,
-  );
-  let success = false;
-
-  const payload: CreateCategoryType = {
+  const paylod = {
     ...formDataPayload.value,
-    name: String(formDataPayload.value.name || ""),
-    section: (formDataPayload.value.section || "food") as CategorySection,
-    display_order: Number(formDataPayload.value.display_order || 0),
+    display_order: Number(formDataPayload.value.display_order),
   };
 
-  if (isEditing) {
-    success = await categoryStore.updateCategory(
-      (editingCategory.value as { id: string }).id,
-      payload,
-    );
-  } else {
-    success = await categoryStore.addCategory(payload);
+  if (paylod?.display_order < 0) {
+    categoryStore.error = "ترتيب العرض لا يمكن أن يكون سالباً";
+    return;
   }
 
-  if (success !== false) {
-    closeModal();
-    resetForm();
-  }
+  await handleSubmit({
+    formDataPayload: formDataPayload.value,
+    isSubmitting,
+    apiCall: () =>
+      isEditing
+        ? categoryStore.updateCategory(
+            (editingCategory.value as { id: string }).id,
+            paylod as UpdateCategoryInput,
+          )
+        : categoryStore.addCategory(paylod as CreateCategoryType),
+    onSuccess: (isSuccess) => {
+      if (isSuccess) {
+        closeModal();
+        resetForm();
+      }
+    },
+  });
 };
 
 watch(
@@ -95,13 +106,13 @@ watch(
         display_order?: number | null;
       };
 
-      setFormConfig(categoryFieldsConfig, handleSubmit, {
+      setFormConfig(categoryFieldsConfig, handleSubmitCategory, {
         name: currentCategory.name || "",
         section: currentCategory.section || "food",
         display_order: currentCategory.display_order ?? 0,
       });
     } else {
-      setFormConfig(categoryFieldsConfig, handleSubmit);
+      setFormConfig(categoryFieldsConfig, handleSubmitCategory);
     }
   },
   { immediate: true },
@@ -123,6 +134,13 @@ watch(
         >
           {{ editingCategory ? "تعديل التصنيف" : "إضافة تصنيف جديد" }}
         </h3>
+
+        <p
+          v-if="categoryStore.error"
+          class="bg-danger/5 text-danger px-fluid rounded-full py-2"
+        >
+          {{ categoryStore.error }}
+        </p>
 
         <UiBaseForm />
 

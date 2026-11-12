@@ -8,9 +8,13 @@ export const useCategoryState = () => {
   const categoryStore = useCategoryStore();
   const notiStore = useNotificationStore();
   const authStore = useAuthStore();
+  const isEditing = Boolean(
+    (editingCategory.value as { id?: unknown } | null)?.id,
+  );
+  const loadCategoreData = async () => await categoryStore.fetchCategories();
 
   const handleRefresh = async () => {
-    const isSuccess = await categoryStore.fetchCategories();
+    const isSuccess = await loadCategoreData();
 
     if (isSuccess) notiStore.show("تم تحديث البيانات بنجاح", "success");
   };
@@ -44,5 +48,7 @@ export const useCategoryState = () => {
     handleRefresh,
     openModal,
     handleDelete,
+    isEditing,
+    loadCategoreData,
   };
 };

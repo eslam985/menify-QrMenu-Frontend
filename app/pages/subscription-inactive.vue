@@ -1,6 +1,7 @@
 <!-- frontend/app/pages/subscription-inactive.vue -->
 <script setup lang="ts">
 definePageMeta({
+  layout: "default",
   middleware: [
     () => {
       const authStore = useAuthStore();

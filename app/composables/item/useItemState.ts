@@ -159,6 +159,14 @@ export const useItemState = () => {
     const cat = categoryStore.categories.find((c) => c.id === categoryId);
     return cat ? cat.name : "—";
   };
+  const loadItemsData = async () => {
+    const categoryPromise =
+      categoryStore.categoriesCount < 1
+        ? categoryStore.fetchCategories()
+        : Promise.resolve();
+
+    await Promise.all([categoryPromise, itemStore.fetchItems()]);
+  };
 
   return {
     selectedCategoryFilter,
@@ -192,6 +200,7 @@ export const useItemState = () => {
     closeItemModal,
     setSearchQuery,
     handleRefresh,
+    loadItemsData,
     openItemModal,
     onDragStart,
     onDragOver,

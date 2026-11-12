@@ -7,9 +7,12 @@ definePageMeta({ middleware: "guest" });
 
 const authStore = useAuthStore();
 const formInstance = useForm();
-const { setFormConfig, formDataPayload, resetForm } = formInstance;
+const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
+  formInstance;
+const { handleSubmit } = useSubmitstate();
 
 provide("current_form_instance", formInstance);
+const slugTouched = ref(false);
 
 const registerFieldsConfig: FormField[] = [
   {
@@ -63,38 +66,32 @@ const registerFieldsConfig: FormField[] = [
 ];
 
 const handleRegisterSubmit = async () => {
-  if (authStore.isLoading) return;
-
-  const payload = formDataPayload.value;
-
-  const payloadRegister = {
-    inviteCode: String(payload.inviteCode).trim(),
-    restaurantName: String(payload.restaurantName).trim(),
-    slug: String(payload.slug),
-    username: String(payload.username).trim(),
-    email: String(payload.email).trim(),
-    password: String(payload.password),
-  };
-
-  const isSuccess = await authStore.register(
-    payloadRegister as RegisterRestaurantType["body"],
-  );
-
-  if (isSuccess) {
-    resetForm();
-    try {
-      await authStore.login({
-        email: payloadRegister.email,
-        password: payloadRegister.password,
-      });
-      await navigateTo("/dashboard");
-    } catch {
-      await navigateTo("/auth/login");
-    }
-  }
+  if (authStore.isLoading || isSubmitting.value) return;
+  handleSubmit({
+    formDataPayload: formDataPayload.value as RegisterRestaurantType["body"],
+    isSubmitting,
+    apiCall: () =>
+      authStore.register(
+        formDataPayload.value as RegisterRestaurantType["body"],
+      ),
+    onSuccess: async (isSuccess) => {
+      if (isSuccess) {
+        resetForm();
+        try {
+          await authStore.login({
+            email: (formDataPayload.value as RegisterRestaurantType["body"])
+              .email,
+            password: (formDataPayload.value as RegisterRestaurantType["body"])
+              .password,
+          });
+          await navigateTo("/dashboard");
+        } catch {
+          await navigateTo("/auth/login");
+        }
+      }
+    },
+  });
 };
-
-const slugTouched = ref(false);
 
 onMounted(() => {
   authStore.resetState();
@@ -104,6 +101,7 @@ onMounted(() => {
   const nameField = formInstance.fields.value.find(
     (f) => f.column === "restaurantName",
   );
+
   const slugField = formInstance.fields.value.find((f) => f.column === "slug");
 
   if (nameField && slugField) {

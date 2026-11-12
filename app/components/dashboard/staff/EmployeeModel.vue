@@ -1,22 +1,19 @@
 <!-- app/components/dashboard/profile/EmployeeInviteForm.vue -->
 <script setup lang="ts">
-import { useForm, type FormField } from "~/composables/useForm";
-
 import type {
   CreateStaffType,
   UpdateStaffRoleType,
 } from "@/schemas/staffSchema/staffSchema";
+import { useForm, type FormField } from "~/composables/useForm";
 
-const router = useRouter();
-const route = useRoute();
+import { useStaffState } from "@/composables/staff/useStaffState";
+import { useSubmitstate } from "#imports";
 
-const staffStore = useStaffStore();
-const authrStore = useAuthStore();
+const { handleSubmit } = useSubmitstate();
+const { router, staffStore, authrStore, employeeId, isEditMode, isAdmin } =
+  useStaffState();
+
 const formInstance = useForm();
-
-const employeeId = computed(() => fromRouteQuery(route.params.id));
-const isEditMode = computed(() => Boolean(employeeId.value));
-const isAdmin = computed(() => authrStore.isAdmin);
 
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
   formInstance;
@@ -91,28 +88,31 @@ const handleEmployeeSubmit = async () => {
     delete payload.confirmPassword;
   }
 
-  isSubmitting.value = true;
-
-  const isSuccess = isEditMode.value
-    ? await staffStore.updateStaffRole(
-        employeeId.value!,
-        payload.roles as UpdateStaffRoleType["body"],
-      )
-    : await staffStore.createStaff(payload as CreateStaffType["body"]);
-
-  isSubmitting.value = false;
-
-  if (isSuccess) {
-    resetForm();
-    router.push("/dashboard/staff");
-  }
+  handleSubmit({
+    formDataPayload: payload,
+    isSubmitting,
+    apiCall: () =>
+      isEditMode.value
+        ? staffStore.updateStaffRole(
+            employeeId.value!,
+            payload.roles as UpdateStaffRoleType["body"],
+          )
+        : staffStore.createStaff(payload as CreateStaffType["body"]),
+    onSuccess: (isSuccess) => {
+      if (isSuccess) {
+        resetForm();
+        router.push("/dashboard/staff");
+      }
+    },
+  });
 };
 
-onMounted(async () => {
+const loadData = async () => {
   if (!isAdmin.value) return;
 
   if (isEditMode.value) {
     if (staffStore.staff.length === 0) await staffStore.getStaff();
+
     if (isEditMode.value && employeeId.value === authrStore.user?.id)
       return router.push("/dashboard/staff");
 
@@ -127,6 +127,10 @@ onMounted(async () => {
     resetForm();
     setFormConfig(employeeFieldsConfig.value, handleEmployeeSubmit);
   }
+};
+
+onMounted(() => {
+  loadData();
 });
 </script>
 

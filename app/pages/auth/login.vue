@@ -2,11 +2,11 @@
 <script setup lang="ts">
 import type { LoginUserType } from "@/schemas/userSchema/userSchema";
 import { useForm, type FormField } from "~/composables/useForm";
-
+import { useSubmitstate } from "#imports";
+import { useLoginState } from "~/composables/auth/useLoginState";
+const { authStore, safeRedirect } = useLoginState();
+const { handleSubmit } = useSubmitstate();
 definePageMeta({ middleware: "guest" });
-
-const authStore = useAuthStore();
-const route = useRoute();
 
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
@@ -33,35 +33,24 @@ const loginFieldsConfig: FormField[] = [
   },
 ];
 
-const safeRedirect = (): string => {
-  const r = String(route.query.redirect ?? "");
-  return r.startsWith("/") && !r.startsWith("//") && !r.includes("\\")
-    ? r
-    : "/dashboard";
-};
-
 const handleLoginSubmit = async () => {
   if (authStore.isLoading || isSubmitting.value) return;
 
-  isSubmitting.value = true;
-  const payload = formDataPayload.value;
-
-  const payloadLogin = {
-    email: String(payload.email).trim(),
-    password: String(payload.password),
-  };
-
-  const isSuccess = await authStore.login(
-    payloadLogin as LoginUserType["body"],
-  );
-
-  if (isSuccess) {
-    resetForm();
-    await navigateTo(safeRedirect());
-  } else if (authStore.subscriptionInactive) {
-    await navigateTo("/subscription-inactive");
-    resetForm();
-  }
+  handleSubmit({
+    formDataPayload: formDataPayload.value,
+    isSubmitting,
+    apiCall: () =>
+      authStore.login(formDataPayload.value as LoginUserType["body"]),
+    onSuccess: async (isSuccess) => {
+      if (isSuccess) {
+        resetForm();
+        await navigateTo(safeRedirect());
+      } else if (authStore.subscriptionInactive) {
+        await navigateTo("/subscription-inactive");
+        resetForm();
+      }
+    },
+  });
 };
 
 onMounted(() => {

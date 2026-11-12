@@ -42,8 +42,8 @@ export const useItemStore = defineStore("item", () => {
       return false;
     }
 
-    if (body.price < 1) {
-      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون 0`;
+    if (!body.price || body.price < 1) {
+      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
       notiStore.show(error.value, "error");
       return false;
     }
@@ -80,6 +80,11 @@ export const useItemStore = defineStore("item", () => {
     }
 
     if (isLoading.value || !id) return false;
+    if (!body.price || body.price < 1) {
+      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
+      notiStore.show(error.value, "error");
+      return false;
+    }
 
     isLoading.value = true;
     try {

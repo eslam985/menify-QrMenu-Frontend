@@ -52,7 +52,7 @@ export const useCategoryStore = defineStore("category", () => {
       return false;
     }
     if (isSaving.value) return false;
-
+    error.value = "";
     isSaving.value = true;
     try {
       const res = await categoryService.createCategory(body);
@@ -83,7 +83,7 @@ export const useCategoryStore = defineStore("category", () => {
       return false;
     }
     if (!id || isSaving.value || !body) return false;
-
+    error.value = "";
     isSaving.value = true;
     try {
       const res = await categoryService.updateCategory(id, body);
@@ -128,6 +128,7 @@ export const useCategoryStore = defineStore("category", () => {
     if (!isConfirmed) return false;
 
     isSaving.value = true;
+    error.value = "";
 
     try {
       await categoryService.deleteCategory(id);

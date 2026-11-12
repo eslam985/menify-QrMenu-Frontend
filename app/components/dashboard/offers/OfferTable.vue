@@ -21,8 +21,11 @@ const tableColumns = [
   { key: "starts_at", label: "يبدأ في" },
   { key: "ends_at", label: "ينتهي في" },
   { key: "created_at", label: "تاريخ الإنشاء" },
-  { key: "actions", label: "الإجراءات" },
 ];
+
+if (authStore.isEditorAndAbove) {
+  tableColumns.push({ key: "actions", label: "الإجراءات" });
+}
 
 watchEffect(() => {
   setTableConfig(tableColumns, filteredOffers.value, offerStore.isLoading);
@@ -169,7 +172,10 @@ watchEffect(() => {
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-center gap-2">
+      <div
+        v-if="authStore.isEditorAndAbove"
+        class="flex items-center justify-center gap-2"
+      >
         <button
           type="button"
           @click="navigateTo(`/dashboard/offers/${row.id}`)"

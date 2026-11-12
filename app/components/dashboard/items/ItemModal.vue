@@ -54,7 +54,7 @@ const itemFieldsConfig = computed<FormField[]>(() => [
     value: 0,
     label: "السعر (ج.م)",
     required: true,
-    type: "text",
+    type: "number",
     colspan: "col-span-1 sm:col-span-1.5",
   },
   {
@@ -66,6 +66,7 @@ const itemFieldsConfig = computed<FormField[]>(() => [
     colspan: "col-span-3",
   },
 ]);
+
 const onSuccessReset = (isSuccess: boolean) => {
   if (isSuccess) {
     closeItemModal();

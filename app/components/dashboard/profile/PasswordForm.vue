@@ -3,14 +3,14 @@
 import type { ChangePasswordType } from "@/schemas/userSchema/userSchema";
 import { useProfileState } from "@/composables/profile/useProfileState";
 import { useForm } from "~/composables/useForm";
-
+import { useSubmitstate } from "#imports";
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
   formInstance;
 provide("current_form_instance", formInstance);
 
-const { handleSubmit, userStore, notiStore } = useProfileState();
-
+const { userStore, notiStore } = useProfileState();
+const { handleSubmit } = useSubmitstate();
 const passwordFieldsConfig: FormField[] = [
   {
     column: "currentPassword",
@@ -38,14 +38,12 @@ const passwordFieldsConfig: FormField[] = [
   },
 ];
 
-const onSuccessReset = (isSuccess: boolean) => {
-  if (!isSuccess) return;
-
+const onSuccessReset = () => {
   resetForm();
   handleSetFormConfig();
 };
 
-const submit = () => {
+const submit = async () => {
   const newPassword = formDataPayload.value.newPassword;
   const confirmPassword = formDataPayload.value.confirmPassword;
   const isPasswordExist = newPassword && confirmPassword;
@@ -57,17 +55,17 @@ const submit = () => {
     return;
   }
 
-  handleSubmit(
-    formDataPayload.value as ChangePasswordType["body"] & {
+  await handleSubmit({
+    formDataPayload: formDataPayload.value as ChangePasswordType["body"] & {
       confirmPassword: string;
     },
     isSubmitting,
-    () =>
+    apiCall: () =>
       userStore.changePassword(
         formDataPayload.value as ChangePasswordType["body"],
       ),
-    onSuccessReset,
-  );
+    onSuccess: () => onSuccessReset(),
+  });
 };
 
 const handleSetFormConfig = () => {

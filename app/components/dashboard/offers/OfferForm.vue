@@ -1,6 +1,21 @@
 <!-- app/components/dashboard/offers/OfferForm.vue -->
 <script setup lang="ts">
+import type {
+  CreateOfferType,
+  UpdateOfferType,
+} from "@/schemas/offerSchema/offerSchema";
+import type { OfferResponse } from "@/types/dataType/offerType";
+import { type FormField } from "~/composables/useForm";
+
 import { useOfferState } from "@/composables/offer/useOfferState";
+import { useSubmitstate } from "#imports";
+const { handleSubmit } = useSubmitstate();
+const formInstance = useForm();
+const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
+  formInstance;
+provide("current_form_instance", formInstance);
+const isEditMode = computed(() => Boolean(id.value));
+
 const {
   categoryStore,
   itemStore,
@@ -12,12 +27,117 @@ const {
   addMenuItemToOffer,
   addCustomItemToOffer,
   removeItemFromOffer,
-  isEditMode,
-  loadData,
+  offerStore,
+  loadOfferData,
+  router,
+  id,
 } = useOfferState();
 
-onMounted(() => {
-  loadData();
+const offerFieldsConfig: FormField[] = [
+  {
+    column: "title",
+    value: "",
+    label: "عنوان العرض (مثال: عرض الويك إند الكبير)",
+    required: true,
+    type: "text",
+    colspan: "col-span-3 md:col-span-2",
+  },
+  {
+    column: "offer_price",
+    value: "",
+    label: "سعر العرض (ج.م) - اختياري",
+    required: false,
+    type: "number",
+    colspan: "col-span-3 md:col-span-1",
+  },
+  {
+    column: "description",
+    value: "",
+    label: "تفاصيل ووصف العرض",
+    required: false,
+    type: "textarea",
+    colspan: "col-span-3",
+  },
+];
+
+const populateOfferData = (offer: OfferResponse) => {
+  startsAt.value = offer.starts_at
+    ? new Date(offer.starts_at).toISOString().slice(0, 16)
+    : "";
+
+  endsAt.value = offer.ends_at
+    ? new Date(offer.ends_at).toISOString().slice(0, 16)
+    : "";
+
+  isActive.value = offer.is_active ?? true;
+  items.value = offer.items ? JSON.parse(JSON.stringify(offer.items)) : [];
+
+  setFormConfig(offerFieldsConfig, handleSubmitOffer, {
+    title: offer.title || "",
+    offer_price: offer.offer_price || null,
+    description: offer.description || null,
+  });
+};
+
+const handleSubmitOffer = async () => {
+  errorMessage.value = "";
+
+  if (isSubmitting.value || offerStore.isLoading) return;
+
+  const offer_price = formDataPayload.value.offer_price
+    ? Number(formDataPayload.value.offer_price)
+    : null;
+
+  const paylod = {
+    ...formDataPayload.value,
+    offer_price,
+  };
+
+  handleSubmit({
+    formDataPayload: formDataPayload.value,
+    isSubmitting,
+    apiCall: () => {
+      return isEditMode.value && id.value
+        ? offerStore.updateOffer(id.value, paylod as UpdateOfferType["body"])
+        : offerStore.addOffer(paylod as CreateOfferType["body"]);
+    },
+    onSuccess: (success) => {
+      if (success) {
+        resetForm();
+        router.push("/dashboard/offers");
+      }
+    },
+  });
+};
+
+const loadData = async () => {
+  const tasks: Promise<unknown>[] = [];
+
+  if (categoryStore.categoriesCount < 1)
+    tasks.push(categoryStore.fetchCategories());
+
+  if (itemStore.items?.length < 1) tasks.push(itemStore.fetchItems());
+
+  if (tasks.length > 0) await Promise.all(tasks);
+
+  if (isEditMode.value && id.value) {
+    let targetOffer = offerStore.offers.find((o) => o.id === id.value);
+
+    if (!targetOffer) {
+      await loadOfferData();
+      targetOffer = offerStore.offers.find((o) => o.id === id.value);
+    }
+
+    if (targetOffer) populateOfferData(targetOffer);
+  } else {
+    resetForm();
+    setFormConfig(offerFieldsConfig, handleSubmitOffer);
+  }
+};
+
+onMounted(async () => {
+  console.log("isEditMode.value: ", isEditMode.value);
+  await loadData();
 });
 </script>
 

@@ -1,23 +1,10 @@
 <!-- app/components/menu/CategorySection.vue -->
 <script setup lang="ts">
-import type {
-  PublicMenuCategory,
-  PublicMenuItem,
-} from "@/types/dataType/publicMenuType";
-
-import { useItemState } from "~/composables/item/useItemState";
-
 const { publicMenuStore, filteredCategories, searchQuery } =
   usePublicMenuState();
 
-const { openItemModal, setActiveCategoryItems } = useItemState();
-
-const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
-  if (!item.is_available) return;
-
-  setActiveCategoryItems(category.items);
-  openItemModal(item);
-};
+import { useShowModal } from "#imports";
+const { openModal: openItemModal } = useShowModal("item-model");
 </script>
 
 <template>
@@ -99,7 +86,7 @@ const openItem = (category: PublicMenuCategory, item: PublicMenuItem) => {
             <div
               v-for="item in category.items"
               :key="item.id"
-              @click="openItem(category, item)"
+              @click="openItemModal(item)"
               :class="[
                 'bg-card text-text p-fluid border-primary/25 group hover:border-primary/50 flex w-[260px] shrink-0 snap-start flex-col justify-between rounded-3xl border shadow-xl sm:w-[280px] md:w-[320px]',
                 item.is_available

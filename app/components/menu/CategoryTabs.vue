@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { usePublicMenuState } from "@/composables/usePublicMenu";
 
-const route = useRoute();
-
 const {
   activeCategory,
   targetCategories,
@@ -12,11 +10,11 @@ const {
   isSticky,
   scrollToCategory,
   handleScroll,
+  handleFetchMenu,
 } = usePublicMenuState();
 
 onMounted(() => {
-  const slug = fromRouteQuery(route.params.slug);
-  publicMenuStore.fetchMenu(fromRouteQuery(slug));
+  handleFetchMenu();
   window.addEventListener("scroll", handleScroll, true);
 });
 

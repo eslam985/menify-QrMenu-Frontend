@@ -1,42 +1,25 @@
 <!-- app/pages/menu/[slug]/index.vue -->
 <script setup lang="ts">
-import CategorySection from "~/components/menu/CategorySection.vue";
-import PublicOffersSection from "~/components/menu/PublicOffersSection.vue";
-import { useItemState } from "~/composables/item/useItemState";
+import type { CartItem } from "~/types/dataType/menuItemType";
 
-import type { CartItem } from "@/types/dataType/menuItemType";
+import { usePublicMenuState, useShowModal } from "#imports";
 
-const route = useRoute();
-const publicMenuStore = usePublicMenuStore();
-const { isOpenItem, selectedItem, closeItemModal } = useItemState();
+const { publicMenuStore, PublicSlug, notFound, handleFetchMenu } =
+  usePublicMenuState();
 
-const slug = computed(() => {
-  const s = route.params.slug;
-  return (Array.isArray(s) ? s[0] : s) ?? "";
-});
+const { isOpen: isOpenItem, selectedData: selectedItem } =
+  useShowModal("item-model");
 
 onMounted(async () => {
-  await publicMenuStore.fetchMenu(slug.value);
+  await handleFetchMenu();
 });
-watch(slug, (s) => publicMenuStore.fetchMenu(s));
+
+watch(
+  () => PublicSlug,
+  () => handleFetchMenu(),
+);
+
 onUnmounted(() => publicMenuStore.clearMenu());
-
-const notFound = computed(() => {
-  const error = publicMenuStore.error;
-
-  if (typeof error !== "object" || error === null || !("response" in error)) {
-    return false;
-  }
-
-  const response = error.response;
-
-  return (
-    typeof response === "object" &&
-    response !== null &&
-    "status" in response &&
-    response.status === 404
-  );
-});
 </script>
 
 <template>
@@ -54,7 +37,7 @@ const notFound = computed(() => {
       </p>
       <button
         v-if="!notFound"
-        @click="publicMenuStore.fetchMenu(slug)"
+        @click="handleFetchMenu"
         class="bg-primary cursor-pointer rounded-xl px-6 py-3 font-bold text-white transition hover:opacity-90"
       >
         إعادة المحاولة
@@ -63,15 +46,14 @@ const notFound = computed(() => {
 
     <template v-else>
       <MenuRestaurantHero :restaurant="publicMenuStore.restaurant" />
-      <PublicOffersSection />
+      <MenuPublicOffersSection />
       <MenuCategoryTabs />
-      <CategorySection />
+      <MenuCategorySection />
 
-      <MenuItemModal
-        v-if="isOpenItem && selectedItem"
-        :item="selectedItem as CartItem"
-        @close="closeItemModal"
-      />
+      <div v-if="isOpenItem && (selectedItem as CartItem).is_available">
+        <MenuItemModal :item="selectedItem as CartItem" />
+      </div>
+
       <CartDrawer />
     </template>
   </div>

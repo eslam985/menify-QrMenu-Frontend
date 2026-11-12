@@ -1,25 +1,11 @@
 <!-- app/pages/dashboard/items/index.vue -->
 <script setup lang="ts">
-import ItemHeader from "~/components/dashboard/items/ItemHeader.vue";
-import ItemTable from "~/components/dashboard/items/ItemTable.vue";
-import ItemModal from "~/components/dashboard/items/ItemModal.vue";
-
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
 });
-
-const itemStore = useItemStore();
-const categoryStore = useCategoryStore();
-
-const loadItemsData = async () => {
-  const categoryPromise =
-    categoryStore.categoriesCount < 1
-      ? categoryStore.fetchCategories()
-      : Promise.resolve();
-
-  await Promise.all([categoryPromise, itemStore.fetchItems()]);
-};
+import { useItemState } from "~/composables/item/useItemState";
+const { itemStore, loadItemsData } = useItemState();
 
 onMounted(async () => {
   if (itemStore.items?.length < 1) {
@@ -30,8 +16,8 @@ onMounted(async () => {
 
 <template>
   <div>
-    <ItemHeader />
-    <ItemTable />
-    <ItemModal />
+    <DashboardItemsItemHeader />
+    <DashboardItemsItemTable />
+    <DashboardItemsItemModal />
   </div>
 </template>

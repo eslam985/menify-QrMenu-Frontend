@@ -4,13 +4,15 @@ import { useProfileState } from "@/composables/profile/useProfileState";
 import { useForm, type FormField } from "~/composables/useForm";
 import type { UpdateUserByIdType } from "@/schemas/userSchema/userSchema";
 
+import { useSubmitstate } from "#imports";
 const formInstanceProfile = useForm();
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
   formInstanceProfile;
 
 provide("current_form_instance", formInstanceProfile);
 
-const { handleSubmit, userStore, authStore } = useProfileState();
+const { userStore, authStore } = useProfileState();
+const { handleSubmit } = useSubmitstate();
 
 const profileFieldsConfig: FormField[] = [
   {
@@ -32,14 +34,14 @@ const profileFieldsConfig: FormField[] = [
 ];
 
 const handleProfileSubmit = async () => {
-  handleSubmit(
-    formDataPayload.value as UpdateUserByIdType["body"],
+  handleSubmit({
+    formDataPayload: formDataPayload.value as UpdateUserByIdType["body"],
     isSubmitting,
-    () =>
+    apiCall: () =>
       userStore.updateUserInfo(
         formDataPayload.value as UpdateUserByIdType["body"],
       ),
-  );
+  });
 };
 
 onMounted(async () => {
