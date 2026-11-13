@@ -1,5 +1,6 @@
 import type { RestaurantResponse } from "@/types/dataType/restaurantType";
 import { defineStore } from "pinia";
+import type { UpdateRestaurantType } from "~/schemas/restaurantSchema/restaurantSchema";
 import { useRestaurantService } from "~/services/restaurantService";
 
 export const useRestaurantStore = defineStore("restaurant", () => {
@@ -43,7 +44,7 @@ export const useRestaurantStore = defineStore("restaurant", () => {
       isLoading.value = false;
     }
   }
-  async function updateRestaurant(body: Record<string, unknown>) {
+  async function updateRestaurant(body: UpdateRestaurantType['body']) {
     isLoading.value = true;
     errorMessage.value = "";
     successMessage.value = "";

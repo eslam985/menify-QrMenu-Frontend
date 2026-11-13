@@ -1,8 +1,10 @@
 <!-- app/components/menu/PublicOffersSection.vue -->
 <script setup lang="ts">
-import { usePublicMenuState } from "@/composables/usePublicMenu";
+import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
+import { menuHelpers } from "#imports";
 
-const { publicMenuStore, getOriginalTotal } = usePublicMenuState();
+const { getOriginalTotal } = menuHelpers()
+const { publicMenuStore } = usePublicMenuState();
 </script>
 
 <template>

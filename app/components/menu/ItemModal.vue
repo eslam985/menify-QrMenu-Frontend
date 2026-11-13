@@ -1,8 +1,9 @@
 <!-- Menify/frontend/app/components/menu/ItemModal.vue -->
 <script setup lang="ts">
-import { usePublicMenuState } from "#imports";
-import { useShowModal } from "#imports";
+import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
 import type { CartItem } from "~/types/dataType/menuItemType";
+
+import { useShowModal } from "#imports";
 const { closeModal: closeItemModal } = useShowModal("item-model");
 const { cartStore, publicMenuStore } = usePublicMenuState();
 

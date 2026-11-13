@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { usePublicMenuState } from "@/composables/usePublicMenu";
+import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
+import { useMenuNavigation } from "~/composables/menu/useMenuNavigation";
 
+const { activeCategory, isSticky, scrollToCategory, handleScroll } =
+  useMenuNavigation();
 const {
-  activeCategory,
   targetCategories,
   publicMenuStore,
   selectedsection,
   sections,
-  isSticky,
-  scrollToCategory,
-  handleScroll,
   handleFetchMenu,
 } = usePublicMenuState();
 

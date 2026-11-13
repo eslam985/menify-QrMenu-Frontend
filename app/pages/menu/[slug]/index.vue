@@ -1,8 +1,9 @@
 <!-- app/pages/menu/[slug]/index.vue -->
 <script setup lang="ts">
 import type { CartItem } from "~/types/dataType/menuItemType";
+import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
 
-import { usePublicMenuState, useShowModal } from "#imports";
+import { useShowModal } from "#imports";
 
 const { publicMenuStore, PublicSlug, notFound, handleFetchMenu } =
   usePublicMenuState();

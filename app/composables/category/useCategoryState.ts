@@ -1,16 +1,12 @@
-import { useCategoryModal } from "~/composables/category/useCategoryModal";
 import { useCategorySearch } from "~/composables/category/useCategorySearch";
 
-const { isOpen, editingCategory, closeModal, openModal } = useCategoryModal();
 const { searchQuery } = useCategorySearch();
 
 export const useCategoryState = () => {
   const categoryStore = useCategoryStore();
   const notiStore = useNotificationStore();
   const authStore = useAuthStore();
-  const isEditing = Boolean(
-    (editingCategory.value as { id?: unknown } | null)?.id,
-  );
+
   const loadCategoreData = async () => await categoryStore.fetchCategories();
 
   const handleRefresh = async () => {
@@ -42,13 +38,8 @@ export const useCategoryState = () => {
     notiStore,
     filteredCategories,
     searchQuery,
-    isOpen,
-    editingCategory,
-    closeModal,
     handleRefresh,
-    openModal,
     handleDelete,
-    isEditing,
     loadCategoreData,
   };
 };

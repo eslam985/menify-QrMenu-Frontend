@@ -1,8 +1,10 @@
 <!-- app/components/dashboard/categories/CategoryHeader.vue -->
 <script setup lang="ts">
+import { useCategoryModal } from "~/composables/category/useCategoryModal";
 import { useCategoryState } from "@/composables/category/useCategoryState";
-const { authStore, categoryStore, handleRefresh, openModal } =
-  useCategoryState();
+const { authStore, categoryStore, handleRefresh } = useCategoryState();
+
+const { openModal } = useCategoryModal();
 </script>
 
 <template>

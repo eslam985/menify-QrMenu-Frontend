@@ -1,6 +1,5 @@
 import { useItemReorderModal } from "~/composables/item/useItemReorderModal";
 import { useItemSearch } from "~/composables/item/useItemSearch";
-import { useItemModal } from "~/composables/item/useItemModal";
 
 export const useItemState = () => {
   const {
@@ -9,14 +8,7 @@ export const useItemState = () => {
     isOpenItemReorderModal,
   } = useItemReorderModal();
 
-  const {
-    activeCategoryItems,
-    selectedItem,
-    isOpenItem,
-    setActiveCategoryItems,
-    closeItemModal,
-    openItemModal,
-  } = useItemModal();
+
 
   const {
     selectedCategoryFilter,
@@ -171,17 +163,14 @@ export const useItemState = () => {
   return {
     selectedCategoryFilter,
     isOpenItemReorderModal,
-    activeCategoryItems,
     selectedCategoryId,
     publicMenuStore,
     categoryStore,
     filteredItems,
-    selectedItem,
     draggedIndex,
     selectedFile,
     imagePreview,
     isAvailable,
-    isOpenItem,
     searchQuery,
     localItems,
     notiStore,
@@ -190,18 +179,15 @@ export const useItemState = () => {
     isSaving,
     closeModalItemReorderModal,
     openModalItemReorderModal,
-    setActiveCategoryItems,
     setCategoryFilter,
     loadCategoryItems,
     handleSaveReorder,
     handleFileChange,
     getCategoryName,
     initializeModal,
-    closeItemModal,
     setSearchQuery,
     handleRefresh,
     loadItemsData,
-    openItemModal,
     onDragStart,
     onDragOver,
     onDrop,

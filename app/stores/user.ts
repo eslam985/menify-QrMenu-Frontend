@@ -7,7 +7,7 @@ import { useUserService } from "@/services/userService";
 import type { SessionResponse } from "@/types/userType/userType";
 import { defineStore } from "pinia";
 
-export const useUserStore = defineStore("user", () => {
+export const useUserStore = defineStore("user", () => { 
   const notiStore = useNotificationStore();
   const confirmStore = useConfirmStore();
   const userService = useUserService();
@@ -105,30 +105,24 @@ export const useUserStore = defineStore("user", () => {
   }
 
   async function removeSessionById(sessionId: string) {
+    if (isLoading.value || !sessionId) return false;
+
+    const msg = "هل انت متأكد من حذف هذة الجلسة ؟";
+    const isConfirmed = await confirmStore.ask(msg);
+    if (!isConfirmed) return false;
+
     isLoading.value = true;
     successMessage.value = "";
     errorMessage.value = "";
-
     try {
-      const isConfirmed = await confirmStore.ask(
-        "هل انت متأكد من حذف هذة الجلسة ؟",
-      );
-      if (!isConfirmed) return false;
-
       const res = await userService.removeSessionById(sessionId);
 
       if (!res || !res.success) return false;
 
       successMessage.value = res.message;
-
       notiStore.show(successMessage.value, "success");
 
-      const index = sessions.value.findIndex((s) => s.id === sessionId);
-
-      if (index !== -1) {
-        sessions.value = sessions.value.splice(index, 1);
-        console.log("sessions.value: ", sessions.value);
-      }
+      sessions.value = sessions.value.filter((s) => s.id !== sessionId);
 
       return res.success;
     } catch (err) {

@@ -63,13 +63,17 @@ export const useProfileState = () => {
   };
 
   const handleRevokeSession = async (sessionId: string) => {
+    if(!sessionId) return
+
     await userStore.removeSessionById(sessionId);
   };
 
   const handleFileChange = (event: Event) => {
     if (!event) return;
+
     const file: File | undefined = (event.target as HTMLInputElement | null)
       ?.files?.[0];
+      
     if (!file) return;
 
     selectedFile.value = file;

@@ -1,7 +1,8 @@
 <!-- app/components/dashboard/items/ItemHeader.vue -->
 <script setup lang="ts">
 import { useItemState } from "@/composables/item/useItemState";
-
+import { useItemModal } from "~/composables/item/useItemModal";
+const { openItemModal } = useItemModal();
 const {
   selectedCategoryFilter,
   categoryStore,
@@ -11,7 +12,6 @@ const {
   openModalItemReorderModal,
   setCategoryFilter,
   setSearchQuery,
-  openItemModal,
   handleRefresh,
 } = useItemState();
 </script>

@@ -6,13 +6,15 @@ import type {
 } from "@/schemas/menuItemSchema/menuItemSchema.js";
 import { useForm, type FormField } from "~/composables/useForm";
 import type { MenuItemResponse } from "~/types/dataType/menuItemType";
+import { useItemModal } from "~/composables/item/useItemModal";
 
 import { useItemState } from "@/composables/item/useItemState";
-
 const {
-  isOpenItem,
   selectedItem: editingItem,
+  isOpenItem,
   closeItemModal,
+} = useItemModal();
+const {
   categoryStore,
   itemStore,
   isAvailable,

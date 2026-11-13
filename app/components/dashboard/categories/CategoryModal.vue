@@ -1,29 +1,28 @@
 <!-- app/components/dashboard/categories/CategoryModal.vue -->
 <script setup lang="ts">
-import type { CreateCategoryType } from "@/schemas/categorySchema/categorySchema";
 import type {
   CategorySection,
   UpdateCategoryInput,
 } from "@/types/dataType/categoryType";
 import { useForm, type FormField } from "~/composables/useForm";
+import type { CreateCategoryType } from "@/schemas/categorySchema/categorySchema";
 
+import { useCategoryModal } from "~/composables/category/useCategoryModal";
 import { useCategoryState } from "@/composables/category/useCategoryState";
+import { useSubmitstate } from "#imports";
 
-const {
-  authStore,
-  categoryStore,
-  isOpen,
-  editingCategory,
-  closeModal,
-  isEditing,
-} = useCategoryState();
-
+const { isOpen, editingCategory, closeModal } = useCategoryModal();
+const { authStore, categoryStore } = useCategoryState();
+const { handleSubmit } = useSubmitstate();
 const formInstance = useForm();
+
 const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
   formInstance;
 provide("current_form_instance", formInstance);
-import { useSubmitstate } from "#imports";
-const { handleSubmit } = useSubmitstate();
+
+const isEditing = computed(() =>
+  Boolean((editingCategory.value as { id?: unknown } | null)?.id),
+);
 
 const categoryFieldsConfig: FormField[] = [
   {
@@ -72,11 +71,12 @@ const handleSubmitCategory = async () => {
     return;
   }
 
+
   await handleSubmit({
     formDataPayload: formDataPayload.value,
     isSubmitting,
     apiCall: () =>
-      isEditing
+      isEditing.value
         ? categoryStore.updateCategory(
             (editingCategory.value as { id: string }).id,
             paylod as UpdateCategoryInput,

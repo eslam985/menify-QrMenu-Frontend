@@ -100,9 +100,10 @@ watchEffect(() => {
 
     <template #cell-status="{ row }">
       <span
-        class="bg-primary/10 text-primary rounded-lg px-2.5 py-1 text-[10px] font-bold"
+        class="rounded-lg px-2.5 py-1 text-[10px] font-bold"
+        :class="row.status === 'active' ? 'bg-success/5 text-success': 'bg-danger/5 text-danger' "
       >
-        {{ row.status || "active" }}
+        {{ row.status || "" }}
       </span>
     </template>
 

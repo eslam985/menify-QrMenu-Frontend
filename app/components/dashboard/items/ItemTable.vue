@@ -2,14 +2,14 @@
 <script setup lang="ts">
 import { useItemState } from "@/composables/item/useItemState";
 import { useTable } from "~/composables/useTable";
-
+import { useItemModal } from "~/composables/item/useItemModal";
+const { openItemModal } = useItemModal();
 const { setTableConfig } = useTable();
 const {
   itemStore,
   authStore,
   publicMenuStore,
   filteredItems,
-  openItemModal,
   getCategoryName,
 } = useItemState();
 
@@ -23,11 +23,8 @@ const tableColumns = [
   { key: "display_order", label: "الترتيب" },
   { key: "created_at", label: "تاريخ الإضافة" },
   { key: "updated_at", label: "آخر تحديث" },
+  ...( authStore.isEditorAndAbove ? [ { key: "actions", label: "الإجراءات" } ] : [] ),
 ];
-
-if (authStore.isEditorAndAbove) {
-  tableColumns.push({ key: "actions", label: "الإجراءات" });
-}
 
 watchEffect(() => {
   setTableConfig(tableColumns, filteredItems.value, itemStore.isLoading);

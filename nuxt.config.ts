@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     public: {
       supportWhatsapp: process.env.NUXT_PUBLIC_SUPPORT_WHATSAPP ?? "",
       supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL ?? "",
-      apiBase: process.env.NUXT_PUBLIC_API_BASE ?? "/api", // خليه /api كقيمة افتراضية عشان البروكسي يشتغل
+      apiBase: process.env.NUXT_PUBLIC_API_BASE ?? "/api",
     },
   },
   routeRules: {
@@ -41,19 +41,19 @@ export default defineNuxtConfig({
     storesDirs: ["stores"],
   },
   typescript: {
-    strict: true, // تفعيل الفحص الصارم الأساسي لـ Nuxt تلقائياً
+    strict: true,
 
     tsConfig: {
       compilerOptions: {
-        noImplicitAny: true,
-        noImplicitReturns: true,
-        noUnusedLocals: true,
-        noUnusedParameters: true,
+        noPropertyAccessFromIndexSignature: false,
+        noFallthroughCasesInSwitch: true,
+        exactOptionalPropertyTypes: true,
         noUncheckedIndexedAccess: true,
         allowUnreachableCode: false,
-        exactOptionalPropertyTypes: true,
-        noFallthroughCasesInSwitch: true,
-        noPropertyAccessFromIndexSignature: false,
+        noUnusedParameters: true,
+        noImplicitReturns: true,
+        noUnusedLocals: true,
+        noImplicitAny: true,
         skipLibCheck: true,
         allowJs: false,
       },

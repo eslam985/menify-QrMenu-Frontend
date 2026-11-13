@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { usePublicMenuState } from "@/composables/usePublicMenu";
-
-const { slug, menuLink, qrCodeUrl, copied, generateQr, copyLink } =
+import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
+import { useMenuShare } from "~/composables/menu/useMenuShare"; 
+const {  menuLink, qrCodeUrl, copied, generateQr, copyLink} = useMenuShare()
+const { slug, } =
   usePublicMenuState();
 
 onMounted(() => {

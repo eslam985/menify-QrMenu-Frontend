@@ -1,11 +1,18 @@
 <!-- app/components/ui/BaseForm.vue -->
 <script setup lang="ts">
-import { inject } from "vue";
-
+import { inject, ref } from "vue";
 import type { FormInstance } from "~/composables/useForm";
 
 const { fields, isSubmitting, workingHours, toggleDay, onSubmitHandler } =
   inject("current_form_instance") as FormInstance;
+
+// تتبع حالة إظهار الباسورد لكل حقل ديناميكياً عبر اسم العمود (column)
+const visiblePasswords = ref<Record<string, boolean>>({});
+
+const togglePasswordVisibility = (column: string) => {
+  visiblePasswords.value[column] = !visiblePasswords.value[column];
+};
+
 
 const daysTranslation: Record<string, string> = {
   sat: "السبت",
@@ -74,15 +81,41 @@ const daysTranslation: Record<string, string> = {
         </option>
       </select>
 
-      <input
-        v-else-if="form.type !== 'file'"
-        :type="form.type"
-        v-model="form.value"
-        :placeholder="form.label"
-        :required="form.required"
-        :autocomplete="form.type === 'password' ? 'new-password' : 'off'"
-        class="p-fluid bg-card border-primary/10 text-text/80 text-fluid-p focus:border-primary w-full rounded-xl border transition-colors focus:outline-none"
-      />
+      <div v-else-if="form.type !== 'file'" class="relative w-full">
+        <input
+          :type="
+            form.type === 'password' && visiblePasswords[form.column]
+              ? 'text'
+              : form.type
+          "
+          v-model="form.value"
+          :placeholder="form.label"
+          :required="form.required"
+          :autocomplete="form.type === 'password' ? 'new-password' : 'off'"
+          :class="form.type === 'password' ? 'pe-10' : ''"
+          class="p-fluid bg-card border-primary/10 text-text/80 text-fluid-p focus:border-primary w-full rounded-xl border transition-colors focus:outline-none"
+        />
+
+        <button
+          v-if="form.type === 'password'"
+          type="button"
+          @click="togglePasswordVisibility(form.column)"
+          class="text-text/50 hover:text-primary absolute inset-y-0 inset-e-0 flex items-center pe-3 transition-colors"
+          :aria-label="
+            visiblePasswords[form.column]
+              ? 'إخفاء كلمة المرور'
+              : 'إظهار كلمة المرور'
+          "
+        >
+          <Icon
+            v-if="String(form.value ?? '').length > 0"
+            :name="
+              visiblePasswords[form.column] ? 'lucide:eye-off' : 'lucide:eye'
+            "
+            class="text-primary h-5 w-5"
+          />
+        </button>
+      </div>
     </div>
 
     <div

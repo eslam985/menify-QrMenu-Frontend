@@ -4,17 +4,18 @@ import type {
   CreateOfferType,
   UpdateOfferType,
 } from "@/schemas/offerSchema/offerSchema";
-import type { OfferResponse } from "@/types/dataType/offerType";
 import { type FormField } from "~/composables/useForm";
 
-import { useOfferState } from "@/composables/offer/useOfferState";
 import { useSubmitstate } from "#imports";
+import { useOfferState } from "@/composables/offer/useOfferState";
+import type { OfferResponse } from "~/types/dataType/offerType";
+
 const { handleSubmit } = useSubmitstate();
 const formInstance = useForm();
+
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
   formInstance;
 provide("current_form_instance", formInstance);
-const isEditMode = computed(() => Boolean(id.value));
 
 const {
   categoryStore,
@@ -31,7 +32,11 @@ const {
   loadOfferData,
   router,
   id,
+  buildOfferPayload,
+  populateOfferData,
 } = useOfferState();
+
+const isEditMode = computed(() => Boolean(id.value));
 
 const offerFieldsConfig: FormField[] = [
   {
@@ -60,46 +65,20 @@ const offerFieldsConfig: FormField[] = [
   },
 ];
 
-const populateOfferData = (offer: OfferResponse) => {
-  startsAt.value = offer.starts_at
-    ? new Date(offer.starts_at).toISOString().slice(0, 16)
-    : "";
-
-  endsAt.value = offer.ends_at
-    ? new Date(offer.ends_at).toISOString().slice(0, 16)
-    : "";
-
-  isActive.value = offer.is_active ?? true;
-  items.value = offer.items ? JSON.parse(JSON.stringify(offer.items)) : [];
-
-  setFormConfig(offerFieldsConfig, handleSubmitOffer, {
-    title: offer.title || "",
-    offer_price: offer.offer_price || null,
-    description: offer.description || null,
-  });
-};
-
 const handleSubmitOffer = async () => {
   errorMessage.value = "";
 
   if (isSubmitting.value || offerStore.isLoading) return;
 
-  const offer_price = formDataPayload.value.offer_price
-    ? Number(formDataPayload.value.offer_price)
-    : null;
-
-  const paylod = {
-    ...formDataPayload.value,
-    offer_price,
-  };
+  const payload = buildOfferPayload(formDataPayload.value);
 
   handleSubmit({
-    formDataPayload: formDataPayload.value,
+    formDataPayload: payload,
     isSubmitting,
     apiCall: () => {
       return isEditMode.value && id.value
-        ? offerStore.updateOffer(id.value, paylod as UpdateOfferType["body"])
-        : offerStore.addOffer(paylod as CreateOfferType["body"]);
+        ? offerStore.updateOffer(id.value, payload as UpdateOfferType["body"])
+        : offerStore.addOffer(payload as CreateOfferType["body"]);
     },
     onSuccess: (success) => {
       if (success) {
@@ -111,6 +90,11 @@ const handleSubmitOffer = async () => {
 };
 
 const loadData = async () => {
+  type initialValuesType = {
+    title: string;
+    offer_price: string | number;
+    description: string;
+  }  
   const tasks: Promise<unknown>[] = [];
 
   if (categoryStore.categoriesCount < 1)
@@ -121,14 +105,18 @@ const loadData = async () => {
   if (tasks.length > 0) await Promise.all(tasks);
 
   if (isEditMode.value && id.value) {
-    let targetOffer = offerStore.offers.find((o) => o.id === id.value);
+    let targetOffer: OfferResponse | undefined = offerStore.offers.find((o) => o.id === id.value);
 
     if (!targetOffer) {
       await loadOfferData();
       targetOffer = offerStore.offers.find((o) => o.id === id.value);
     }
 
-    if (targetOffer) populateOfferData(targetOffer);
+    if (targetOffer) {
+      const initialValues: initialValuesType = populateOfferData(targetOffer);
+      
+      setFormConfig(offerFieldsConfig, handleSubmitOffer, initialValues);
+    }
   } else {
     resetForm();
     setFormConfig(offerFieldsConfig, handleSubmitOffer);

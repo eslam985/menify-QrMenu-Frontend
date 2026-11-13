@@ -2,14 +2,12 @@
 <script setup lang="ts">
 import { useCategoryState } from "@/composables/category/useCategoryState";
 import { useTable } from "~/composables/useTable";
+import { useCategoryModal } from "~/composables/category/useCategoryModal";
 
-const {
-  authStore,
-  categoryStore,
-  filteredCategories,
-  openModal,
-  handleDelete,
-} = useCategoryState();
+const { authStore, categoryStore, filteredCategories, handleDelete } =
+  useCategoryState();
+const { openModal } = useCategoryModal();
+
 const { setTableConfig } = useTable();
 
 const tableColumns = [
@@ -19,11 +17,10 @@ const tableColumns = [
   { key: "display_order", label: "الترتيب" },
   { key: "updated_at", label: "آخر تحديث" },
   { key: "created_at", label: "تاريخ الانشاء" },
+  ...(authStore.isEditorAndAbove
+    ? [{ key: "actions", label: "الإجراءات" }]
+    : []),
 ];
-
-if (authStore.isEditorAndAbove) {
-  tableColumns.push({ key: "actions", label: "الإجراءات" });
-}
 
 watchEffect(() => {
   setTableConfig(

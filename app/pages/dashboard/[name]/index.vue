@@ -8,7 +8,10 @@ definePageMeta({
   requiredRole: RolesList.Admin,
 });
 
-import { useForm, type FormField } from "~/composables/useForm";
+import { useForm } from "~/composables/useForm";
+import { restaurantFieldsConfig } from "~/constants/restaurantFormConfig";
+import type { UpdateRestaurantType } from "~/schemas/restaurantSchema/restaurantSchema";
+import type { PublicRestaurantInfo } from "~/types/dataType/publicMenuType";
 const { handleSubmit } = useSubmitstate();
 
 const restaurantStore = useRestaurantStore();
@@ -24,118 +27,59 @@ const {
 
 provide("current_form_instance", formInstance);
 
-const restaurantFieldsConfig: FormField[] = [
-  {
-    column: "name",
-    value: "",
-    label: "اسم المطعم او الكافية",
-    required: true,
-    type: "text",
-    colspan: "col-span-3 md:col-span-1",
-  },
-  {
-    column: "phone",
-    value: "",
-    label: "رقم الهاتف",
-    required: true,
-    type: "tel",
-    colspan: "col-span-3 md:col-span-1",
-  },
-  {
-    column: "whatsapp",
-    value: "",
-    label: "رقم واتساب",
-    required: false,
-    type: "tel",
-    colspan: "col-span-3 md:col-span-1",
-  },
-  {
-    column: "currency",
-    value: "",
-    label: "العملة مثل (EGP | جنيه)",
-    required: true,
-    type: "text",
-    colspan: "col-span-3 md:col-span-1",
-  },
-  {
-    column: "address",
-    value: "",
-    label: "عنوان المطعم او الكافية",
-    required: false,
-    type: "text",
-    colspan: "col-span-3 md:col-span-2",
-  },
-  {
-    column: "maps_url",
-    value: "",
-    label: "رابط عنوان المكان (GPS)",
-    required: false,
-    type: "text",
-    colspan: "col-span-3 md:col-span-1",
-  },
-  {
-    column: "instagram_url",
-    value: "",
-    label: "رابط انستجرام",
-    required: false,
-    type: "text",
-    colspan: "col-span-3 md:col-span-1",
-  },
-  {
-    column: "facebook_url",
-    value: "",
-    label: "رابط فيسبوك",
-    required: false,
-    type: "text",
-    colspan: "col-span-3 md:col-span-1",
-  },
-  {
-    column: "timezone",
-    value: "",
-    label: "المنطقة او البلد",
-    required: false,
-    type: "text",
-    colspan: "col-span-3 md:col-span-1",
-  },
-  {
-    column: "description",
-    value: "",
-    label: "الوصف",
-    required: false,
-    type: "textarea",
-    colspan: "col-span-3",
-  },
-];
+const addresses = ref<BranchAddress[]>([]);
+
+const addAddress = () => {
+  addresses.value.push({ branch_name: "", address: "" });
+};
+
+const removeAddress = (index: number) => {
+  addresses.value.splice(index, 1);
+};
 
 const handleRestaurantSubmit = async () => {
+  
+  const address: string | null = stringifyAddresses(addresses.value);
+
+  const payload: UpdateRestaurantType["body"] = {
+    ...formDataPayload.value,
+    address,
+  };
+
   handleSubmit({
-    formDataPayload: formDataPayload.value,
+    formDataPayload: payload,
     isSubmitting,
-    apiCall: () => restaurantStore.updateRestaurant(formDataPayload.value),
+    apiCall: () =>
+      restaurantStore.updateRestaurant(payload),
   });
 };
 
-onMounted(async () => {
-  if (
+const loadData = async () => {
+  const isNotData =
     !restaurantStore.restaurant ||
-    Object.keys(restaurantStore.restaurant).length < 1
-  ) {
-    await restaurantStore.fetchRestaurant();
-  }
+    Object.keys(restaurantStore.restaurant).length < 1;
 
-  const restaurantData = restaurantStore.restaurant;
+  if (isNotData) await restaurantStore.fetchRestaurant();
 
-  if (restaurantData) {
-    setFormConfig(
-      restaurantFieldsConfig,
-      handleRestaurantSubmit,
-      restaurantData,
-    );
+  const restaurantData: PublicRestaurantInfo | null =
+    restaurantStore.restaurant;
 
-    if (restaurantData.working_hours) {
-      setWorkingHoursConfig(restaurantData.working_hours);
-    }
-  }
+  if (!restaurantData) return;
+
+  // Populate branch addresses on page load
+  addresses.value = parseAddresses(restaurantData.address);
+
+  setFormConfig(restaurantFieldsConfig, handleRestaurantSubmit, {
+    ...restaurantData,
+  });
+
+  if (!restaurantData.working_hours) return;
+
+  setWorkingHoursConfig({ ...restaurantData.working_hours });
+};
+
+onMounted(async () => {
+  await loadData();
 });
 
 onUnmounted(() => {
@@ -165,6 +109,65 @@ onUnmounted(() => {
       </span>
       الاساسية
     </h3>
-    <UiBaseForm />
+    <UiBaseForm>
+      <template #extra-fields>
+        <div
+          class="border-primary/10 pt-fluid mt-fluid flex flex-col gap-3 border-t"
+        >
+          <div class="flex items-center justify-between">
+            <label class="text-fluid-xs text-primary font-bold">
+              عناوين الفروع
+            </label>
+            <button
+              type="button"
+              @click="addAddress"
+              class="bg-primary/10 text-primary hover:bg-primary/20 text-fluid-xs flex items-center gap-1 rounded-lg px-3 py-1.5 font-semibold transition-colors"
+            >
+              <Icon name="lucide:plus" class="h-4 w-4" />
+              <span>إضافة فرع</span>
+            </button>
+          </div>
+
+          <div
+            v-if="addresses.length === 0"
+            class="text-text/40 text-fluid-sm border-primary/10 rounded-xl border border-dashed py-4 text-center"
+          >
+            لا توجد عناوين مضافة. اضغط على "إضافة فرع" لإدخال عنوان.
+          </div>
+
+          <div
+            v-for="(item, index) in addresses"
+            :key="index"
+            class="gap-fluid grid grid-cols-1 items-center sm:grid-cols-3"
+          >
+            <input
+              type="text"
+              v-model="item.branch_name"
+              placeholder="اسم الفرع (مثال: فرع المعادي)"
+              class="p-fluid bg-card border-primary/10 text-text/80 text-fluid-p focus:border-primary w-full rounded-xl border transition-colors focus:outline-none"
+            />
+
+            <div class="flex items-center gap-2 sm:col-span-2">
+              <input
+                type="text"
+                v-model="item.address"
+                placeholder="العنوان بالتفصيل"
+                required
+                class="p-fluid bg-card border-primary/10 text-text/80 text-fluid-p focus:border-primary w-full rounded-xl border transition-colors focus:outline-none"
+              />
+
+              <button
+                type="button"
+                @click="removeAddress(index)"
+                class="bg-denger/10 text-denger hover:bg-denger/20 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors"
+                title="حذف الفرع"
+              >
+                <Icon name="lucide:trash-2" class="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </UiBaseForm>
   </div>
 </template>

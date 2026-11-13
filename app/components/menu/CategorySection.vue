@@ -1,5 +1,6 @@
 <!-- app/components/menu/CategorySection.vue -->
 <script setup lang="ts">
+import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
 const { publicMenuStore, filteredCategories, searchQuery } =
   usePublicMenuState();
 

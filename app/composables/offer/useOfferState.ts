@@ -1,4 +1,6 @@
 import { useOfferSearch } from "~/composables/offer/useOfferSearch";
+import type { CreateOfferType } from "@/schemas/offerSchema/offerSchema";
+import type { OfferResponse } from "@/types/dataType/offerType";
 
 export interface itemsType {
   menu_item_id?: string;
@@ -79,6 +81,64 @@ export const useOfferState = () => {
     return result;
   });
 
+  const buildOfferPayload = (formData: Record<string, any>) => {
+    const description = formData.description || null;
+
+    const rawPrice = formData.offer_price;
+    const offer_price: number | null =
+      rawPrice !== "" && rawPrice !== null && rawPrice !== undefined
+        ? Number(rawPrice)
+        : null;
+
+    const ends_at: string = endsAt.value
+      ? new Date(endsAt.value).toISOString()
+      : new Date(Date.now() + 86400000).toISOString();
+
+    const startsAtPayload = startsAt.value
+      ? { starts_at: new Date(startsAt.value).toISOString() }
+      : {};
+
+    const offerItems: NonNullable<CreateOfferType["body"]["items"]> =
+      items.value.flatMap<NonNullable<CreateOfferType["body"]["items"]>[number]>(
+        (i) => {
+          if ("menu_item_id" in i && i.menu_item_id) {
+            return [{ menu_item_id: i.menu_item_id, quantity: i.quantity }];
+          }
+          return i.custom_label
+            ? [{ custom_label: i.custom_label, quantity: i.quantity }]
+            : [];
+        },
+      );
+
+    return {
+      ...formData,
+      ...startsAtPayload,
+      ends_at,
+      description,
+      offer_price,
+      is_active: isActive.value,
+      items: offerItems,
+    };
+  };
+  const populateOfferData = (offer: OfferResponse) => {
+    startsAt.value = offer.starts_at
+      ? new Date(offer.starts_at).toISOString().slice(0, 16)
+      : "";
+
+    endsAt.value = offer.ends_at
+      ? new Date(offer.ends_at).toISOString().slice(0, 16)
+      : "";
+
+    isActive.value = offer.is_active ?? true;
+    items.value = offer.items ? JSON.parse(JSON.stringify(offer.items)) : [];
+
+    return {
+      title: offer.title || "",
+      offer_price: offer.offer_price ?? "",
+      description: offer.description || "",
+    };
+  };
+
   return {
     router,
     route,
@@ -103,5 +163,7 @@ export const useOfferState = () => {
     removeItemFromOffer,
     handleRefresh,
     loadOfferData,
+    buildOfferPayload,
+    populateOfferData,
   };
 };

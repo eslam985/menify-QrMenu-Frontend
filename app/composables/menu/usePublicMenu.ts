@@ -1,17 +1,14 @@
-import QRCode from "qrcode";
 import type {
   PublicMenuCategory,
   PublicMenuItem,
 } from "@/types/dataType/publicMenuType";
-import type { PublicOffer } from "@/types/dataType/publicMenuType";
-import type { OfferItemResponse } from "@/types/dataType/offerType";
-import { useItemState } from "~/composables/item/useItemState";
-import type { CartItem } from "@/types/dataType/menuItemType";
 
+import type { CartItem } from "@/types/dataType/menuItemType";
+import { useItemModal } from "~/composables/item/useItemModal";
 export const usePublicMenuState = () => {
   const route = useRoute();
 
-  const { openItemModal, setActiveCategoryItems } = useItemState();
+  const { setActiveCategoryItems, openItemModal } = useItemModal();
 
   const publicMenuStore = usePublicMenuStore();
   const authStore = useAuthStore();
@@ -19,12 +16,8 @@ export const usePublicMenuState = () => {
 
   const item = ref<CartItem>();
   const closeItemModel = ref(false);
-  const activeCategory = ref<string | number | null>(null);
   const selectedsection = ref("كل الاقسام");
-  const isSticky = ref(false);
   const searchQuery = ref("");
-  const qrCodeUrl = ref("");
-  const copied = ref(false);
   const daysMap: Record<string, string> = {
     sun: "الأحد",
     mon: "الإثنين",
@@ -34,6 +27,7 @@ export const usePublicMenuState = () => {
     fri: "الجمعة",
     sat: "السبت",
   };
+
   const sections = computed(() => publicMenuStore.sections);
   const slug = computed(() => authStore.restaurantSlug);
   const PublicSlug = fromRouteQuery(route.params.slug);
@@ -72,69 +66,6 @@ export const usePublicMenuState = () => {
       );
   });
 
-  const menuLink = computed(() => {
-    if (import.meta.client) {
-      return `${window.location.origin}/menu/${slug.value}`;
-    }
-
-    const requestUrl = useRequestURL();
-    return `${requestUrl.origin}/menu/${slug.value}`;
-  });
-
-  const handleScroll = () =>
-    window.scrollY > 1000 ? (isSticky.value = true) : (isSticky.value = false);
-
-  const scrollToCategory = (categoryId: string | number) => {
-    if (!categoryId) return;
-
-    activeCategory.value = categoryId;
-
-    const element = document.getElementById(`category-${categoryId}`);
-
-    element
-      ? element.scrollIntoView({ behavior: "smooth", block: "start" })
-      : null;
-  };
-
-  const getOriginalTotal = (offer: PublicOffer) => {
-    if (offer.original_total) return offer.original_total;
-
-    if (!offer.items || !offer.items?.length) return 0;
-
-    return offer.items.reduce((sum: number, item: OfferItemResponse) => {
-      const unitPrice = item.unit_price || 0;
-      const qty = item.quantity || 0;
-      return sum + unitPrice * qty;
-    }, 0);
-  };
-
-  const generateQr = async () => {
-    try {
-      qrCodeUrl.value = await QRCode.toDataURL(menuLink.value, {
-        width: 300,
-        margin: 2,
-        color: {
-          dark: "#c95400",
-          light: "#ffffff",
-        },
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(menuLink.value);
-      copied.value = true;
-      setTimeout(() => {
-        copied.value = false;
-      }, 2000);
-    } catch (err) {
-      console.error("Failed to copy: ", err);
-    }
-  };
-
   const todayHours = computed(() => {
     const hours = publicMenuStore.restaurant?.working_hours;
     if (!hours || typeof hours !== "object") return null;
@@ -164,6 +95,7 @@ export const usePublicMenuState = () => {
     setActiveCategoryItems(category.items);
     openItemModal(item);
   };
+
   const handleFetchMenu = async () => {
     await publicMenuStore.fetchMenu(fromRouteQuery(PublicSlug));
   };
@@ -184,20 +116,16 @@ export const usePublicMenuState = () => {
       response.status === 404
     );
   });
+
   return {
     publicMenuStore,
     authStore,
     sections,
-    activeCategory,
     filteredCategories,
     targetCategories,
     selectedsection,
-    isSticky,
     searchQuery,
-    menuLink,
     slug,
-    qrCodeUrl,
-    copied,
     daysMap,
     todayHours,
     route,
@@ -208,12 +136,7 @@ export const usePublicMenuState = () => {
     notFound,
     openItemModal,
     setActiveCategoryItems,
-    scrollToCategory,
     openItem,
-    handleScroll,
-    getOriginalTotal,
-    generateQr,
-    copyLink,
     handleFetchMenu,
   };
 };
