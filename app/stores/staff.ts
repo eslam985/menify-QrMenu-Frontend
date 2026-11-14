@@ -6,26 +6,29 @@ import type {
   UpdateStaffRoleType,
 } from "@/schemas/staffSchema/staffSchema";
 
+import { RolesList } from "~/constants/auth";
+
 export const useStaffStore = defineStore("staff", () => {
-  const notiStore = useNotificationStore();
   const confirmStore = useConfirmStore();
   const staffService = useStaffService();
+  const authStore = useAuthStore();
 
   const staff = ref<StaffResponse[]>([]);
-  const successMessage = ref("");
-  const errorMessage = ref("");
   const isLoading = ref(false);
+  const isSaving = ref(false);
+  const isLoaded = ref(false);
 
   const staffCount = computed(() => staff.value.length);
   const adminsCount = computed(
-    () => staff.value.filter((u) => u.roles === "5150").length,
+    () => staff.value.filter((u) => Number(u.roles) === RolesList.Admin).length,
   );
   const editorsCount = computed(
-    () => staff.value.filter((u) => u.roles === "1984").length,
+    () => staff.value.filter((u) => Number(u.roles) === RolesList.Editor).length,
   );
   const usersCount = computed(
-    () => staff.value.filter((u) => u.roles === "2001").length,
+    () => staff.value.filter((u) => Number(u.roles) === RolesList.User).length,
   );
+
 
   function getEmployeeById(id: string) {
     if (!id) return false;
@@ -37,20 +40,21 @@ export const useStaffStore = defineStore("staff", () => {
     return result;
   }
 
-  async function getStaff() {
+  async function getStaff(force = false) {
     if (isLoading.value) return false;
+    if (!force && isLoaded.value) return true;
 
     isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
     try {
       const res = await staffService.getStaff();
 
       if (!res || !res.success) return false;
 
       staff.value = res.data;
-      return res.data;
+      isLoaded.value = true
+      return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل جلب المستخدمين ! ");
       return false;
     } finally {
       isLoading.value = false;
@@ -58,26 +62,33 @@ export const useStaffStore = defineStore("staff", () => {
   }
 
   async function createStaff(body: CreateStaffType["body"]) {
-    if (isLoading.value || Object.keys(body).length < 1) return false;
 
-    isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
+    if (
+      isSaving.value ||
+      typeof body !== "object" ||
+      Object.keys(body).length < 1
+    )
+      return false;
+
+    if (!authStore.checkRole(authStore.isAdmin, "Admin")) return false;
+
+    isSaving.value = true;
     try {
       const res = await staffService.createStaff(body);
 
-      if (!res || !res.success) return false;
-
-      successMessage.value = res.message;
-      notiStore.show(successMessage.value, "success");
+      const errMsg = "فشل إضافة المستخدم";
+      const successMsg = "تم اضافة المستخدم بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
 
       staff.value.push(res.data);
 
       return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل اضافة المستخدم ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
@@ -85,64 +96,64 @@ export const useStaffStore = defineStore("staff", () => {
     staffId: string,
     roles: UpdateStaffRoleType["body"],
   ) {
-    if (isLoading.value || !staffId || !roles) return false;
+    if (isSaving.value || !staffId || !roles) return false;
+    if (!authStore.checkRole(authStore.isAdmin, "Admin")) return false;
 
-    isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
+    isSaving.value = true;
+
     try {
       const res = await staffService.updateStaffRole(staffId, roles);
 
-      if (!res || !res.success) return false;
-
-      successMessage.value = res.message;
-      notiStore.show(successMessage.value, "success");
+      const errMsg = "فشل تحديث صلاحية المستخدم !";
+      const successMsg = "تم تحديث صلاحية المستخدم بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
 
       const index = staff.value.findIndex((u) => u.id === staffId);
-
       if (index !== -1) staff.value.splice(index, 1, res.data);
 
       return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل تحديث صلاحية المستخدم ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function deleteStaff(staffId: string) {
-    if (!staffId || isLoading.value) return false;
+    
+    if (!staffId || isSaving.value) return false;
+    if (!authStore.checkRole(authStore.isAdmin, "Admin")) return false;
 
     const confirm = await confirmStore.ask("هل انت متأكد من حذف هذا الموظف ؟");
     if (!confirm) return false;
 
-    isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
+    isSaving.value = true;
+
     try {
       const res = await staffService.deleteStaff(staffId);
 
-      if (!res || !res.success) return false;
+      const errMsg = "فشل حذف المستخدم !";
+      const successMsg = "تم حذف المستخدم بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg, false);
+      if (!isRes) return false;
 
-      successMessage.value = res.message;
-      notiStore.show(successMessage.value, "success");
-
-      const index = staff.value.findIndex((u) => u.id === staffId);
-
-      if (index !== -1) staff.value.splice(index, 1);
+      staff.value = staff.value.filter((s) => s.id !== staffId);
 
       return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل حذف المستخدم ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   return {
     isLoading,
-    successMessage,
-    errorMessage,
+    isSaving,
+    isLoaded,
     staff,
     staffCount,
     adminsCount,
@@ -155,3 +166,4 @@ export const useStaffStore = defineStore("staff", () => {
     deleteStaff,
   };
 });
+// 158

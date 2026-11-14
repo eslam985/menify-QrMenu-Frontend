@@ -1,19 +1,14 @@
-import { usePublicMenuService } from "@/services/publicMenuService";
+import { defineStore } from "pinia";
+
 import type {
   PublicMenuCategory,
   PublicOffer,
   PublicRestaurantInfo,
 } from "@/types/dataType/publicMenuType";
-import { handleGlobalError } from "@/utils/apiError";
-import { defineStore } from "pinia";
 
-const CURRENCY_LABELS: Record<string, string> = {
-  EGP: "ج.م",
-  SAR: "ر.س",
-  AED: "د.إ",
-  USD: "$",
-  EUR: "€",
-};
+import { handleGlobalError } from "@/utils/apiError";
+import { CURRENCY_LABELS } from "~/constants/currency";
+import { usePublicMenuService } from "@/services/publicMenuService";
 
 export const usePublicMenuStore = defineStore("publicMenu", () => {
   const publicMenuService = usePublicMenuService();
@@ -23,21 +18,25 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
   const offers = ref<PublicOffer[]>([]);
   const isLoading = ref(false);
   const isLoaded = ref(false);
-  const error = ref<unknown>(null);
+  const error = ref<string | null>(null);
 
+  const isNotFound = ref(false);
   let loadedSlug: string | null = null;
   const categoriesCount = computed(() => categories.value?.length);
 
   const sections = computed(() => [
-    ...new Set(categories.value.map((c) => c.section)),
+    ...new Set(categories.value.map((c) => c.section).filter(Boolean)),
   ]);
 
-  async function fetchMenu(slug: string) {
-    if (!slug || isLoading.value) return;
-    if (loadedSlug === slug && restaurant.value) return;
+  async function fetchMenu(slug: string, force = false) {
+    if (!slug || isLoading.value) return false;
+    if (!force && loadedSlug === slug && restaurant.value) return true;
+
+    if (loadedSlug !== slug) clearMenu();
 
     isLoading.value = true;
     error.value = null;
+    isNotFound.value = false;
     try {
       const res = await publicMenuService.fetchMenu(slug);
 
@@ -47,15 +46,18 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
 
       if (!success || !data) return false;
 
-      const info = data.restaurant;
+      restaurant.value = {
+        ...data.restaurant,
+        currency:
+          CURRENCY_LABELS[data.restaurant.currency] ?? data.restaurant.currency,
+      };
 
-      info.currency = CURRENCY_LABELS[info.currency] ?? info.currency;
-      restaurant.value = info;
       categories.value = data.categories ?? [];
       offers.value = data.offers ?? [];
       loadedSlug = slug;
+      isLoaded.value = true;
 
-      return res;
+      return res.success;
     } catch (e: unknown) {
       const { status, message } = handleGlobalError(
         e,
@@ -64,6 +66,7 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
       );
 
       if (status === 404) {
+        isNotFound.value = true;
         error.value = "عذراً، هذا المطعم غير موجود أو تم إيقاف الرابط.";
       } else {
         error.value = message;
@@ -72,12 +75,12 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
       return false;
     } finally {
       isLoading.value = false;
-      isLoaded.value = true;
     }
   }
 
   function clearMenu() {
     restaurant.value = null;
+    isNotFound.value = false;
     categories.value = [];
     offers.value = [];
     error.value = null;
@@ -91,6 +94,7 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
     categories,
     offers,
     isLoading,
+    isNotFound,
     isLoaded,
     error,
     categoriesCount,

@@ -4,113 +4,124 @@ import type { UpdateRestaurantType } from "~/schemas/restaurantSchema/restaurant
 import { useRestaurantService } from "~/services/restaurantService";
 
 export const useRestaurantStore = defineStore("restaurant", () => {
+  const confirmStore = useConfirmStore();
+  const authStore = useAuthStore();
   const restaurantService = useRestaurantService();
-  const notiStore = useNotificationStore();
 
   const restaurant = ref<RestaurantResponse | null>(null);
   const isLoading = ref(false);
-  const errorMessage = ref("");
-  const successMessage = ref("");
+  const isSaving = ref(false);
+  const isLoaded = ref(false);
 
-  const restaurantStatus = computed(
-    () => (restaurant.value as { status?: string } | null)?.status,
-  );
+  const restaurantStatus = computed(() => restaurant.value?.status);
+  const subscription_ends_at = computed(() => restaurant.value?.subscription_ends_at);
+  const joinIn = computed(() => restaurant.value?.created_at);
 
-  const subscription_ends_at = computed(
-    () =>
-      (restaurant.value as { subscription_ends_at?: string } | null)
-        ?.subscription_ends_at,
-  );
 
-  const joinIn = computed(
-    () => (restaurant.value as { created_at?: string } | null)?.created_at,
-  );
+  async function fetchRestaurant(force = false) {
+    if (isLoading.value) return false;
+    if (!force && isLoaded.value) return true;
 
-  async function fetchRestaurant() {
     isLoading.value = true;
-    errorMessage.value = "";
-    successMessage.value = "";
+
     try {
       const res = await restaurantService.getRestaurant();
 
-      if (!res || !res.success) return false;
-      console.log("res.data: ", res.data);
-      successMessage.value = res.message;
+      if (!res || !res.success || !res.data) return false;
+
       restaurant.value = res.data;
-      return res.data;
-    } catch (err: unknown) {
+      isLoaded.value = true
+      return res.success;
+    } catch (err) {
+      handleGlobalError(err, "فشل جلب البيانات ! ");
       return false;
     } finally {
       isLoading.value = false;
     }
   }
-  async function updateRestaurant(body: UpdateRestaurantType['body']) {
-    isLoading.value = true;
-    errorMessage.value = "";
-    successMessage.value = "";
+  async function updateRestaurant(body: UpdateRestaurantType["body"]) {
+    if (
+      isSaving.value ||
+      typeof body !== "object" ||
+      Object.keys(body).length < 1
+    )
+      return false;
+    if (!authStore.checkRole(authStore.isAdmin, "Admin")) return false;
+
+    isSaving.value = true;
+
     try {
       const res = await restaurantService.updateRestaurant(body);
 
-      if (!res || !res.success) return false;
-
-      console.log("res.data: ", res.data);
-      successMessage.value = res.message || "تم رفع صورة الصنف بنجاح!";
-      notiStore.show(successMessage.value, "success");
+      const errMsg = "فشل تحديث البيانات ! ";
+      const successMsg = "تم تحديث البيانات بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
 
       restaurant.value = res.data;
-      return res.data;
-    } catch (err: unknown) {
+      return res.success;
+    } catch (err) {
+      handleGlobalError(err, "فشل تحديث البيانات ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function uploadLogo(formData: FormData) {
-    isLoading.value = true;
-    errorMessage.value = "";
-    successMessage.value = "";
+    if (isSaving.value || !formData) return false;
+    if (!authStore.checkRole(authStore.isAdmin, "Admin")) return false;
+
+    isSaving.value = true;
     try {
       const res = await restaurantService.uploadLogo(formData);
-      if (!res || !res.success) return false;
-
-      console.log(res);
+      const errMsg = "فشل رفع الصورة";
+      const successMsg = "تم رفع الصورة بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
       restaurant.value = res.data;
 
-      notiStore.show(res.message || "تم رفع صورة الصنف بنجاح!", "success");
-      return res;
-    } catch (err: unknown) {
+      return res.success;
+    } catch (err) {
+      handleGlobalError(err, "فشل رفع الصورة");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function deleteLogo() {
-    isLoading.value = true;
-    errorMessage.value = "";
-    successMessage.value = "";
+    if (isSaving.value) return false;
+    if (!authStore.checkRole(authStore.isAdmin, "Admin")) return false;
+
+    const confirmMsg = "هل أنت متأكد من حذف شعار المطعم؟";
+    const isConfirmed = await confirmStore.ask(confirmMsg);
+    if (!isConfirmed) return false;
+
+    isSaving.value = true;
     try {
       const res = await restaurantService.deleteLogo();
-      if (!res || !res.success) return false;
+      const errMsg = "فشل حذف الصورة";
+      const successMsg = "تم حذف الصورة بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
 
-      console.log(res);
       restaurant.value = res.data;
 
-      notiStore.show(res.message || "تم حذف الصورة نجاح", "success");
-      return res;
-    } catch (err: unknown) {
+      return res.success;
+    } catch (err) {
+      handleGlobalError(err, "فشل حذف الصورة");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   return {
     restaurant,
     isLoading,
-    errorMessage,
-    successMessage,
+    isSaving,
+    isLoaded,
     restaurantStatus,
     subscription_ends_at,
     joinIn,
@@ -120,3 +131,4 @@ export const useRestaurantStore = defineStore("restaurant", () => {
     deleteLogo,
   };
 });
+// 123

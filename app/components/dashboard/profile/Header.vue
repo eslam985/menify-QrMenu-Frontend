@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { useProfileState } from "@/composables/profile/useProfileState";
+import { useSubmitstate } from "#imports";
+import { DEFAULT_AVATAR } from "@/utils/constants";
+
+const { handleSubmit } = useSubmitstate();
 
 const {
   userStore,
@@ -8,13 +12,33 @@ const {
   avatarPreview,
   isDropdownOpen,
   isModalOpen,
-  DEFAULT_AVATAR,
   handleFileChange,
   handleUpload,
   handleDelete,
-  handleSelectHistory,
   role,
 } = useProfileState();
+
+const handleSelectHistory = async (url: string) => {
+  if (!url) return;
+
+  handleSubmit({
+    formDataPayload: url,
+    apiCall: () => userStore.setAvatarFromHistory(url),
+    onSuccess: async (isSuccess) => {
+      if (!isSuccess) return;
+
+      isModalOpen.value = false;
+      await userStore.findUserById();
+    },
+  });
+};
+
+// فلترة سجل الصور لإزالة أي نص فارغ "" قبل العرض
+const validAvatarHistory = computed(() =>
+  (authStore.user?.avatar_history || []).filter((url) =>
+    Boolean(url && url.trim()),
+  ),
+);
 </script>
 
 <template>
@@ -61,6 +85,7 @@ const {
                   fetchpriority="high"
                   loading="eager"
                   decoding="async"
+                  @error="handleImageError"
                 />
 
                 <input
@@ -104,12 +129,8 @@ const {
                       "
                     />
                   </label>
-
                   <button
-                    v-if="
-                      authStore.user?.avatar_history &&
-                      authStore.user?.avatar_history?.length > 0
-                    "
+                    v-if="validAvatarHistory.length > 0"
                     type="button"
                     @click="
                       isModalOpen = true;
@@ -123,7 +144,8 @@ const {
                   <button
                     v-if="
                       authStore.user?.avatar_url &&
-                      authStore.user?.avatar_url !== 'https://cloudinary.com'
+                      authStore.user.avatar_url.trim() !== '' &&
+                      authStore.user.avatar_url !== DEFAULT_AVATAR
                     "
                     type="button"
                     @click="handleDelete"
@@ -162,8 +184,8 @@ const {
               <Icon name="lucide:mail" class="text-primary h-6 w-6" />
               <a
                 target="_blank"
-                href="mailto:ee17172@gmail.com"
-                class="text-text lg:hover:text-pimary"
+                :href="'mailto:' + authStore.user?.email"
+                class="text-text lg:hover:text-primary"
               >
                 {{ authStore.user?.email }}
               </a>
@@ -188,16 +210,12 @@ const {
 
               <a
                 target="_blank"
-                :href="authStore.user?.avatar_url ?? DEFAULT_AVATAR"
-                class="text-fluid-xs lg:hover:text-pimary max-w-100 cursor-pointer self-center truncate text-center transition-colors"
+                :href="authStore.user?.avatar_url || DEFAULT_AVATAR"
+                class="text-fluid-xs lg:hover:text-primary max-w-100 cursor-pointer self-center truncate text-center transition-colors"
               >
                 Avatar URL
                 <span class="text-primary mx-1">
-                  {{
-                    authStore.user?.avatar_url
-                      ? authStore.user?.avatar_url
-                      : DEFAULT_AVATAR
-                  }}
+                  {{ authStore.user?.avatar_url || DEFAULT_AVATAR }}
                 </span>
               </a>
             </div>

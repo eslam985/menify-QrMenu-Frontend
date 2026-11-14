@@ -103,10 +103,7 @@ watchEffect(() => {
       >
         <button
           type="button"
-          @click="
-            openItemModal(row);
-            itemStore.error = '';
-          "
+          @click="openItemModal(row)"
           class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary px-fluid text-fluid-xs cursor-pointer rounded-xl border py-1.5 font-medium active:scale-95"
         >
           تعديل

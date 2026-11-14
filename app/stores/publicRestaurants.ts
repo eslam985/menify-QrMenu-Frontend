@@ -13,8 +13,8 @@ export const usePublicRestaurantsStore = defineStore(
     const isLoaded = ref(false);
     const error = ref<string | null>(null);
 
-    async function fetchRestaurants() {
-      if (isLoaded.value || isLoading.value) return;
+    async function fetchRestaurants(force = false) {
+      if (!force && (isLoaded.value || isLoading.value)) return true;
 
       isLoading.value = true;
       error.value = null;
@@ -22,10 +22,11 @@ export const usePublicRestaurantsStore = defineStore(
       try {
         const res = await service.fetchRestaurants();
 
-        if (!res || !res.success) return;
+        if (!res || !res.success) return false;
 
         restaurants.value = res.data ?? [];
         isLoaded.value = true;
+        return res.success;
       } catch (e: unknown) {
         const { message } = handleGlobalError(
           e,
@@ -33,6 +34,7 @@ export const usePublicRestaurantsStore = defineStore(
           false,
         );
         error.value = message;
+        return false;
       } finally {
         isLoading.value = false;
       }

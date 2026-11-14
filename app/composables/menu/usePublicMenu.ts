@@ -100,22 +100,7 @@ export const usePublicMenuState = () => {
     await publicMenuStore.fetchMenu(fromRouteQuery(PublicSlug));
   };
 
-  const notFound = computed(() => {
-    const error = publicMenuStore.error;
-
-    if (typeof error !== "object" || error === null || !("response" in error)) {
-      return false;
-    }
-
-    const response = error.response;
-
-    return (
-      typeof response === "object" &&
-      response !== null &&
-      "status" in response &&
-      response.status === 404
-    );
-  });
+  const notFound = computed(() => publicMenuStore.isNotFound);
 
   return {
     publicMenuStore,

@@ -1,11 +1,12 @@
 <!-- app/components/dashboard/profile/ActiveSessionsList.vue -->
 <script setup lang="ts">
 import type { SessionResponse } from "@/types/userType/userType";
-
+import { useTable } from "~/composables/useTable";
 import { useProfileState } from "@/composables/profile/useProfileState";
 
+const { setTableConfig } = useTable();
+
 const {
-  setTableConfig,
   sessionTableColumns,
   sessions,
   isLoading,

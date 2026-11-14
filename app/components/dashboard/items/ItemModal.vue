@@ -163,12 +163,6 @@ watch(
       >
         {{ editingItem ? "تعديل صنف" : "إضافة صنف جديد" }}
       </h3>
-      <p
-        v-if="itemStore.error"
-        class="text-danger bg-danger/10 text-fluid-xs mt-2 rounded-lg p-2.5"
-      >
-        {{ itemStore.error }}
-      </p>
       <form @submit.prevent="handleSubmit" class="gap-fluid flex flex-col">
         <UiBaseForm>
           <template #extra-fields>

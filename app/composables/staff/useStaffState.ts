@@ -13,8 +13,6 @@ export const useStaffState = () => {
   const employeeId = computed(() => fromRouteQuery(route.params.id));
   const isEditMode = computed(() => Boolean(employeeId.value));
   const isAdmin = computed(() => authrStore.isAdmin);
-  const DEFAULT_AVATAR: string =
-    "https://res.cloudinary.com/dbahqgo8j/image/upload/blogger/iaeclevshfanh5j6x9ew.webp";
 
   const handleRefresh = async () => {
     const isSuccess = await staffStore.getStaff();
@@ -62,7 +60,6 @@ export const useStaffState = () => {
     isEditMode,
     isAdmin,
     authStore,
-    DEFAULT_AVATAR,
     searchQuery,
     handleRefresh,
     handleDelete,

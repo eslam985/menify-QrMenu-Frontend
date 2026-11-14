@@ -1,43 +1,31 @@
+import { defineStore } from "pinia";
+
 import type {
   LoginUserType,
   RegisterRestaurantType,
 } from "@/schemas/userSchema/userSchema";
 import { useAuthService } from "@/services/authService";
 import type { UserProfileResponse } from "@/types/userType/userType";
-import { defineStore } from "pinia";
-import { handleGlobalError } from "~/utils/apiError";
 
-export const RolesList = { Admin: 5150, Editor: 1984, User: 2001 } as const;
-
-const COOKIE_NAME = "tabloz_has_session";
+import { RolesList } from "~/constants/auth";
+import { useSessionCookie } from "~/composables/auth/useSessionCookie";
+import { handleGlobalError, mapRegisterError } from "~/utils/apiError";
 
 export const useAuthStore = defineStore("auth", () => {
   const authService = useAuthService();
+
   const notiStore = useNotificationStore();
-
-  const sessionCookie = useCookie<string | null>(COOKIE_NAME, {
-    maxAge: 30 * 24 * 60 * 60,
-    path: "/",
-    sameSite: "lax",
-  });
-
-  function getSessionCookie(): boolean {
-    return !!sessionCookie.value;
-  }
-
-  function setSessionCookie() {
-    sessionCookie.value = "1";
-  }
-
-  function removeSessionCookie() {
-    sessionCookie.value = null;
-  }
+  const { hasSessionCookie, setSessionCookie, removeSessionCookie } =
+    useSessionCookie();
 
   const user = ref<UserProfileResponse | null>(null);
   const accessToken = ref<string | null>(null);
   const isInitialized = ref(false);
   const subscriptionInactive = ref(false);
   const isLoading = ref(false);
+  const isLoaded = ref(false);
+  const isSaving = ref(false);
+
   const errorMessage = ref("");
   const successMessage = ref("");
   const userRole = computed(() =>
@@ -45,7 +33,6 @@ export const useAuthStore = defineStore("auth", () => {
   );
 
   function resetState() {
-    isLoading.value = false;
     errorMessage.value = "";
     successMessage.value = "";
   }
@@ -65,6 +52,27 @@ export const useAuthStore = defineStore("auth", () => {
     if (required === RolesList.Editor) return isEditorAndAbove.value;
     return true;
   });
+  /**
+   * Verifies if the user meets the required role permission.
+   * Displays an error notification and returns `false` if unauthorized.
+   *
+   * @param hasPermission - Boolean computed flag (e.g., `authStore.isEditorAndAbove`)
+   * @param roleName - Optional human-readable role label to display in the error message
+   * @returns `true` if authorized, otherwise `false`
+   */
+  function checkRole(hasPermission: boolean, roleName?: string): boolean {
+    if (!hasPermission) {
+      const msg = roleName
+        ? `هذا الإجراء يتطلب صلاحية (${roleName}) أو أعلى!`
+        : "هذا الإجراء غير مصرح لك حالياً";
+
+      notiStore.show(msg, "error");
+      return false;
+    }
+
+    return true;
+  }
+
   function clearSession() {
     user.value = null;
     accessToken.value = null;
@@ -73,7 +81,8 @@ export const useAuthStore = defineStore("auth", () => {
     removeSessionCookie();
   }
 
-  async function loadProfile() {
+  async function loadProfile(force = false) {
+    if (!force && isLoaded.value) return true;
     if (!accessToken.value) return false;
     resetState();
     try {
@@ -82,6 +91,7 @@ export const useAuthStore = defineStore("auth", () => {
       if (!res || !res.success || !res.data) return false;
 
       user.value = res.data;
+      isLoaded.value = true;
       return res.data;
     } catch (err: unknown) {
       const { status, code } = handleGlobalError(
@@ -99,10 +109,10 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function register(payload: RegisterRestaurantType["body"]) {
-    if (isLoading.value) return false;
+    if (isSaving.value) return false;
 
     resetState();
-    isLoading.value = true;
+    isSaving.value = true;
     try {
       const res = await authService.register(payload);
 
@@ -121,33 +131,21 @@ export const useAuthStore = defineStore("auth", () => {
         "فشل عملية التسجيل",
         false,
       );
-
-      if (status === 403) {
-        errorMessage.value = "كود الدعوة غير صالح أو منتهي الصلاحية";
-      } else if (status === 409) {
-        if (message.includes("Slug")) {
-          errorMessage.value = "رابط المطعم مستخدم بالفعل، اختر رابطاً آخر";
-        } else if (message.includes("Email")) {
-          errorMessage.value = "هذا البريد الإلكتروني مسجّل بالفعل";
-        } else {
-          errorMessage.value = "بيانات مكررة، راجع الحقول وحاول مجدداً";
-        }
-      } else {
-        errorMessage.value = message || "فشل عملية التسجيل، حاول مرة أخرى";
-      }
+      errorMessage.value = mapRegisterError(status, message);
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function login(body: LoginUserType["body"]) {
     const isNotValid =
       typeof body !== "object" || Object.keys(body)?.length < 2;
-    if (isLoading.value || isNotValid) return false;
+    if (isSaving.value || isNotValid) return false;
 
     successMessage.value = "";
     errorMessage.value = "";
+    isSaving.value = true;
     isLoading.value = true;
     try {
       const res = await authService.login(body);
@@ -183,17 +181,18 @@ export const useAuthStore = defineStore("auth", () => {
         notiStore.show(errorMessage.value, "error");
       }
 
-      throw false;
+      return false;
     } finally {
+      isSaving.value = false;
       isLoading.value = false;
       isInitialized.value = true;
     }
   }
 
   async function logout() {
-    if (isLoading.value) return false;
+    if (isSaving.value) return false;
     resetState();
-    isLoading.value = true;
+    isSaving.value = true;
 
     try {
       const res = await authService.logout();
@@ -207,7 +206,7 @@ export const useAuthStore = defineStore("auth", () => {
       console.error(err);
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
       clearSession();
       if (import.meta.client) {
         window.location.href = "/auth/login";
@@ -223,7 +222,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     if (import.meta.server) return Promise.resolve();
 
-    if (!getSessionCookie()) {
+    if (!hasSessionCookie()) {
       isInitialized.value = true;
       return Promise.resolve();
     }
@@ -277,6 +276,8 @@ export const useAuthStore = defineStore("auth", () => {
     isInitialized,
     subscriptionInactive,
     isLoading,
+    isLoaded,
+    isSaving,
     errorMessage,
     successMessage,
     userRole,
@@ -293,5 +294,6 @@ export const useAuthStore = defineStore("auth", () => {
     clearSession,
     loadProfile,
     register,
+    checkRole,
   };
 });

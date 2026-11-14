@@ -51,7 +51,7 @@ watchEffect(() => {
       >
         <button
           type="button"
-          @click="(openModal(row), (categoryStore.error = ''))"
+          @click="openModal(row)"
           class="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary text-fluid-xs px-fluid cursor-pointer rounded-xl border py-1.5 font-medium active:scale-95"
         >
           تعديل

@@ -4,6 +4,7 @@ import { useItemService } from "~/services/itemService";
 import type {
   CreateMenuItemType,
   ListMenuItemsType,
+  ReorderMenuItemsType,
   UpdateMenuItemType,
 } from "@/schemas/menuItemSchema/menuItemSchema.js";
 import type { MenuItemResponse } from "@/types/dataType/menuItemType";
@@ -15,18 +16,38 @@ export const useItemStore = defineStore("item", () => {
 
   const items = ref<MenuItemResponse[]>([]);
   const isLoading = ref(false);
-  const error = ref<string | null>(null);
+  const isSaving = ref(false);
+  const isLoaded = ref(false);
 
-  async function fetchItems(params?: ListMenuItemsType["query"]) {
-    isLoading.value = true;
-    error.value = null;
+  function isValidPrice(price?: number, title?: string): boolean {
+    if (price === undefined || price === null || price < 1) {
+      const msg = `سعر '${title ?? "الصنف"}' لا يجب أن يكون أصغر من 1`;
+      notiStore.show(msg, "error");
+      return false;
+    }
+    return true;
+  }
+  function replaceItemInState(id: string, updatedItem: MenuItemResponse) {
+    const index = items.value.findIndex((i) => i.id === id);
+    if (index !== -1) {
+      items.value[index] = updatedItem;
+    }
+  }
+
+async function fetchItems(params?: ListMenuItemsType["query"], force = false) {
+  if (isLoading.value) return false;
+  if (!force && !params && isLoaded.value) return true;
+
     try {
       const res = await itemService.getItems(params);
       if (!res) return false;
 
       items.value = res.data || [];
-      return res.data;
+
+      if (!params) isLoaded.value = true;
+      return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل جلب الاصناف ! ");
       return false;
     } finally {
       isLoading.value = false;
@@ -34,116 +55,140 @@ export const useItemStore = defineStore("item", () => {
   }
 
   async function addItem(body: CreateMenuItemType["body"]) {
-    if (!authStore.isEditorAndAbove) {
-      notiStore.show(
-        "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!",
-        "error",
-      );
+    if (isSaving.value) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor"))
       return false;
-    }
-
-    if (!body.price || body.price < 1) {
-      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
-      notiStore.show(error.value, "error");
+    if (!body || typeof body !== "object" || Object.keys(body).length < 1)
       return false;
-    }
+    if (!isValidPrice(body.price, body.title)) return false;
 
-    if (isLoading.value) return false;
-
-    isLoading.value = true;
+    isSaving.value = true;
     try {
       const res = await itemService.createItem(body);
 
-      if (!res.success || !res.data) {
-        const msg = res.message || "فشل إضافة الصنف";
-        notiStore.show(msg, "error");
-        return false;
-      }
+      const errMsg = "فشل اضافة الصنف";
+      const successMsg = body.title
+        ? `تم اضافة الصنف ${body.title} بنجاح!`
+        : "تم اضافة الصنف بنجاح!";
+
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
 
       items.value.push(res.data);
-      const msg = res.message || `تم إضافة الصنف "${body.title}" بنجاح!`;
-      notiStore.show(msg, "success");
 
       return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل اضافة الصنف ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function updateItem(id: string, body: UpdateMenuItemType["body"]) {
-    if (!authStore.isEditorAndAbove) {
-      const msg = "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!";
-      notiStore.show(msg, "error");
+    if (isSaving.value) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor"))
       return false;
-    }
-
-    if (isLoading.value || !id) return false;
-    if (!body.price || body.price < 1) {
-      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
-      notiStore.show(error.value, "error");
+    if (
+      !id ||
+      !body ||
+      typeof body !== "object" ||
+      Object.keys(body).length < 1
+    )
       return false;
-    }
+    if (!isValidPrice(body.price, body.title)) return false;
 
-    isLoading.value = true;
+    isSaving.value = true;
     try {
       const res = await itemService.updateItem(id, body);
 
-      if (!res || !res.success || !res.data) return false;
-      const index = items.value.findIndex((i) => i.id === id);
+      const errMsg = "فشل تعديل الصنف";
+      const successMsg = body.title
+        ? `تم تعديل الصنف ${body.title} بنجاح!`
+        : "تم تعديل الصنف بنجاح!";
 
-      if (index !== -1 && res.data) items.value[index] = res.data;
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
 
-      notiStore.show(res.message || "تم تحديث الصنف بنجاح!", "success");
+      replaceItemInState(id, res.data);
+
       return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل تحديث الصنف!");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
+    }
+  }
+
+  async function uploadImage(id: string, formData: FormData) {
+    const isNotUser = authStore.isEditorAndAbove;
+    const isLowRole = !authStore.checkRole(isNotUser, "Editor");
+
+    if (isSaving.value || !id || !formData) return false;
+    if (isLowRole) return false;
+
+    isSaving.value = true;
+    try {
+      const res = await itemService.uploadImage(id, formData);
+
+      const errMsg = "فشل رفع صورة الصنف";
+      const successMsg = "تم رفع صورة الصنف بنجاح!";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
+
+      replaceItemInState(id, res.data);
+      return res.success;
+    } catch (err: unknown) {
+      handleGlobalError(err, "فشل رفع صورة الصنف!");
+      return false;
+    } finally {
+      isSaving.value = false;
     }
   }
 
   async function removeItem(id: string) {
-    if (isLoading.value || !id) return false;
-    if (!authStore.isAdmin) {
-      notiStore.show("عذراً، حذف الأصناف متاح للآدمن (Admin) فقط.", "error");
-      return false;
-    }
+    if (isSaving.value) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor")) return false;
 
-    const isConfirmed = await confirmStore.ask(
-      "هل أنت متأكد من حذف هذا الصنف نهائياً؟",
-      "تأكيد الحذف",
-    );
+    const confimMsg = "هل أنت متأكد من حذف هذا الصنف نهائياً؟";
+    const isConfirmed = await confirmStore.ask(confimMsg, "تأكيد الحذف");
     if (!isConfirmed) return false;
 
-    isLoading.value = true;
+    isSaving.value = true;
     try {
-      await itemService.deleteItem(id);
+      const res = await itemService.deleteItem(id);
+
+      const errMsg = "فشل حذف الصنف";
+      const successMsg = "تم حذف الصنف بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg, false);
+
+      if (!isRes) return false;
+
       items.value = items.value.filter((i) => i.id !== id);
-      notiStore.show("تم حذف الصنف بنجاح!", "success");
-      return true;
+      return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل حذف الصنف!");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function toggleAvailability(id: string, currentStatus: boolean) {
-    if (!authStore.isEditorAndAbove) {
-      notiStore.show(
-        "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!",
-        "error",
-      );
-      return false;
-    }
+    if (isSaving.value) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor")) return false;
+    if (!id || typeof currentStatus !== "boolean") return false;
 
+    isSaving.value = true;
     try {
       const newStatus = !currentStatus;
       const res = await itemService.setAvailability(id, newStatus);
 
-      if (!res || !res.success || !res.data) return false;
+      const errMsg = "فشل تحديث حالة التوفر";
+      const successMsg = "تم تحديث حالة التوفر بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
 
       const index = items.value.findIndex((i) => i.id === id);
 
@@ -151,82 +196,53 @@ export const useItemStore = defineStore("item", () => {
 
       if (item) item.is_available = newStatus;
 
-      notiStore.show("تم تحديث حالة التوفر بنجاح", "success");
-
-      return res.data;
+      return res.success;
     } catch (err: unknown) {
-      return false;
-    }
-  }
-
-  async function uploadImage(id: string, formData: FormData) {
-    if (!authStore.isEditorAndAbove) {
-      notiStore.show(
-        "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!",
-        "error",
-      );
-      return false;
-    }
-
-    if (isLoading.value || !id) return false;
-
-    isLoading.value = true;
-    try {
-      const res = await itemService.uploadImage(id, formData);
-      const index = items.value.findIndex((i) => i.id === id);
-      if (index !== -1 && res.data) {
-        items.value[index] = res.data;
-      }
-      notiStore.show(res.message || "تم رفع صورة الصنف بنجاح!", "success");
-      return true;
-    } catch (err: unknown) {
+      handleGlobalError(err, "فشل تحديث حالة التوفر");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function deleteImage(id: string) {
-    if (!authStore.isEditorAndAbove) {
-      notiStore.show(
-        "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!",
-        "error",
-      );
-      return false;
-    }
+    if (isSaving.value) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor")) return false;
+    if (!id) return false;
 
-    if (isLoading.value || !id) return false;
-
-    isLoading.value = true;
+    isSaving.value = true;
     try {
       const res = await itemService.deleteImage(id);
-      const index = items.value.findIndex((i) => i.id === id);
-      if (index !== -1 && res.data) {
-        items.value[index] = res.data;
-      }
-      notiStore.show(res.message || "تم حذف صورة الصنف بنجاح!", "success");
-      return true;
+
+      const errMsg = "فشل حذف الصورة!";
+      const successMsg = "تم حذف الصوره بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
+
+      replaceItemInState(id, res.data);
+      return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل حذف الصوره !");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
-  async function reorderItems(payload: { category_id: string; ids: string[] }) {
-    if (!authStore.isEditorAndAbove) {
-      notiStore.show(
-        "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!",
-        "error",
-      );
-      return false;
-    }
+  async function reorderItems(payload: ReorderMenuItemsType["body"]) {
+    if (isSaving.value) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor")) return false;
+    if (typeof payload !== "object" || Object.keys(payload).length < 1) return false;
 
-    if (isLoading.value) return false;
+    isSaving.value = true;
 
-    isLoading.value = true;
     try {
       const res = await itemService.reorderItems(payload);
+
+      const errMsg = "فشل إعادة ترتيب الأصناف!";
+      const successMsg = "تم إعادة ترتيب الأصناف بنجاح!";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
 
       payload.ids.forEach((id, index) => {
         const item = items.value.find((i) => i.id === id);
@@ -235,19 +251,19 @@ export const useItemStore = defineStore("item", () => {
 
       items.value.sort((a, b) => a.display_order - b.display_order);
 
-      notiStore.show(res.message || "تم إعادة ترتيب الأصناف بنجاح!", "success");
-      return true;
+      return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل ترتيب الاصناف !");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   return {
     items,
     isLoading,
-    error,
+    isSaving,
     fetchItems,
     addItem,
     updateItem,

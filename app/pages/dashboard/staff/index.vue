@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RolesList } from "~/stores/auth";
+import { RolesList } from "~/constants/auth"; 
 
 definePageMeta({
   layout: "dashboard",

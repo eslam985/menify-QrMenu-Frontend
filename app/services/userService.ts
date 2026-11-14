@@ -98,7 +98,7 @@ export const useUserService = () => {
         BaseApiResponse<SetAndUpdateAvatarUrlResponse>
       >("/avatar/previous", {
         method: "patch",
-        body: chosenAvatarUrl,
+        body: { chosenAvatarUrl }, 
       });
 
       return res;

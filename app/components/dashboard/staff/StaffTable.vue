@@ -4,27 +4,20 @@ import type { UserResponse } from "~/types/userType/userType";
 
 import { useStaffState } from "~/composables/staff/useStaffState";
 import { useTable } from "~/composables/useTable";
+const { setTableConfig } = useTable();
+import { staffFormConfig } from "~/constants/staffFormConfig";
+import { DEFAULT_AVATAR } from "@/utils/constants";
+
+const { tableColumns } = staffFormConfig();
 
 const {
   filteredEmployee,
-  DEFAULT_AVATAR,
   staffStore,
   authStore,
   role,
   loadData,
   handleDelete,
 } = useStaffState();
-const { setTableConfig } = useTable();
-
-const tableColumns = [
-  { key: "avatar_url", label: "الصورة" },
-  { key: "username", label: "اسم الموظف" },
-  { key: "email", label: "الايميل" },
-  { key: "roles", label: "الدور / الصلاحية" },
-  { key: "created_at", label: "تاريخ الانضمام" },
-  { key: "updated_at", label: "آخر تعديل" },
-  { key: "actions", label: "الإجراءات" },
-];
 
 onMounted(() => {
   if (staffStore.staff?.length < 1) {
@@ -41,9 +34,10 @@ watchEffect(() => {
   <UiBaseTable class="my-section-fluid">
     <template #cell-avatar_url="{ row }">
       <img
-        :src="(row.avatar_url as UserResponse['avatar_url']) ?? DEFAULT_AVATAR"
+        :src="(row.avatar_url as UserResponse['avatar_url']) || DEFAULT_AVATAR"
         alt="صور الموظف"
-        class="h-20 w-20 rounded-full"
+        class="h-20 w-20 rounded-full object-cover"
+        @error="handleImageError"
       />
     </template>
 

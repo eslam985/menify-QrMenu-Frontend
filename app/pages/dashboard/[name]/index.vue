@@ -1,6 +1,6 @@
 <!-- app/components/dashboard/restaurant/RestaurantForm.vue -->
 <script setup lang="ts">
-import { RolesList } from "~/stores/auth";
+import { RolesList } from "~/constants/auth"; 
 
 definePageMeta({
   layout: "dashboard",
@@ -112,7 +112,7 @@ onUnmounted(() => {
     <UiBaseForm>
       <template #extra-fields>
         <div
-          class="border-primary/10 pt-fluid mt-fluid flex flex-col gap-3 border-t"
+          class="border-primary/10 py-fluid mt-fluid flex flex-col gap-3 border-t"
         >
           <div class="flex items-center justify-between">
             <label class="text-fluid-xs text-primary font-bold">
@@ -121,9 +121,9 @@ onUnmounted(() => {
             <button
               type="button"
               @click="addAddress"
-              class="bg-primary/10 text-primary hover:bg-primary/20 text-fluid-xs flex items-center gap-1 rounded-lg px-3 py-1.5 font-semibold transition-colors"
+              class="btn-primary flex justify-between gap-1"
             >
-              <Icon name="lucide:plus" class="h-4 w-4" />
+              <Icon name="lucide:plus" class="h-4 w-4 self-center" />
               <span>إضافة فرع</span>
             </button>
           </div>
@@ -162,7 +162,9 @@ onUnmounted(() => {
                 class="bg-denger/10 text-denger hover:bg-denger/20 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors"
                 title="حذف الفرع"
               >
-                <Icon name="lucide:trash-2" class="h-5 w-5" />
+              <span class="btn-danger">
+                <Icon name="lucide:trash-2"/>
+              </span>
               </button>
             </div>
           </div>

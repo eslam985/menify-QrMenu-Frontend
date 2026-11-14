@@ -66,12 +66,6 @@ const handleSubmitCategory = async () => {
     display_order: Number(formDataPayload.value.display_order),
   };
 
-  if (paylod?.display_order < 0) {
-    categoryStore.error = "ترتيب العرض لا يمكن أن يكون سالباً";
-    return;
-  }
-
-
   await handleSubmit({
     formDataPayload: formDataPayload.value,
     isSubmitting,
@@ -134,14 +128,6 @@ watch(
         >
           {{ editingCategory ? "تعديل التصنيف" : "إضافة تصنيف جديد" }}
         </h3>
-
-        <p
-          v-if="categoryStore.error"
-          class="bg-danger/5 text-danger px-fluid rounded-full py-2"
-        >
-          {{ categoryStore.error }}
-        </p>
-
         <UiBaseForm />
 
         <div

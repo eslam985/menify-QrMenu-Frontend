@@ -48,3 +48,20 @@ export const handleGlobalError = (
     ...(errorData?.code !== undefined && { code: errorData.code }),
   };
 };
+
+
+export const mapRegisterError = (status?: number, message?: string): string => {
+  if (status === 403) {
+    return "كود الدعوة غير صالح أو منتهي الصلاحية";
+  }
+  if (status === 409) {
+    if (message?.includes("Slug")) {
+      return "رابط المطعم مستخدم بالفعل، اختر رابطاً آخر";
+    }
+    if (message?.includes("Email")) {
+      return "هذا البريد الإلكتروني مسجّل بالفعل";
+    }
+    return "بيانات مكررة، راجع الحقول وحاول مجدداً";
+  }
+  return message || "فشل عملية التسجيل، حاول مرة أخرى";
+};

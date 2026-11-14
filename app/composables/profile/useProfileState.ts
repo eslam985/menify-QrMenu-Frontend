@@ -1,10 +1,8 @@
 import { storeToRefs } from "pinia";
 
 import type { SessionResponse } from "@/types/userType/userType";
-import { useTable } from "~/composables/useTable";
 
 export const useProfileState = () => {
-  const { setTableConfig } = useTable();
 
   const notiStore = useNotificationStore();
   const authStore = useAuthStore();
@@ -15,8 +13,6 @@ export const useProfileState = () => {
   const avatarPreview = ref<string | null>(null);
   const isDropdownOpen = ref<boolean>(false);
   const isModalOpen = ref<boolean>(false);
-  const DEFAULT_AVATAR: string =
-    "https://res.cloudinary.com/dbahqgo8j/image/upload/blogger/iaeclevshfanh5j6x9ew.webp";
 
   const sessionTableColumns = [
     { key: "device_info", label: "الجهاز / المتصفح" },
@@ -63,7 +59,7 @@ export const useProfileState = () => {
   };
 
   const handleRevokeSession = async (sessionId: string) => {
-    if(!sessionId) return
+    if (!sessionId) return;
 
     await userStore.removeSessionById(sessionId);
   };
@@ -73,7 +69,7 @@ export const useProfileState = () => {
 
     const file: File | undefined = (event.target as HTMLInputElement | null)
       ?.files?.[0];
-      
+
     if (!file) return;
 
     selectedFile.value = file;
@@ -94,21 +90,6 @@ export const useProfileState = () => {
 
   const handleDelete = async () => {
     await userStore.deleteAvatar();
-  };
-
-  const handleSelectHistory = async (
-    url: string,
-  ): Promise<null | undefined> => {
-    const isSuccess = await userStore.setAvatarFromHistory(url);
-
-    if (!isSuccess) {
-      return null;
-    } else {
-      isModalOpen.value = false;
-      await userStore.findUserById();
-    }
-
-    return null;
   };
 
   const role = (): "Admin" | "Editor" | "User" | "N/A" =>
@@ -135,9 +116,7 @@ export const useProfileState = () => {
     handleFileChange,
     handleUpload,
     handleDelete,
-    handleSelectHistory,
     role,
-    setTableConfig,
     parseUserAgent,
     isCurrentSession,
     handleRevokeSession,

@@ -1,5 +1,7 @@
 <!-- app/pages/dashboard/index.vue -->
 <script setup lang="ts">
+import { RolesList } from "~/constants/auth"; 
+
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
@@ -20,7 +22,7 @@ const offersIsNotActiveCount = computed(
 const offersIsActiveCount = computed(() => offerStore.offersIsActiveCount);
 const restaurantStatus = computed(() => restaurantStore.restaurantStatus);
 const categoriesCount = computed(() => categoryStore.categoriesCount);
-const items_count = computed(() => categoryStore.items_count);
+const items_count = computed(() => categoryStore.totalItemsCount);
 const editorsCount = computed(() => staffStore.editorsCount);
 const offersCount = computed(() => offerStore.offersCount);
 const adminsCount = computed(() => staffStore.adminsCount);

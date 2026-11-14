@@ -7,33 +7,32 @@ import { useUserService } from "@/services/userService";
 import type { SessionResponse } from "@/types/userType/userType";
 import { defineStore } from "pinia";
 
-export const useUserStore = defineStore("user", () => { 
-  const notiStore = useNotificationStore();
+export const useUserStore = defineStore("user", () => {
   const confirmStore = useConfirmStore();
   const userService = useUserService();
   const authStore = useAuthStore();
 
-  const successMessage = ref("");
-  const errorMessage = ref("");
   const isLoading = ref(false);
+  const isSaving = ref(false);
+  const isLoaded = ref(false);
 
   const sessions = ref<SessionResponse[]>([]);
 
-  async function findUserById() {
+  async function findUserById(force = false) {
+    if (isLoading.value) return false;
+    if (!force &&  isLoaded.value) return true;
     isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
     try {
       const res = await userService.findUserById();
 
-      if (!res || !res.success) return false;
+      if (!res || !res.success || !authStore.user || !res.data) return false;
 
-      if (authStore.user && res.data) {
-        authStore.user = { ...authStore.user, ...res.data };
-      }
+      authStore.user = { ...authStore.user, ...res.data };
 
-      return res.data;
+      isLoaded.value = true
+      return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل جلب بيانات المستخدم !");
       return false;
     } finally {
       isLoading.value = false;
@@ -41,63 +40,71 @@ export const useUserStore = defineStore("user", () => {
   }
 
   async function updateUserInfo(body: UpdateUserByIdType["body"]) {
-    isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
+    if (
+      isSaving.value ||
+      typeof body !== "object" ||
+      Object.keys(body).length < 1
+    )
+      return false;
+
+    isSaving.value = true;
     try {
       const res = await userService.updateUserInfo(body);
 
-      if (!res || !res.success) return false;
+      const errMsg = "فشل تحديث البيانات ";
+      const successMsg = "تم تحديث البيانات بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
 
-      successMessage.value = res.message;
-
-      notiStore.show(successMessage.value, "success");
-
-      if (authStore.user && res.data) {
-        authStore.user = { ...authStore.user, ...res.data };
-      }
-
-      return res.data;
-    } catch (err) {
-      return false;
-    } finally {
-      isLoading.value = false;
-    }
-  }
-  async function changePassword(body: ChangePasswordType["body"]) {
-    isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
-    try {
-      const res = await userService.changePassword(body);
-
-      if (!res || !res.success) return false;
-
-      successMessage.value = res.message;
-
-      notiStore.show(successMessage.value, "success");
+      if (!authStore.user) return false;
+      authStore.user = { ...authStore.user, ...res.data };
 
       return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل تحديث البيانات ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
+    }
+  }
+  async function changePassword(body: ChangePasswordType["body"]) {
+    if (
+      isSaving.value ||
+      typeof body !== "object" ||
+      Object.keys(body).length < 1
+    )
+      return false;
+
+    isSaving.value = true;
+    try {
+      const res = await userService.changePassword(body);
+
+      const errMsg = "فشل تحديث كلمة المرور !";
+      const successMsg = "تم تحديث كلمة المرور بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg, false);
+      if (!isRes) return false;
+
+      return res.success;
+    } catch (err) {
+      handleGlobalError(err, "فشل تحديث كلمة المرور !");
+      return false;
+    } finally {
+      isSaving.value = false;
     }
   }
 
-  async function getSessionsByUserId(query: GetSessionsQueryType["query"]) {
+  async function getSessionsByUserId(query?: GetSessionsQueryType["query"]) {
     isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
     try {
-      const res = await userService.getSessionsByUserId(query);
+      const res = await userService.getSessionsByUserId(query ?? {});
 
       if (!res || !res.success) return false;
 
       sessions.value = res.data;
 
-      return res.data;
+      return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل جلب الجلسات!");
       return false;
     } finally {
       isLoading.value = false;
@@ -105,114 +112,111 @@ export const useUserStore = defineStore("user", () => {
   }
 
   async function removeSessionById(sessionId: string) {
-    if (isLoading.value || !sessionId) return false;
+    if (isSaving.value || !sessionId) return false;
 
     const msg = "هل انت متأكد من حذف هذة الجلسة ؟";
     const isConfirmed = await confirmStore.ask(msg);
     if (!isConfirmed) return false;
 
-    isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
+    isSaving.value = true;
     try {
       const res = await userService.removeSessionById(sessionId);
 
-      if (!res || !res.success) return false;
-
-      successMessage.value = res.message;
-      notiStore.show(successMessage.value, "success");
+      const errMsg = "فشل حذف الجلسه !";
+      const successMsg = "تم حذف الجلسة بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg, false);
+      if (!isRes) return false;
 
       sessions.value = sessions.value.filter((s) => s.id !== sessionId);
 
       return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل حذف الجلسه !");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function uploadAvatar(body: FormData) {
-    isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
+    if(isSaving.value || !body) return false
+    isSaving.value = true;
     try {
       const res = await userService.uploadAvatar(body);
 
-      if (!res || !res.success || !res.data) return false;
-
-      successMessage.value = res.message;
-      notiStore.show(successMessage.value, "success");
-
-      if (authStore.user) {
-        authStore.user.avatar_url = res.data.avatar_url;
-        authStore.user.avatar_history = res.data.avatar_history;
-      }
+      const errMsg = "فشل رفع الصورة !";
+      const successMsg = "تم رفع الصورة بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes || !authStore.user) return false;
+      
+      authStore.user.avatar_url = res.data.avatar_url;
+      authStore.user.avatar_history = res.data.avatar_history;
 
       return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل رفع الصورة !");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function deleteAvatar() {
-    const isConfirmed = await confirmStore.ask(
-      "هل انت متأكد من حذف هذة الصورة ؟",
-    );
+    if (isSaving.value) return false;
+
+    const msg = "هل انت متأكد من حذف هذة الصورة ؟";
+    const isConfirmed = await confirmStore.ask(msg);
     if (!isConfirmed) return false;
-    isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
+
+    isSaving.value = true;
     try {
       const res = await userService.deleteAvatar();
 
-      if (!res || !res.success) return false;
+      const errMsg = "فشل حذف الصورة !";
+      const successMsg = "تم حذف الصورة بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes || !authStore.user) return false;
 
-      successMessage.value = res.message;
-      notiStore.show(successMessage.value, "success");
-
-      if (authStore.user) authStore.user.avatar_url = res.data.avatar_url;
+      authStore.user.avatar_url = res.data.avatar_url;
 
       return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل حذف الصورة !");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function setAvatarFromHistory(chosenAvatarUrl: string) {
-    isLoading.value = true;
-    successMessage.value = "";
-    errorMessage.value = "";
+    if (isSaving.value || !chosenAvatarUrl) return false;
+
+    isSaving.value = true;
     try {
       const res = await userService.setAvatarFromHistory(chosenAvatarUrl);
 
-      if (!res || !res.success) return false;
+      const errMsg = "فشل استرجاع الصورة!";
+      const successMsg = "تم تغيير الصورة الشخصية بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes || !authStore.user) return false;
 
-      successMessage.value = res.message;
-      notiStore.show(successMessage.value, "success");
-
-      if (authStore.user) {
-        authStore.user.avatar_url = res.data.avatar_url;
-        authStore.user.avatar_history = res.data.avatar_history;
-      }
+      authStore.user.avatar_url = res.data.avatar_url;
+      authStore.user.avatar_history = res.data.avatar_history;
 
       return res.success;
     } catch (err) {
+      handleGlobalError(err, "فشل استرجاع الصورة ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   return {
     isLoading,
-    successMessage,
-    errorMessage,
+    isSaving,
     sessions,
+    isLoaded,
     findUserById,
     updateUserInfo,
     changePassword,
@@ -223,3 +227,4 @@ export const useUserStore = defineStore("user", () => {
     setAvatarFromHistory,
   };
 });
+// 230

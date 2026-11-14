@@ -1,27 +1,41 @@
-export interface submitType<TData extends object> {
-  formDataPayload: TData;
-  isSubmitting: Ref<boolean>;
+export interface submitType<TData = unknown> {
+  formDataPayload?: TData;
+  isSubmitting?: Ref<boolean>;
   apiCall: () => Promise<unknown>;
-  onSuccess?: (isSuccess: boolean) => void;
+  onSuccess?: (isSuccess: boolean) => void | Promise<void>;
 }
 
 export const useSubmitstate = () => {
-  const handleSubmit = async <TData extends object>({
+  const handleSubmit = async <TData = unknown>({
     formDataPayload,
     isSubmitting,
     apiCall,
     onSuccess,
   }: submitType<TData>) => {
-    if (isSubmitting.value) return;
-    if (Object.keys(formDataPayload)?.length < 1) return;
+    const submitting = isSubmitting ?? ref(false);
 
-    isSubmitting.value = true;
+    if (submitting.value) return;
+
+    // التحقق من وجود بيانات صالحة سواء كانت نصاً أو كائناً
+    if (formDataPayload !== undefined) {
+      if (typeof formDataPayload === "string" && !formDataPayload.trim()) return;
+      
+      if (
+        typeof formDataPayload === "object" &&
+        formDataPayload !== null &&
+        Object.keys(formDataPayload).length < 1
+      ) {
+        return;
+      }
+    }
+
+    submitting.value = true;
     try {
       const result = await apiCall();
 
-      if (onSuccess) onSuccess(Boolean(result));
+      if (onSuccess) await onSuccess(Boolean(result));
     } finally {
-      isSubmitting.value = false;
+      submitting.value = false;
     }
   };
 

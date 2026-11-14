@@ -15,7 +15,8 @@ export const useOfferStore = defineStore("offer", () => {
 
   const offers = ref<OfferResponse[]>([]);
   const isLoading = ref(false);
-  const error = ref<string | null>(null);
+  const isSaving = ref(false);
+  const isLoaded = ref(false);
 
   const offersCount = computed(() => offers.value?.length);
   const offersIsActiveCount = computed(
@@ -25,17 +26,20 @@ export const useOfferStore = defineStore("offer", () => {
     () => offers.value.filter((offer) => !offer.is_active).length,
   );
 
-  async function fetchOffers(params?: ListOffersType["query"]) {
+  async function fetchOffers(params?: ListOffersType["query"], force = false) {
+    if (isLoading.value) return false;
+    if (!force && !params && isLoaded.value) return true;
     isLoading.value = true;
-    error.value = null;
     try {
       const res = await offerService.getOffers(params);
 
       if (!res || !res.success) return;
 
       offers.value = res.data || [];
-      return res.data;
+      if (!params) isLoaded.value = true;
+      return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل جلب العروض ! ");
       return false;
     } finally {
       isLoading.value = false;
@@ -43,104 +47,118 @@ export const useOfferStore = defineStore("offer", () => {
   }
 
   async function addOffer(body: CreateOfferType["body"]) {
-    if (!authStore.isEditorAndAbove) {
-      notiStore.show(
-        "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!",
-        "error",
-      );
+    if (isSaving.value) return false;
+
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor"))
       return false;
-    }
-    if (body?.offer_price && body?.offer_price < 1) {
-      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
-      notiStore.show(error.value, "error");
+
+    if (typeof body !== "object" || Object.keys(body).length < 1) return false;
+
+    if (
+      body.offer_price !== null &&
+      body.offer_price !== undefined &&
+      body.offer_price < 1
+    ) {
+      const msg = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
+      notiStore.show(msg, "error");
       return false;
     }
 
-    if (isLoading.value) return false;
-
-    isLoading.value = true;
+    isSaving.value = true;
     try {
       const res = await offerService.createOffer(body);
-      if (!res.success) {
-        notiStore.show(res.message || "فشل إضافة العرض", "error");
-        return false;
-      }
 
-      offers.value.unshift(res.data);
-      notiStore.show(
-        res.message || `تم إضافة العرض "${body.title}" بنجاح!`,
-        "success",
-      );
-      return true;
+      const errMsg = "فشل إضافة العرض";
+      const successMsg = body.title
+        ? `تم إضافة العرض "${body.title}" بنجاح!`
+        : "تم اضافة العرض بنجاح!";
+
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
+
+      offers.value.push(res.data);
+      return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل اضافة العرض ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function updateOffer(id: string, body: UpdateOfferType["body"]) {
-    if (!authStore.isEditorAndAbove) {
-      notiStore.show(
-        "هذا الإجراء يتطلب صلاحية محرر (Editor) أو أعلى!",
-        "error",
-      );
+    if (isSaving.value || !id) return false;
+
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor"))
+      return false;
+
+    if (typeof body !== "object" || Object.keys(body).length < 1) return false;
+
+    if (
+      body.offer_price !== null &&
+      body.offer_price !== undefined &&
+      body.offer_price < 1
+    ) {
+      const msg = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
+      notiStore.show(msg, "error");
       return false;
     }
 
-    if (isLoading.value || !id) return false;
-    if (body?.offer_price && body?.offer_price < 1) {
-      error.value = `سعر  '  ${body.title ?? "الصنف"}  '  لا يجب ان يكون اصغر من 1`;
-      notiStore.show(error.value, "error");
-      return false;
-    }
-
-    isLoading.value = true;
+    isSaving.value = true;
     try {
       const res = await offerService.updateOffer(id, body);
+
+      const errMsg = "فشل تحديث العرض";
+      const successMsg = "تم تحديث العرض بنجاح!";
+      const isRes = handleApiResult(res, errMsg, successMsg);
+      if (!isRes) return false;
+
       const index = offers.value.findIndex((o) => o.id === id);
-      if (index !== -1 && res.data) {
-        offers.value[index] = res.data;
-      }
-      notiStore.show(res.message || "تم تحديث العرض بنجاح!", "success");
-      return true;
+
+      if (index !== -1 && res.data) offers.value[index] = res.data;
+      return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل تعديل العرض ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   async function removeOffer(id: string) {
-    if (isLoading.value || !id) return false;
-    if (!authStore.isAdmin) {
-      notiStore.show("عذراً، حذف العروض متاح للآدمن (Admin) فقط.", "error");
+    if (isSaving.value || !id) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor"))
       return false;
-    }
 
-    const isConfirmed = await confirmStore.ask(
-      "هل أنت متأكد من حذف هذا العرض نهائياً؟",
-      "تأكيد الحذف",
-    );
+    const confirmMsg = "هل أنت متأكد من حذف هذا العرض نهائياً؟";
+    const isConfirmed = await confirmStore.ask(confirmMsg, "تأكيد الحذف");
     if (!isConfirmed) return false;
 
-    isLoading.value = true;
+    isSaving.value = true;
     try {
-      await offerService.deleteOffer(id);
+      const res = await offerService.deleteOffer(id);
+
+      const errMsg = "فشل حذف العرض";
+      const successMsg = "تم حذف العرض بنجاح";
+      const isRes = handleApiResult(res, errMsg, successMsg, false);
+
+      if (!isRes) return false;
+
       offers.value = offers.value.filter((o) => o.id !== id);
-      notiStore.show("تم حذف العرض بنجاح!", "success");
-      return true;
+      return res.success;
     } catch (err: unknown) {
+      handleGlobalError(err, "فشل حذف العرض ! ");
       return false;
     } finally {
-      isLoading.value = false;
+      isSaving.value = false;
     }
   }
 
   return {
     offers,
     isLoading,
-    error,
+    isLoaded,
+    isSaving,
     offersCount,
     offersIsActiveCount,
     offersIsNotActiveCount,
@@ -150,3 +168,4 @@ export const useOfferStore = defineStore("offer", () => {
     removeOffer,
   };
 });
+// 153

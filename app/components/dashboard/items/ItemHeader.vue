@@ -76,10 +76,7 @@ const {
 
       <button
         v-if="authStore?.isEditorAndAbove"
-        @click="
-          openItemModal();
-          itemStore.error = '';
-        "
+        @click="openItemModal()"
         class="btn-primary flex justify-between gap-1"
       >
         <span>إضافة صنف جديد</span>
