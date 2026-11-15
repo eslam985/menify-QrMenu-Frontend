@@ -10,7 +10,7 @@ import { useStaffState } from "@/composables/staff/useStaffState";
 import { useSubmitstate } from "#imports";
 
 const { handleSubmit } = useSubmitstate();
-const { router, staffStore, authrStore, employeeId, isEditMode, isAdmin } =
+const { router, staffStore, authStore, employeeId, isEditMode, isAdmin } =
   useStaffState();
 
 const formInstance = useForm();
@@ -113,7 +113,7 @@ const loadData = async () => {
   if (isEditMode.value) {
     if (staffStore.staff.length === 0) await staffStore.getStaff();
 
-    if (isEditMode.value && employeeId.value === authrStore.user?.id)
+    if (isEditMode.value && employeeId.value === authStore.user?.id)
       return router.push("/dashboard/staff");
 
     const employeeData = staffStore.getEmployeeById(employeeId.value!);

@@ -3,15 +3,15 @@
 import { useItemState } from "@/composables/item/useItemState";
 import { useItemModal } from "~/composables/item/useItemModal";
 const { openItemModal } = useItemModal();
+import { useItemReorderModal } from "~/composables/item/useItemReorderModal";
+const { openModalItemReorderModal } = useItemReorderModal();
 const {
   selectedCategoryFilter,
   categoryStore,
   searchQuery,
   authStore,
   itemStore,
-  openModalItemReorderModal,
   setCategoryFilter,
-  setSearchQuery,
   handleRefresh,
 } = useItemState();
 </script>
@@ -23,28 +23,12 @@ const {
     <h1 class="text-primary text-fluid-h3 font-bold">إدارة أصناف المنيو</h1>
 
     <div class="gap-fluid flex w-full flex-wrap items-center lg:w-auto">
-      <div class="relative w-full sm:w-60">
-        <span
-          class="text-primary text-fluid-sm pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5"
-        >
-          <Icon name="lucide:search"></Icon>
-        </span>
+      <CommonBaseSearchInput
+        v-model="searchQuery"
+        placeholder="بحث في الأصناف..."
+        class="sm:w-60"
+      />
 
-        <input
-          :value="searchQuery"
-          @input="setSearchQuery(($event.target as HTMLInputElement).value)"
-          type="text"
-          placeholder="بحث في الأصناف..."
-          class="bg-card border-primary/10 text-text focus:border-primary text-fluid-xs w-full rounded-xl border py-2.5 pr-9 pl-8 shadow-xs transition focus:outline-none"
-        />
-        <button
-          v-if="searchQuery"
-          @click="setSearchQuery('')"
-          class="text-text/40 hover:text-text text-fluid-xs absolute inset-y-0 left-0 flex cursor-pointer items-center pl-3"
-        >
-          ✕
-        </button>
-      </div>
 
       <select
         :value="selectedCategoryFilter"

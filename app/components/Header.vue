@@ -12,7 +12,7 @@
       <NuxtLink to="/">
         <span
           class="text-text md:hover:text-primary text-(length:--text-fluid-h3) font-black tracking-tight"
-          >tabloz</span
+          >Tabloz</span
         >
       </NuxtLink>
     </div>

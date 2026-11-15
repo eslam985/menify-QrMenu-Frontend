@@ -128,7 +128,7 @@ const { openModal: openItemModal } = useShowModal("item-model");
 
                 <div class="flex flex-col gap-1">
                   <h3
-                    class="text-text truncate text-(length:--text-fluid-h3) font-bold"
+                    class="text-text truncate text-(length:--text-fluid-p) font-bold"
                   >
                     {{ item.title }}
                   </h3>

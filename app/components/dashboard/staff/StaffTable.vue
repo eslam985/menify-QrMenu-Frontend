@@ -3,18 +3,18 @@
 import type { UserResponse } from "~/types/userType/userType";
 
 import { useStaffState } from "~/composables/staff/useStaffState";
-import { useTable } from "~/composables/useTable";
-const { setTableConfig } = useTable();
 import { staffFormConfig } from "~/constants/staffFormConfig";
 import { DEFAULT_AVATAR } from "@/utils/constants";
+import { useTable } from "~/composables/useTable";
+import { formatRoleLabel } from "#imports";
 
 const { tableColumns } = staffFormConfig();
+const { setTableConfig } = useTable();
 
 const {
   filteredEmployee,
   staffStore,
   authStore,
-  role,
   loadData,
   handleDelete,
 } = useStaffState();
@@ -43,7 +43,7 @@ watchEffect(() => {
 
     <template #cell-roles="{ row }">
       <span class="text-fluid-xs text-text/60 md:hover:text-primary">{{
-        role((row as unknown as UserResponse).roles)
+        formatRoleLabel((row as unknown as UserResponse).roles)
       }}</span>
     </template>
 

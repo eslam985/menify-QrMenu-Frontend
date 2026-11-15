@@ -5,13 +5,10 @@ import { useTable } from "~/composables/useTable";
 import { useItemModal } from "~/composables/item/useItemModal";
 const { openItemModal } = useItemModal();
 const { setTableConfig } = useTable();
-const {
-  itemStore,
-  authStore,
-  publicMenuStore,
-  filteredItems,
-  getCategoryName,
-} = useItemState();
+
+const publicMenuStore = usePublicMenuStore();
+const categoryStore = useCategoryStore();
+const { itemStore, authStore, filteredItems } = useItemState();
 
 const tableColumns = [
   { key: "image_url", label: "الصورة" },
@@ -23,7 +20,9 @@ const tableColumns = [
   { key: "display_order", label: "الترتيب" },
   { key: "created_at", label: "تاريخ الإضافة" },
   { key: "updated_at", label: "آخر تحديث" },
-  ...( authStore.isEditorAndAbove ? [ { key: "actions", label: "الإجراءات" } ] : [] ),
+  ...(authStore.isEditorAndAbove
+    ? [{ key: "actions", label: "الإجراءات" }]
+    : []),
 ];
 
 watchEffect(() => {
@@ -61,7 +60,7 @@ watchEffect(() => {
       <span
         class="bg-primary/10 text-primary text-fluid-xs rounded-lg px-2.5 py-1 font-semibold"
       >
-        {{ getCategoryName(row.category_id as string) }}
+        {{ categoryStore.getCategoryName(row.category_id as string) }}
       </span>
     </template>
 

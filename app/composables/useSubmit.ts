@@ -5,6 +5,7 @@ export interface submitType<TData = unknown> {
   onSuccess?: (isSuccess: boolean) => void | Promise<void>;
 }
 
+
 export const useSubmitstate = () => {
   const handleSubmit = async <TData = unknown>({
     formDataPayload,

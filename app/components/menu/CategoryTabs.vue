@@ -53,7 +53,7 @@ watch(selectedsection, () => (activeCategory.value = null));
       <div
         :class="[
           'p-fluid no-scrollbar bg-card/80 border-primary/30 flex items-center gap-2 overflow-x-auto border-y',
-          isSticky ? 'mx-auto max-w-5xl md:rounded-xl' : 'md:rounded-full',
+          isSticky ? 'mx-auto md:max-w-[90%] md:rounded-xl' : 'md:rounded-full',
         ]"
       >
         <select v-model="selectedsection" class="select-primary">

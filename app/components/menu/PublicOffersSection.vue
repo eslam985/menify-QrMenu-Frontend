@@ -86,7 +86,7 @@ const { publicMenuStore } = usePublicMenuState();
               </h3>
               <p
                 v-if="offer.description"
-                class="text-fluid-sm text-text/70 leading-relaxed"
+                class="text-fluid-p text-text/70 leading-relaxed"
               >
                 {{ offer.description }}
               </p>
@@ -112,7 +112,7 @@ const { publicMenuStore } = usePublicMenuState();
 
           <div
             v-if="offer.items?.length > 0"
-            class="bg-bg/40 p-fluid border-primary/10 mb-fluid md:p-section-fluid rounded-2xl border"
+            class="bg-bg/40 p-fluid border-primary/10 mb-fluid  rounded-2xl border"
           >
             <div class="mb-2.5 flex items-center justify-between">
               <span
@@ -166,8 +166,8 @@ const { publicMenuStore } = usePublicMenuState();
                         }}
                         ج.م</strong
                       >
-                      <span class="text-text/40">
-                        ({{ formatPrice(item.unit_price) }} للقطعة)
+                      <span class="text-text/50">
+                        ({{ formatPrice(item.unit_price) }} لل {{ item.title }} الواحد)
                       </span>
                     </span>
                     <span

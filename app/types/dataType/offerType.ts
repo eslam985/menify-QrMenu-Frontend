@@ -59,3 +59,10 @@ export interface SetOfferImageResult {
   offer: OfferResponse;
   previousImageUrl: string | null;
 }
+
+export interface OfferItemFormRow {
+  menu_item_id?: string | null;
+  custom_label?: string | null;
+  selected_category_id?: string;
+  quantity: number;
+}

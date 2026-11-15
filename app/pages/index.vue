@@ -18,7 +18,7 @@ onMounted(() => {
           class="text-(length:--text-fluid-h1) leading-tight font-black tracking-tighter"
         >
           ودّع المنيوهات الورقية، <br />
-          <span class="text-primary">وابدأ المستقبل مع tabloz</span>
+          <span class="text-primary">وابدأ المستقبل مع Tabloz</span>
         </h1>
         <p
           class="text-text/80 mx-auto max-w-2xl text-(length:--text-fluid-p) leading-relaxed"

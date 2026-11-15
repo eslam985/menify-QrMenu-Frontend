@@ -19,6 +19,12 @@ export const useItemStore = defineStore("item", () => {
   const isSaving = ref(false);
   const isLoaded = ref(false);
 
+  function findItemsByCategoryId(categoryId: string): MenuItemResponse[] {
+    if (!categoryId) return [];
+
+    return items.value.filter((item) => item.category_id === categoryId);
+  }
+
   function isValidPrice(price?: number, title?: string): boolean {
     if (price === undefined || price === null || price < 1) {
       const msg = `سعر '${title ?? "الصنف"}' لا يجب أن يكون أصغر من 1`;
@@ -34,9 +40,12 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
-async function fetchItems(params?: ListMenuItemsType["query"], force = false) {
-  if (isLoading.value) return false;
-  if (!force && !params && isLoaded.value) return true;
+  async function fetchItems(
+    params?: ListMenuItemsType["query"],
+    force = false,
+  ) {
+    if (isLoading.value) return false;
+    if (!force && !params && isLoaded.value) return true;
 
     try {
       const res = await itemService.getItems(params);
@@ -149,7 +158,8 @@ async function fetchItems(params?: ListMenuItemsType["query"], force = false) {
 
   async function removeItem(id: string) {
     if (isSaving.value) return false;
-    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor")) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor"))
+      return false;
 
     const confimMsg = "هل أنت متأكد من حذف هذا الصنف نهائياً؟";
     const isConfirmed = await confirmStore.ask(confimMsg, "تأكيد الحذف");
@@ -177,7 +187,8 @@ async function fetchItems(params?: ListMenuItemsType["query"], force = false) {
 
   async function toggleAvailability(id: string, currentStatus: boolean) {
     if (isSaving.value) return false;
-    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor")) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor"))
+      return false;
     if (!id || typeof currentStatus !== "boolean") return false;
 
     isSaving.value = true;
@@ -207,7 +218,8 @@ async function fetchItems(params?: ListMenuItemsType["query"], force = false) {
 
   async function deleteImage(id: string) {
     if (isSaving.value) return false;
-    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor")) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor"))
+      return false;
     if (!id) return false;
 
     isSaving.value = true;
@@ -231,8 +243,10 @@ async function fetchItems(params?: ListMenuItemsType["query"], force = false) {
 
   async function reorderItems(payload: ReorderMenuItemsType["body"]) {
     if (isSaving.value) return false;
-    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor")) return false;
-    if (typeof payload !== "object" || Object.keys(payload).length < 1) return false;
+    if (!authStore.checkRole(authStore.isEditorAndAbove, "Editor"))
+      return false;
+    if (typeof payload !== "object" || Object.keys(payload).length < 1)
+      return false;
 
     isSaving.value = true;
 
@@ -272,5 +286,6 @@ async function fetchItems(params?: ListMenuItemsType["query"], force = false) {
     uploadImage,
     deleteImage,
     reorderItems,
+    findItemsByCategoryId,
   };
 });

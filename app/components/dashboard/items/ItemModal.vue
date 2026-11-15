@@ -4,147 +4,105 @@ import type {
   CreateMenuItemType,
   UpdateMenuItemType,
 } from "@/schemas/menuItemSchema/menuItemSchema.js";
-import { useForm, type FormField } from "~/composables/useForm";
 import type { MenuItemResponse } from "~/types/dataType/menuItemType";
-import { useItemModal } from "~/composables/item/useItemModal";
 
+import { useImageUpload } from "#imports";
+import { useForm } from "~/composables/useForm";
+import { useItemModal } from "~/composables/item/useItemModal";
 import { useItemState } from "@/composables/item/useItemState";
+import { getItemFieldsConfig } from "~/constants/itemFieldsConfig";
+
 const {
   selectedItem: editingItem,
   isOpenItem,
   closeItemModal,
 } = useItemModal();
-const {
-  categoryStore,
-  itemStore,
-  isAvailable,
-  selectedFile,
-  imagePreview,
-  handleFileChange,
-} = useItemState();
+const { handleSubmit: submitForm } = useSubmitstate();
+const { categoryStore, itemStore, isAvailable } = useItemState();
+const { selectedFile, imagePreview, handleFileChange, resetImage } =
+  useImageUpload();
 
 const formInstance = useForm();
-
 const { setFormConfig, formDataPayload, resetForm, isSubmitting } =
   formInstance;
 provide("current_form_instance", formInstance);
 
-const itemFieldsConfig = computed<FormField[]>(() => [
-  {
-    column: "title",
-    value: "",
-    label: "اسم الصنف",
-    required: true,
-    type: "text",
-    colspan: "col-span-3",
-  },
-  {
-    column: "category_id",
-    value: categoryStore.categories[0]?.id || "",
-    label: "التصنيف",
-    required: true,
-    type: "select",
-    colspan: "col-span-1 sm:col-span-1.5",
-    options: categoryStore.categories.map((cat) => ({
-      label: cat.name,
-      value: cat.id,
-    })),
-    isOpenItem,
-  },
-  {
-    column: "price",
-    value: 0,
-    label: "السعر (ج.م)",
-    required: true,
-    type: "number",
-    colspan: "col-span-1 sm:col-span-1.5",
-  },
-  {
-    column: "description",
-    value: "",
-    label: "الوصف",
-    required: false,
-    type: "textarea",
-    colspan: "col-span-3",
-  },
-]);
-
-const onSuccessReset = (isSuccess: boolean) => {
-  if (isSuccess) {
-    closeItemModal();
-    resetForm();
-  }
-};
+const itemFieldsConfig = computed(() =>
+  getItemFieldsConfig(categoryStore.categories),
+);
 
 const handleSubmit = async () => {
-  if (isSubmitting.value || itemStore.isLoading) return;
-
-  isSubmitting.value = true;
+  if (itemStore.isSaving) return;
 
   const existingItem = editingItem.value as MenuItemResponse | null;
-  let itemId = existingItem?.id;
+  const payload = formDataPayload.value;
 
-  if (existingItem) {
-    const isSuccess = await itemStore.updateItem(
-      existingItem.id,
-      formDataPayload.value as UpdateMenuItemType["body"],
-    );
+  await submitForm({
+    formDataPayload: payload,
+    isSubmitting,
+    apiCall: () => {
+      return existingItem
+        ? itemStore.updateItem(
+            existingItem.id,
+            payload as UpdateMenuItemType["body"],
+          )
+        : itemStore.addItem(payload as CreateMenuItemType["body"]);
+    },
+    onSuccess: async (isSuccess) => {
+      if (!isSuccess) return;
 
-    onSuccessReset(isSuccess);
+      const targetItemId = existingItem
+        ? existingItem.id
+        : itemStore.items[itemStore.items.length - 1]?.id;
+
+      if (selectedFile.value && targetItemId) {
+        const formData = new FormData();
+        formData.append("image", selectedFile.value);
+        await itemStore.uploadImage(targetItemId, formData);
+      }
+
+      closeItemModal();
+      resetForm();
+      resetImage();
+    },
+  });
+};
+
+const syncModalForm = (open: boolean, item: MenuItemResponse | null) => {
+  if (!open) {
+    resetForm();
+    resetImage();
+    return;
+  }
+
+  selectedFile.value = null;
+
+  if (item) {
+    isAvailable.value = item.is_available ?? true;
+    imagePreview.value = item.image_url || null;
+
+    const initialData = {
+      title: item.title || "",
+      category_id: item.category_id || "",
+      price: item.price || 0,
+      description: item.description || "",
+      display_order: item.display_order ?? 0,
+    };
+
+    setFormConfig(itemFieldsConfig.value, handleSubmit, initialData);
   } else {
-    const isSuccess = await itemStore.addItem(
-      formDataPayload.value as CreateMenuItemType["body"],
-    );
+    isAvailable.value = true;
+    imagePreview.value = null;
 
-    onSuccessReset(isSuccess);
+    setFormConfig(itemFieldsConfig.value, handleSubmit, {
+      category_id: categoryStore.categories[0]?.id || "",
+    });
   }
-
-  if (selectedFile.value && itemId) {
-    const formData = new FormData();
-    formData.append("image", selectedFile.value);
-    await itemStore.uploadImage(itemId, formData);
-  }
-
-  isSubmitting.value = false;
 };
 
 watch(
   [isOpenItem, editingItem],
-  ([open, item]) => {
-    if (!open) {
-      resetForm();
-      imagePreview.value = null;
-      selectedFile.value = null;
-      return;
-    }
-
-    if (item) {
-      isAvailable.value =
-        (item as { is_available?: boolean | null }).is_available ?? true;
-      imagePreview.value =
-        (item as { image_url?: string | null }).image_url || null;
-      selectedFile.value = null;
-
-      setFormConfig(itemFieldsConfig.value, handleSubmit, {
-        title: (item as { title?: string | null }).title || "",
-        category_id:
-          (item as { category_id?: string | null }).category_id || "",
-        price: (item as { price?: number | null }).price || 0,
-        description:
-          (item as { description?: string | null }).description || "",
-        display_order:
-          (item as { display_order?: number | null }).display_order ?? 0,
-      });
-    } else {
-      isAvailable.value = true;
-      imagePreview.value = null;
-      selectedFile.value = null;
-
-      setFormConfig(itemFieldsConfig.value, handleSubmit, {
-        category_id: categoryStore.categories[0]?.id || "",
-      });
-    }
-  },
+  ([open, item]) => syncModalForm(open, item as MenuItemResponse | null),
   { immediate: true },
 );
 </script>

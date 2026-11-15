@@ -1,7 +1,7 @@
 <!-- /tabloz/frontend/app/components/dashboard/staff/StaffHeader.vue -->
 <script setup lang="ts">
 import { useStaffState } from "~/composables/staff/useStaffState";
-const { staffStore, handleRefresh } = useStaffState();
+const { staffStore, searchQuery, handleRefresh } = useStaffState()
 </script>
 
 <template>
@@ -26,7 +26,10 @@ const { staffStore, handleRefresh } = useStaffState();
     </div>
 
     <div class="gap-fluid flex w-full flex-wrap items-center md:w-auto">
-      <CommonBaseSearchInput />
+      <CommonBaseSearchInput
+        v-model="searchQuery"
+        placeholder="ابحث بالاسم أو البريد الإلكتروني..."
+      />
 
       <button
         @click="handleRefresh"

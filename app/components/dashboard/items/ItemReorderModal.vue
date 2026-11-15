@@ -1,22 +1,23 @@
 <!-- app/components/dashboard/items/ItemReorderModal.vue -->
 <script setup lang="ts">
 import { useItemState } from "@/composables/item/useItemState";
+import { useItemReorderModal } from "~/composables/item/useItemReorderModal";
 
 const {
-  categoryStore,
   selectedCategoryId,
   localItems,
   isSaving,
   draggedIndex,
-  isOpenItemReorderModal,
-  closeModalItemReorderModal,
   loadCategoryItems,
   onDragStart,
   onDragOver,
   onDrop,
   handleSaveReorder,
   initializeModal,
-} = useItemState();
+  closeModalItemReorderModal,
+  isOpenItemReorderModal,
+} = useItemReorderModal();
+const { categoryStore } = useItemState();
 
 watch(selectedCategoryId, () => {
   loadCategoryItems();

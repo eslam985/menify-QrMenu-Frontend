@@ -12,7 +12,7 @@ export const useCategoryStore = defineStore("category", () => {
   const categoryService = useCategoryService();
   const confirmStore = useConfirmStore();
   const authStore = useAuthStore();
-  const notiStore = useNotificationStore()
+  const notiStore = useNotificationStore();
   const categories = ref<CategoryWithCountResponse[]>([]);
   const isSaving = ref(false);
   const isLoaded = ref(false);
@@ -24,37 +24,45 @@ export const useCategoryStore = defineStore("category", () => {
     categories.value.reduce((acc, cat) => acc + (cat.items_count || 0), 0),
   );
 
+  const getCategoryName = computed(() => (categoryId: string) => {
+    const cat = categories.value.find((c) => c.id === categoryId);
+    return cat ? cat.name : "—";
+  });
+
+  const findCategoryById = computed(
+    () => (id: string) => categories.value.find((c) => c.id === id),
+  );
+
+  
   async function fetchCategories(force = false) {
-  if (isLoading.value) return false;
-  if (!force && isLoaded.value) return true;
+    if (isLoading.value) return false;
+    if (!force && isLoaded.value) return true;
 
-  isLoading.value = true;
-  try {
-    const res = await categoryService.getCategories();
-    if (!res || !res.success) return false;
+    isLoading.value = true;
+    try {
+      const res = await categoryService.getCategories();
+      if (!res || !res.success) return false;
 
-    categories.value = res.data || [];
-    isLoaded.value = true;
-    return true;
-  } catch (err: unknown) {
-    handleGlobalError(err, "فشل جلب التصنيفات!");
-    return false;
-  } finally {
-    isLoading.value = false;
+      categories.value = res.data || [];
+      isLoaded.value = true;
+      return true;
+    } catch (err: unknown) {
+      handleGlobalError(err, "فشل جلب التصنيفات!");
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
-
 
   async function addCategory(body: CreateCategoryType) {
     if (!authStore.checkRole(authStore.isEditorAndAbove, "editor"))
       return false;
 
     if (body.display_order && body.display_order < 0) {
-      const msg = "ترتيب العرض لا يمكن أن يكون سالباً"
-      notiStore.show(msg, 'error')
-      return false
+      const msg = "ترتيب العرض لا يمكن أن يكون سالباً";
+      notiStore.show(msg, "error");
+      return false;
     }
-
 
     if (isSaving.value) return false;
 
@@ -87,11 +95,11 @@ export const useCategoryStore = defineStore("category", () => {
     if (!id || isSaving.value || !body) return false;
 
     if (body.display_order && body.display_order < 0) {
-      const msg = "ترتيب العرض لا يمكن أن يكون سالباً"
-      notiStore.show(msg, 'error')
-      return false
+      const msg = "ترتيب العرض لا يمكن أن يكون سالباً";
+      notiStore.show(msg, "error");
+      return false;
     }
-    
+
     isSaving.value = true;
     try {
       const res = await categoryService.updateCategory(id, body);
@@ -169,5 +177,7 @@ export const useCategoryStore = defineStore("category", () => {
     addCategory,
     removeCategory,
     updateCategory,
+    getCategoryName,
+    findCategoryById,
   };
 });

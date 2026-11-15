@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { useCategoryModal } from "~/composables/category/useCategoryModal";
 import { useCategoryState } from "@/composables/category/useCategoryState";
-const { authStore, categoryStore, handleRefresh } = useCategoryState();
+const { authStore, categoryStore, handleRefresh, searchQuery } = useCategoryState();
 
 const { openModal } = useCategoryModal();
 </script>
@@ -19,7 +19,11 @@ const { openModal } = useCategoryModal();
     </div>
 
     <div class="gap-fluid flex w-full flex-wrap items-center md:w-auto">
-      <CommonBaseSearchInput />
+      <CommonBaseSearchInput
+        v-model="searchQuery"
+        placeholder="ابحث عن تصنيف..."
+      />
+
 
       <button
         @click="handleRefresh"
