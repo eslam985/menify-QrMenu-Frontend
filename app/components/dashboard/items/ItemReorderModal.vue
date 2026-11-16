@@ -106,7 +106,7 @@ watch(isOpenItemReorderModal, (open) => {
             <div>
               <p class="text-text text-fluid-sm font-bold">{{ item.title }}</p>
               <p class="text-primary text-fluid-xs font-semibold">
-                {{ item.price }} ج.م
+                {{ item.price }}
               </p>
             </div>
           </div>

@@ -35,7 +35,12 @@ const handleSubmit = async () => {
   if (itemStore.isSaving) return;
 
   const existingItem = editingItem.value as MenuItemResponse | null;
-  const payload = formDataPayload.value;
+  
+  const is_available = isAvailable.value;
+  const payload = {
+    ...formDataPayload.value,
+    is_available,
+  };
 
   await submitForm({
     formDataPayload: payload,

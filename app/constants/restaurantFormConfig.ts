@@ -1,5 +1,4 @@
-
-export  const restaurantFieldsConfig: FormField[] = [
+export const restaurantFieldsConfig: FormField[] = [
   {
     column: "name",
     value: "",
@@ -27,10 +26,23 @@ export  const restaurantFieldsConfig: FormField[] = [
   {
     column: "currency",
     value: "",
-    label: "العملة مثل (EGP | جنيه)",
+    label: "العملة مثل (EGP)",
     required: true,
-    type: "text",
+    type: "select",
     colspan: "col-span-3 md:col-span-1",
+    options: [
+      { label: "الجنيه المصري", value: "EGP" },
+      { label: "الريال السعودي", value: "SAR" },
+      { label: "الدرهم الإماراتي", value: "AED" },
+      { label: "الدولار الأمريكي", value: "USD" },
+      { label: "اليورو", value: "EUR" },
+      { label: "الدينار الكويتي", value: "KWD" },
+      { label: "الريال القطري", value: "QAR" },
+      { label: "الدينار البحريني", value: "BHD" },
+      { label: "الريال العماني", value: "OMR" },
+      { label: "الدينار الأردني", value: "JOD" },
+      { label: "الجنيه الإسترليني", value: "GBP" },
+    ],
   },
   {
     column: "maps_url",

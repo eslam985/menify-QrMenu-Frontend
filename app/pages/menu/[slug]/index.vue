@@ -2,7 +2,6 @@
 <script setup lang="ts">
 import type { CartItem } from "~/types/dataType/menuItemType";
 import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
-
 import { useShowModal } from "#imports";
 
 const { publicMenuStore, PublicSlug, notFound, handleFetchMenu } =
@@ -11,17 +10,19 @@ const { publicMenuStore, PublicSlug, notFound, handleFetchMenu } =
 const { isOpen: isOpenItem, selectedData: selectedItem } =
   useShowModal("item-model");
 
-onMounted(async () => {
-  await handleFetchMenu();
-});
-
-watch(
-  () => PublicSlug,
-  () => handleFetchMenu(),
+// Nuxt هينفذها على السيرفر لو فتحت الرابط مباشرة، وهيكيشها في المتصفح لو رجعت ودخلت نفس المطعم تاني
+await useAsyncData(
+  () => `public-menu-${PublicSlug.value}`,
+  async () => {
+    await handleFetchMenu();
+    return true;
+  },
+  { watch: [PublicSlug] }
 );
 
-onUnmounted(() => publicMenuStore.clearMenu());
+
 </script>
+
 
 <template>
   <div class="px-fluid mx-auto w-full pb-16 2xl:max-w-[90%]">
@@ -36,11 +37,7 @@ onUnmounted(() => publicMenuStore.clearMenu());
             : "تحقق من اتصالك بالإنترنت وحاول مرة أخرى."
         }}
       </p>
-      <button
-        v-if="!notFound"
-        @click="handleFetchMenu"
-        class="bg-primary cursor-pointer rounded-xl px-6 py-3 font-bold text-white transition hover:opacity-90"
-      >
+      <button v-if="!notFound" @click="handleFetchMenu" class="btn-primary">
         إعادة المحاولة
       </button>
     </div>
@@ -55,7 +52,9 @@ onUnmounted(() => publicMenuStore.clearMenu());
         <MenuItemModal :item="selectedItem as CartItem" />
       </div>
 
+    <ClientOnly>
       <CartDrawer />
+    </ClientOnly>
     </template>
   </div>
 </template>

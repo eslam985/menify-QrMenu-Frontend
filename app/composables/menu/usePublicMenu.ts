@@ -30,7 +30,7 @@ export const usePublicMenuState = () => {
 
   const sections = computed(() => publicMenuStore.sections);
   const slug = computed(() => authStore.restaurantSlug);
-  const PublicSlug = fromRouteQuery(route.params.slug);
+  const PublicSlug = computed(() => fromRouteQuery(route.params.slug));
 
   const targetCategories = computed(() => {
     const res =
@@ -97,7 +97,11 @@ export const usePublicMenuState = () => {
   };
 
   const handleFetchMenu = async () => {
-    await publicMenuStore.fetchMenu(fromRouteQuery(PublicSlug));
+    const s = PublicSlug.value;
+    if (s) {
+      cartStore.initCart(s);
+      await publicMenuStore.fetchMenu(s);
+    }
   };
 
   const notFound = computed(() => publicMenuStore.isNotFound);

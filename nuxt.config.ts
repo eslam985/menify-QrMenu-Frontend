@@ -15,8 +15,11 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
+    "/dashboard": { ssr: false },
     "/dashboard/**": { ssr: false },
-    //'/auth/**' : { ssr: false }, // stays WITHOUT ssr:false: login/register render instantly from the server
+    "/subscription-inactive": { ssr: false },
+    "/auth/login": {ssr: false},
+    "/auth/register": {ssr: false},
     "/api/**": {
       proxy: "https://menify-qr-menu-backend.vercel.app/api/**",
     },

@@ -1,3 +1,4 @@
+<!-- app/components/menu/CategoryTabs.vue -->
 <script setup lang="ts">
 import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
 import { useMenuNavigation } from "~/composables/menu/useMenuNavigation";
@@ -9,11 +10,9 @@ const {
   publicMenuStore,
   selectedsection,
   sections,
-  handleFetchMenu,
 } = usePublicMenuState();
 
 onMounted(() => {
-  handleFetchMenu();
   window.addEventListener("scroll", handleScroll, true);
 });
 
@@ -21,6 +20,7 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll, true));
 
 watch(selectedsection, () => (activeCategory.value = null));
 </script>
+
 
 <template>
   <div dir="rtl" v-if="publicMenuStore.categories.length" class="my-fluid">
@@ -58,8 +58,8 @@ watch(selectedsection, () => (activeCategory.value = null));
       >
         <select v-model="selectedsection" class="select-primary">
           <option value="كل الاقسام">كل الاقسام</option>
-          <option v-for="sec in sections" :key="sec" :value="sec">
-            {{ sec }}
+          <option v-for="sec in sections" :key="sec.value" :value="sec.value">
+            {{ sec.label }}
           </option>
         </select>
 

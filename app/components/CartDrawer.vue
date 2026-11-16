@@ -8,6 +8,11 @@ const totalItemsCount = computed(() =>
     ? cartStore.totalItemsCount + " " + "عناصر"
     : cartStore.totalItemsCount + " " + "عنصر",
 );
+
+const clearCart = () => {
+  cartStore.clearCart();
+  isCartOpen.value = false;
+};
 </script>
 
 <template>
@@ -18,17 +23,18 @@ const totalItemsCount = computed(() =>
     >
       <button
         @click="isCartOpen = true"
-        class="bg-primary p-fluid shadow-glow flex w-full cursor-pointer flex-row-reverse items-center justify-between rounded-xl font-bold text-white transition hover:opacity-95 dark:text-black"
+        class="bg-card border-primary/20 p-fluid shadow-glow flex w-full cursor-pointer flex-row-reverse items-center justify-between rounded-xl border font-bold transition hover:opacity-95"
       >
         <div class="gap-fluid flex items-center">
-          <span class="px-fluid text-fluid-sm rounded-lg bg-white/20 py-1">
+          <span class="px-fluid text-fluid-sm text-primary rounded-lg py-1">
             {{ totalItemsCount }}
           </span>
-          <span>عرض الفاتورة</span>
+          <span class="btn-primary">عرض الفاتورة</span>
         </div>
         <span class="text-fluid-p">
-          اجمالي الفاتورة ({{ formatPrice(cartStore.totalPrice) }}
-          {{ publicMenuStore.restaurant?.currency || "EGP" }})
+          اجمالي الفاتورة 
+          <span class="text-success">({{ formatPrice(cartStore.totalPrice) }}
+          {{ publicMenuStore.restaurant?.currency || "EGP" }})</span>
         </span>
       </button>
     </div>
@@ -39,7 +45,7 @@ const totalItemsCount = computed(() =>
       class="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm"
     >
       <div
-        class="bg-card text-text p-fluid border-primary/10 flex h-full w-full max-w-md flex-col border-l shadow-2xl"
+        class="bg-card p-fluid border-primary/10 flex h-full w-full max-w-md flex-col border-l shadow-2xl"
       >
         <div
           class="border-primary/10 flex items-center justify-between border-b pb-4"
@@ -52,10 +58,10 @@ const totalItemsCount = computed(() =>
           </button>
           <h3 class="text-(length:--text-fluid-h3) font-bold">الحساب</h3>
           <button
-            @click="cartStore.clearCart()"
-            class="text-fluid-xs hover:text-danger flex cursor-pointer items-center gap-1 font-semibold text-red-400"
+            @click="clearCart"
+            class="btn-danger flex justify-between gap-1"
           >
-            <Icon name="lucide:trash-2" class="h-4 w-4" /> مسح الكل
+            <Icon name="lucide:trash-2" class="h-4 w-4 self-center" /> مسح الكل
           </button>
         </div>
 
@@ -106,10 +112,13 @@ const totalItemsCount = computed(() =>
             class="text-fluid-p flex items-center justify-between font-black"
           >
             <span>الإجمالي الكلي:</span>
-            <span class="text-primary"
-              >{{ cartStore.totalPrice }}
-              {{ publicMenuStore.restaurant?.currency || "EGP" }}</span
-            >
+
+            <span class="text-primary text-xl font-black">
+              {{ formatPrice(cartStore.totalPrice) }}
+              <span class="ext-fluid-xs">
+                {{ publicMenuStore.restaurant?.currency }}
+              </span>
+            </span>
           </div>
         </div>
       </div>

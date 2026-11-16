@@ -213,14 +213,14 @@ onMounted(async () => {
                   <button
                     type="button"
                     @click="addMenuItemToOffer"
-                    class="bg-primary/10 text-primary hover:bg-primary/20 px-fluid text-fluid-xs cursor-pointer rounded-xl py-1.5 font-bold transition"
+                    class="btn-primary"
                   >
                     + صنف من المنيو
                   </button>
                   <button
                     type="button"
                     @click="addCustomItemToOffer"
-                    class="bg-primary/10 text-primary hover:bg-primary/20 px-fluid text-fluid-xs cursor-pointer rounded-xl py-1.5 font-bold transition"
+                    class="btn-primary"
                   >
                     + نص مخصص
                   </button>
@@ -241,7 +241,7 @@ onMounted(async () => {
                   :key="index"
                   class="bg-bg border-primary/10 gap-fluid p-fluid flex flex-col items-center rounded-2xl border shadow-2xs md:flex-row"
                 >
-                  <template v-if="'menu_item_id' in item">
+                  <template v-if="item.menu_item_id !== undefined">
                     <div
                       class="gap-fluid grid w-full flex-1 grid-cols-1 md:grid-cols-2"
                     >
@@ -276,7 +276,7 @@ onMounted(async () => {
                           :key="menuItem.id"
                           :value="menuItem.id"
                         >
-                          {{ menuItem.title }} — ({{ menuItem.price }} ج.م)
+                          {{ menuItem.title }} — ({{ menuItem.price }})
                         </option>
                       </select>
                     </div>

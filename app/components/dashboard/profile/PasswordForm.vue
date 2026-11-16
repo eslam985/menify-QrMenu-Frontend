@@ -1,9 +1,9 @@
 <!-- app/components/dashboard/profile/PasswordForm.vue -->
 <script setup lang="ts">
-import type { ChangePasswordType } from "@/schemas/userSchema/userSchema";
-import { useProfileState } from "@/composables/profile/useProfileState";
-import { useForm } from "~/composables/useForm";
 import { useSubmitstate } from "#imports";
+import { useProfileState } from "@/composables/profile/useProfileState";
+import type { ChangePasswordType } from "@/schemas/userSchema/userSchema";
+import { useForm } from "~/composables/useForm";
 const formInstance = useForm();
 const { setFormConfig, formDataPayload, isSubmitting, resetForm } =
   formInstance;
@@ -38,16 +38,25 @@ const passwordFieldsConfig: FormField[] = [
   },
 ];
 
-const onSuccessReset = () => {
-  resetForm();
-  handleSetFormConfig();
-};
-
 const submit = async () => {
+  const currentPassword = formDataPayload.value.currentPassword;
   const newPassword = formDataPayload.value.newPassword;
   const confirmPassword = formDataPayload.value.confirmPassword;
-  const isPasswordExist = newPassword && confirmPassword;
-  const isPasswordNotMatch = isPasswordExist && newPassword !== confirmPassword;
+
+  const isNotValidPayload =
+    typeof currentPassword !== "string" ||
+    typeof newPassword !== "string" ||
+    typeof confirmPassword !== "string" ||
+    !currentPassword ||
+    !newPassword;
+
+  if (isNotValidPayload) {
+    const msg = "كلمة المرور القديمة والجديدة مطلوبين";
+    notiStore.show(msg, "error");
+    return;
+  }
+
+  const isPasswordNotMatch = newPassword !== confirmPassword;
 
   if (isPasswordNotMatch) {
     const msg = "كلمة المرور الجديدة وتأكيدها غير متطابقين!";
@@ -55,16 +64,19 @@ const submit = async () => {
     return;
   }
 
+  const payload: ChangePasswordType["body"] = {
+    currentPassword,
+    newPassword,
+  };
+
   await handleSubmit({
-    formDataPayload: formDataPayload.value as ChangePasswordType["body"] & {
-      confirmPassword: string;
-    },
+    formDataPayload: payload,
     isSubmitting,
-    apiCall: () =>
-      userStore.changePassword(
-        formDataPayload.value as ChangePasswordType["body"],
-      ),
-    onSuccess: () => onSuccessReset(),
+    apiCall: () => userStore.changePassword(payload),
+    onSuccess: () => {
+      resetForm();
+      handleSetFormConfig();
+    },
   });
 };
 

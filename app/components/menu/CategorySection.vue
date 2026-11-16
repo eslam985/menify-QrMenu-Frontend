@@ -67,29 +67,31 @@ const { openModal: openItemModal } = useShowModal("item-model");
       >
         لا توجد أصناف في المنيو حالياً.
       </div>
-
       <template v-else>
         <div
           v-for="category in filteredCategories"
           :key="category.id"
           :id="`category-${category.id}`"
-          class="scroll-mt-24"
+          class="mb-section-fluid border-primary/30 scroll-mt-24 border-b pb-3"
         >
           <h2
-            class="text-fluid-h2 text-primary mb-fluid border-primary/10 border-b pb-2 font-bold"
+            class="text-fluid-h2 text-text mb-fluid border-primary/10 border-b pb-2 font-bold"
           >
             {{ category.name }}
           </h2>
 
           <div
-            class="scrollbar-thumb-primary/20 gap-fluid flex snap-x snap-mandatory scrollbar-thin scrollbar-track-transparent overflow-x-auto pt-1 pb-4"
+            :class="[
+              'scrollbar-thumb-primary/20 gap-fluid grid snap-x snap-mandatory scrollbar-thin scrollbar-track-transparent auto-cols-[260px] grid-flow-col overflow-x-auto pt-1 pb-4 sm:auto-cols-80 md:auto-cols-[320px]',
+              category.items.length > 8 ? 'grid-rows-2' : 'grid-rows-1',
+            ]"
           >
             <div
               v-for="item in category.items"
               :key="item.id"
               @click="openItemModal(item)"
               :class="[
-                'bg-card text-text p-fluid border-primary/25 group hover:border-primary/50 flex w-[260px] shrink-0 snap-start flex-col justify-between rounded-3xl border shadow-xl sm:w-[280px] md:w-[320px]',
+                'bg-card text-text p-fluid border-primary/25 group hover:border-primary/50 flex w-full snap-start flex-col justify-between rounded-3xl border shadow-xl',
                 item.is_available
                   ? 'cursor-pointer hover:scale-[1.02]'
                   : 'cursor-not-allowed opacity-60',
@@ -145,11 +147,12 @@ const { openModal: openItemModal } = useShowModal("item-model");
                 class="border-primary/10 mt-fluid flex items-center justify-between border-t pt-3"
               >
                 <span class="text-fluid-xs text-text/50 font-bold">السعر</span>
+
                 <span class="text-primary text-xl font-black">
                   {{ formatPrice(item.price) }}
-                  <span class="ext-fluid-xs">{{
-                    publicMenuStore.restaurant?.currency || "ج.م"
-                  }}</span>
+                  <span class="ext-fluid-xs">
+                    {{ publicMenuStore.restaurant?.currency }}
+                  </span>
                 </span>
               </div>
             </div>

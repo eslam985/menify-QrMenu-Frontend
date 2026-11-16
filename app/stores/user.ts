@@ -75,6 +75,11 @@ export const useUserStore = defineStore("user", () => {
     )
       return false;
 
+    const msg = `هل انت متأكد من تغير كلمة المرور الحالية \n
+  (سيتم تسجيل الخروج من كل الاجهزة النشظه بما في ذلك هذا الجهاز)`;
+    const isConfirmed = await confirmStore.ask(msg);
+    if (!isConfirmed) return false;    
+
     isSaving.value = true;
     try {
       const res = await userService.changePassword(body);
@@ -83,7 +88,8 @@ export const useUserStore = defineStore("user", () => {
       const successMsg = "تم تحديث كلمة المرور بنجاح";
       const isRes = handleApiResult(res, errMsg, successMsg, false);
       if (!isRes) return false;
-
+      
+      reloadNuxtApp();
       return res.success;
     } catch (err) {
       handleGlobalError(err, "فشل تحديث كلمة المرور !");

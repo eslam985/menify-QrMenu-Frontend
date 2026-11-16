@@ -3,7 +3,7 @@
 import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
 import { menuHelpers } from "#imports";
 
-const { getOriginalTotal } = menuHelpers()
+const { getOriginalTotal } = menuHelpers();
 const { publicMenuStore } = usePublicMenuState();
 </script>
 
@@ -47,7 +47,7 @@ const { publicMenuStore } = usePublicMenuState();
             class="text-fluid-xs px-fluid flex items-center gap-1 rounded-full bg-green-500 py-1 font-black text-white shadow-md"
           >
             <Icon name="lucide:trending-down" class="h-3.5 w-3.5" />
-            <span>وفّر {{ formatPrice(offer.savings) }} ج.م</span>
+            <span>وفّر {{ formatPrice(offer.savings)  +   ' ' + publicMenuStore.restaurant?.currency}} </span>
           </div>
 
           <div
@@ -112,7 +112,7 @@ const { publicMenuStore } = usePublicMenuState();
 
           <div
             v-if="offer.items?.length > 0"
-            class="bg-bg/40 p-fluid border-primary/10 mb-fluid  rounded-2xl border"
+            class="bg-bg/40 p-fluid border-primary/10 mb-fluid rounded-2xl border"
           >
             <div class="mb-2.5 flex items-center justify-between">
               <span
@@ -160,14 +160,17 @@ const { publicMenuStore } = usePublicMenuState();
                       class="text-fluid-xs text-text/60"
                     >
                       الإجمالي:
-                      <strong class="text-primary font-bold"
-                        >{{
-                          formatPrice(item.unit_price * item.quantity)
-                        }}
-                        ج.م</strong
-                      >
+                      <strong class="text-primary font-bold">
+                        <span class="text-primary font-black">
+                          {{ formatPrice(item.unit_price * item.quantity) }}
+                          <span class="ext-fluid-xs">
+                            {{ publicMenuStore.restaurant?.currency }}
+                          </span>
+                        </span>
+                      </strong>
                       <span class="text-text/50">
-                        ({{ formatPrice(item.unit_price) }} لل {{ item.title }} الواحد)
+                        ({{ formatPrice(item.unit_price) + ' ' + publicMenuStore.restaurant?.currency }} لل
+                        {{ item.title }} الواحد)
                       </span>
                     </span>
                     <span
@@ -204,8 +207,9 @@ const { publicMenuStore } = usePublicMenuState();
             <div class="text-text/70 flex items-center justify-between">
               <span>السعر الإجمالي قبل العرض:</span>
               <span class="text-text/50 font-bold line-through"
-                >{{ formatPrice(offer.original_total) }} ج.م</span
-              >
+                >{{ formatPrice(offer.original_total) + ' ' + publicMenuStore.restaurant?.currency  }}
+              </span>
+              
             </div>
             <div
               class="text-primary flex items-center justify-between font-bold"
@@ -214,8 +218,8 @@ const { publicMenuStore } = usePublicMenuState();
               <span class="text-base font-black">
                 {{
                   offer.offer_price !== null && offer.offer_price !== undefined
-                    ? `${formatPrice(offer.offer_price)}
-                ج.م`
+                    ? `${formatPrice(offer.offer_price)} ${publicMenuStore.restaurant?.currency}
+                `
                     : "مجاني"
                 }}
               </span>
@@ -225,7 +229,7 @@ const { publicMenuStore } = usePublicMenuState();
               class="border-primary/5 flex items-center justify-between border-t pt-1 font-bold text-green-500"
             >
               <span>وفرت معنا:</span>
-              <span>{{ formatPrice(offer.savings) }} ج.م</span>
+              <span>{{ formatPrice(offer.savings)  +   ' ' + publicMenuStore.restaurant?.currency}} </span>
             </div>
           </div>
 
@@ -239,17 +243,18 @@ const { publicMenuStore } = usePublicMenuState();
               >
               <div class="flex items-baseline gap-2.5">
                 <span class="text-primary text-fluid-p font-black">
-                  {{ formatPrice(offer.offer_price) }}
-                  <span v-if="offer.offer_price" class="text-fluid-xs font-bold"
-                    >ج.م</span
-                  >
+                  {{ formatPrice(offer.offer_price)  +   ' ' + publicMenuStore.restaurant?.currency}}
+                  <span
+                    v-if="offer.offer_price"
+                    class="text-fluid-xs font-bold"
+                  ></span>
                 </span>
 
                 <span
                   v-if="getOriginalTotal(offer) > (offer.offer_price || 0)"
                   class="text-text/40 text-fluid-xs font-semibold line-through"
                 >
-                  {{ formatPrice(getOriginalTotal(offer)) }} ج.م
+                  {{ formatPrice(getOriginalTotal(offer))  +   ' ' + publicMenuStore.restaurant?.currency}}
                 </span>
               </div>
             </div>

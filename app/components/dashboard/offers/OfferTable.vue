@@ -68,7 +68,7 @@ watchEffect(() => {
       <span class="text-primary font-bold">
         {{
           row.offer_price !== null && row.offer_price !== undefined
-            ? `${row.offer_price} ج.م`
+            ? `${row.offer_price} `
             : "مجاني / حسب الطلب"
         }}
       </span>
@@ -78,7 +78,7 @@ watchEffect(() => {
       <span class="text-text/70 font-medium">
         {{
           row.original_total !== null && row.original_total !== undefined
-            ? `${row.original_total} ج.م`
+            ? `${row.original_total} `
             : "—"
         }}
       </span>
@@ -93,7 +93,7 @@ watchEffect(() => {
         "
         class="text-fluid-xs rounded-md bg-green-500/10 px-2 py-0.5 font-bold text-green-500"
       >
-        وفّر {{ row.savings }} ج.م
+        وفّر {{ row.savings }} 
       </span>
       <span v-else class="text-text/40 text-fluid-xs">—</span>
     </template>

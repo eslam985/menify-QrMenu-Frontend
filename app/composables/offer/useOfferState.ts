@@ -151,7 +151,7 @@ export const useOfferState = () => {
     return foundItem.category_id;
   };
 
-  const mapOfferItemsToFormRows = (
+    const mapOfferItemsToFormRows = (
     offerItems?: OfferResponse["items"],
   ): OfferItemFormRow[] => {
     if (!offerItems || offerItems.length === 0) {
@@ -161,11 +161,18 @@ export const useOfferState = () => {
     const result: OfferItemFormRow[] = [];
 
     for (const item of offerItems) {
+      if (item.custom_label) {
+        result.push({
+          custom_label: item.custom_label,
+          quantity: item.quantity,
+        });
+        continue;
+      }
+
       const categoryId = getCategoryIdForMenuItem(item.menu_item_id);
 
       result.push({
-        menu_item_id: item.menu_item_id,
-        custom_label: item.custom_label,
+        menu_item_id: item.menu_item_id || "",
         selected_category_id: categoryId,
         quantity: item.quantity,
       });
@@ -173,6 +180,7 @@ export const useOfferState = () => {
 
     return result;
   };
+
 
   const populateOfferData = (offer: OfferResponse) => {
     startsAt.value = formatForDateTimeInput(offer.starts_at);

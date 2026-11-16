@@ -1,5 +1,5 @@
+// frontend/app/stores/publicMenu.ts
 import { defineStore } from "pinia";
-
 import type {
   PublicMenuCategory,
   PublicOffer,
@@ -21,18 +21,36 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
   const error = ref<string | null>(null);
 
   const isNotFound = ref(false);
-  let loadedSlug: string | null = null;
+  const loadedSlug = ref<string | null>(null);
+
   const categoriesCount = computed(() => categories.value?.length);
 
-  const sections = computed(() => [
-    ...new Set(categories.value.map((c) => c.section).filter(Boolean)),
-  ]);
+  const sections = computed(() => {
+    const translations = {
+      food: "المأكولات",
+      drinks: "المشروبات",
+      desserts: "الحلويات",
+      shisha: "الشيشة",
+      other: "شئ أخر",
+    };
+
+    const uniqueSections = [
+      ...new Set(categories.value.map((c) => c.section).filter(Boolean)),
+    ];
+
+    return uniqueSections.map((sec) => ({
+      value: sec, // القيمة الإنجليزية للفلترة: 'food'
+      label: translations[sec] || sec, // الاسم العربي للعرض: 'المأكولات'
+    }));
+  });
 
   async function fetchMenu(slug: string, force = false) {
     if (!slug || isLoading.value) return false;
-    if (!force && loadedSlug === slug && restaurant.value) return true;
+    if (!force && loadedSlug.value === slug && restaurant.value) return true;
 
-    if (loadedSlug !== slug) clearMenu();
+
+    if (loadedSlug.value !== slug) clearMenu();
+
 
     isLoading.value = true;
     error.value = null;
@@ -54,7 +72,7 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
 
       categories.value = data.categories ?? [];
       offers.value = data.offers ?? [];
-      loadedSlug = slug;
+      loadedSlug.value = slug;
       isLoaded.value = true;
 
       return res.success;
@@ -86,7 +104,7 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
     error.value = null;
     isLoading.value = false;
     isLoaded.value = false;
-    loadedSlug = null;
+    loadedSlug.value = null;
   }
 
   return {
@@ -98,6 +116,7 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
     isLoaded,
     error,
     categoriesCount,
+    loadedSlug,
     sections,
     fetchMenu,
     clearMenu,

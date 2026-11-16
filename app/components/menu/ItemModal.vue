@@ -1,4 +1,4 @@
-<!-- Menify/frontend/app/components/menu/ItemModal.vue -->
+<!-- tabloz/frontend/app/components/menu/ItemModal.vue -->
 <script setup lang="ts">
 import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
 import type { CartItem } from "~/types/dataType/menuItemType";
@@ -21,6 +21,7 @@ const handleAdd = (selectedItem: any) => {
     class="p-fluid animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
   >
     <div
+      dir="rtl"
       class="bg-card text-text shadow-soft border-primary/10 flex w-full max-w-lg flex-col overflow-hidden rounded-xl border"
     >
       <div class="bg-bg relative h-56 w-full">
@@ -38,22 +39,20 @@ const handleAdd = (selectedItem: any) => {
         >
           <Icon name="lucide:utensils" class="h-16 w-16 opacity-50" />
         </div>
-
-        <button
-          @click="closeItemModal"
-          class="top-fluid absolute left-4 cursor-pointer rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70"
-        >
-          <Icon name="lucide:x" class="h-5 w-5" />
-        </button>
       </div>
 
       <div class="gap-fluid p-section-fluid flex flex-col">
-        <div>
-          <h2 class="text-text text-(length:--text-fluid-h2) font-bold">
+        <div class="bg-bg rounded-card p-fluid mb-fluid">
+          <h2 class="text-text text-fluid-h2 mb-fluid font-bold">
             {{ item?.title }}
           </h2>
-          <p class="text-primary mt-1 text-(length:--text-fluid-p) font-black">
-            {{ formatPrice(item?.price ?? "") }} جنيه
+          <p class="text-primary mt-1 text-fluid-p font-black">
+            <span>السعر</span>
+            {{
+              formatPrice(item?.price ?? "") +
+              " " +
+              publicMenuStore.restaurant?.currency
+            }}
           </p>
         </div>
 
@@ -64,13 +63,23 @@ const handleAdd = (selectedItem: any) => {
           {{ item?.description }}
         </p>
 
-        <button
-          @click="handleAdd(item)"
-          class="bg-primary mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3 font-bold text-white shadow-lg transition hover:opacity-90"
-        >
-          <Icon name="lucide:shopping-bag" class="h-5 w-5" />
-          إضافة إلى الفاتورة
-        </button>
+        <div class="gap-fluid flex justify-center">
+          <button
+            @click="handleAdd(item)"
+            class="btn-primary flex justify-center gap-1"
+          >
+            <Icon name="lucide:shopping-bag" class="h-5 w-5 self-center" />
+            إضافة إلى الفاتورة
+          </button>
+
+          <button
+            @click="closeItemModal"
+            class="btn-danger flex justify-center gap-1"
+          >
+            <span class="self-center mb-1">رجوع</span>
+            <Icon name="lucide:x" class="h-5 w-5 self-center" />
+          </button>
+        </div>
       </div>
     </div>
   </div>
