@@ -126,7 +126,7 @@ watch(
         <h3
           class="text-fluid-h3 text-primary border-primary/5 border-b pb-2 font-bold"
         >
-          {{ editingCategory ? "تعديل التصنيف" : "إضافة تصنيف جديد" }}
+          {{ isEditing ? "تعديل التصنيف" : "إضافة تصنيف جديد" }}
         </h3>
         <UiBaseForm />
 
