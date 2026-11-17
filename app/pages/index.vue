@@ -1,9 +1,22 @@
 <script setup lang="ts">
 const restaurantsStore = usePublicRestaurantsStore();
 const { restaurants, isLoading } = storeToRefs(restaurantsStore);
-const loadRestaurants = () => restaurantsStore.fetchRestaurants();
+const loadRestaurants = async () => await restaurantsStore.fetchRestaurants();
 
-// أضف هذا الكود داخل <script setup lang="ts"> في ملف app/pages/index.vue
+await useAsyncData("home-restaurants", async () => {
+  await loadRestaurants();
+  return true;
+});
+
+useHead({
+  meta: [
+    {
+      name: "google-site-verification",
+      content: "rYTEb-Ob4kJMCp7tqf-aoMBDK9BpigLTl4n2T_h6WK8",
+    },
+  ],
+});
+
 useSeoMeta({
   title: "Tabloz | منيو إلكتروني ذكي للمطاعم والكافيهات عبر QR كود",
   description:
@@ -11,14 +24,14 @@ useSeoMeta({
   ogTitle: "Tabloz - منيو إلكتروني ذكي للمطاعم والكافيهات",
   ogDescription:
     "منيو إلكتروني تفاعلي عبر QR كود مع حاسبة فاتورة ذكية ولوحة تحكم كاملة لتعديل الأسعار والأصناف في ثوانٍ.",
-  ogImage: "/imgs/hero.webp",
   twitterCard: "summary_large_image",
 });
 
 useSchemaOrg([
   defineWebSite({
     name: "Tabloz",
-    description: "منصة إنشاء وإدارة المنيو الإلكتروني الذكي للمطاعم والكافيهات.",
+    description:
+      "منصة إنشاء وإدارة المنيو الإلكتروني الذكي للمطاعم والكافيهات.",
     inLanguage: "ar",
   }),
   {
@@ -34,12 +47,8 @@ useSchemaOrg([
     },
   },
 ]);
-
-
-onMounted(() => {
-  loadRestaurants();
-});
 </script>
+
 
 <template>
   <div class="bg-bg text-text flex min-h-screen flex-col justify-between">
