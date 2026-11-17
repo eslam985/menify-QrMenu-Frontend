@@ -3,6 +3,39 @@ const restaurantsStore = usePublicRestaurantsStore();
 const { restaurants, isLoading } = storeToRefs(restaurantsStore);
 const loadRestaurants = () => restaurantsStore.fetchRestaurants();
 
+// أضف هذا الكود داخل <script setup lang="ts"> في ملف app/pages/index.vue
+useSeoMeta({
+  title: "Tabloz | منيو إلكتروني ذكي للمطاعم والكافيهات عبر QR كود",
+  description:
+    "ودّع المنيوهات الورقية، وابدأ المستقبل مع Tabloz. أنشئ منيو إلكتروني تفاعلي لمطعمك أو الكافيه الخاص بك مع QR كود دائم ولوحة تحكم لحظية.",
+  ogTitle: "Tabloz - منيو إلكتروني ذكي للمطاعم والكافيهات",
+  ogDescription:
+    "منيو إلكتروني تفاعلي عبر QR كود مع حاسبة فاتورة ذكية ولوحة تحكم كاملة لتعديل الأسعار والأصناف في ثوانٍ.",
+  ogImage: "/imgs/hero.webp",
+  twitterCard: "summary_large_image",
+});
+
+useSchemaOrg([
+  defineWebSite({
+    name: "Tabloz",
+    description: "منصة إنشاء وإدارة المنيو الإلكتروني الذكي للمطاعم والكافيهات.",
+    inLanguage: "ar",
+  }),
+  {
+    "@type": "SoftwareApplication",
+    name: "Tabloz",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "EGP",
+      description: "تجربة مجانية لأول شهر بالكامل",
+    },
+  },
+]);
+
+
 onMounted(() => {
   loadRestaurants();
 });
