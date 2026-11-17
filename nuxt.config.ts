@@ -11,15 +11,18 @@ export default defineNuxtConfig({
     public: {
       supportWhatsapp: process.env.NUXT_PUBLIC_SUPPORT_WHATSAPP ?? "",
       supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL ?? "",
+      supportTelegram: process.env.NUXT_PUBLIC_SUPPORT_TELEGRAM ?? "", // اسم المستخدم بدون @ مثلاً: tabloz_support
+      supportFacebook: process.env.NUXT_PUBLIC_SUPPORT_FACEBOOK ?? "", // رابط الصفحة كامل
       apiBase: process.env.NUXT_PUBLIC_API_BASE ?? "/api",
     },
   },
+
   routeRules: {
     "/dashboard": { ssr: false },
     "/dashboard/**": { ssr: false },
     "/subscription-inactive": { ssr: false },
-    "/auth/login": {ssr: false},
-    "/auth/register": {ssr: false},
+    "/auth/login": { ssr: false },
+    "/auth/register": { ssr: false },
     "/api/**": {
       proxy: "https://menify-qr-menu-backend.vercel.app/api/**",
     },

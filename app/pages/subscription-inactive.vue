@@ -34,6 +34,7 @@ const retry = async () => {
 };
 </script>
 <template>
+  <NuxtLayout name="default">
   <div
     dir="rtl"
     class="px-fluid mx-auto flex min-h-[85vh] w-full items-center justify-center py-8 2xl:max-w-[90%]"
@@ -160,4 +161,6 @@ const retry = async () => {
       </div>
     </div>
   </div>
+  </NuxtLayout>
+
 </template>

@@ -17,12 +17,9 @@ await useAsyncData(
     await handleFetchMenu();
     return true;
   },
-  { watch: [PublicSlug] }
+  { watch: [PublicSlug] },
 );
-
-
 </script>
-
 
 <template>
   <div class="px-fluid mx-auto w-full pb-16 2xl:max-w-[90%]">
@@ -52,9 +49,8 @@ await useAsyncData(
         <MenuItemModal :item="selectedItem as CartItem" />
       </div>
 
-    <ClientOnly>
+      
       <CartDrawer />
-    </ClientOnly>
     </template>
   </div>
 </template>

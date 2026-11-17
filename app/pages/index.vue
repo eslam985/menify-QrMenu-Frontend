@@ -108,7 +108,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <div class="mt-12 w-full text-right">
+      <div id="pricing" class="mt-12 w-full text-right">
         <div class="mb-section-fluid">
           <h2 class="text-primary text-(length:--text-fluid-h2) font-bold">
             باقات الأسعار والاشتراكات

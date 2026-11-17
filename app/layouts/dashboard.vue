@@ -1,5 +1,4 @@
 <!-- app/layouts/dashboard.vue -->
-
 <template>
   <div class="bg-bg text-text flex min-h-screen w-full items-stretch" dir="rtl">
     <DashboardSidebar />
@@ -11,6 +10,8 @@
         <CommonNotificationAlert />
         <slot />
       </main>
+
+      <Footer />
     </div>
 
     <CommonCustomConfirmModal />
