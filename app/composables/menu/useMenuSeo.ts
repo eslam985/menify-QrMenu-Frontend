@@ -36,22 +36,26 @@ export const useMenuSeo = (
         : restaurant.value?.name
           ? `منيو ${restaurant.value.name} | Tabloz`
           : "منيو المطعم | Tabloz",
+
     description: () =>
       notFound.value
         ? "عذراً، هذا المنيو غير متاح أو الرابط غير صحيح."
         : restaurant.value?.description ||
           `تصفح القائمة الرقمية والأسعار والعروض الخاصة بـ ${restaurant.value?.name || "المطعم"} عبر Tabloz.`,
+
     ogTitle: () =>
       notFound.value
         ? "المنيو غير متاح"
         : restaurant.value?.name
           ? `منيو ${restaurant.value.name}`
           : "منيو المطعم",
+
     ogDescription: () =>
       notFound.value
         ? "عذراً، هذا المنيو غير متاح أو الرابط غير صحيح."
         : restaurant.value?.description ||
           "تصفح المنيو الإلكتروني واطلب بسهولة.",
+          
     ogImage: () =>
       !notFound.value && restaurant.value?.logo_url
         ? restaurant.value.logo_url

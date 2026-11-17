@@ -13,6 +13,9 @@ const clearCart = () => {
   cartStore.clearCart();
   isCartOpen.value = false;
 };
+onMounted(()=> {
+  cartStore.initCart()
+})
 </script>
 
 <template>
