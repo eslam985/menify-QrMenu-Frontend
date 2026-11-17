@@ -23,12 +23,12 @@ export const useStaffStore = defineStore("staff", () => {
     () => staff.value.filter((u) => Number(u.roles) === RolesList.Admin).length,
   );
   const editorsCount = computed(
-    () => staff.value.filter((u) => Number(u.roles) === RolesList.Editor).length,
+    () =>
+      staff.value.filter((u) => Number(u.roles) === RolesList.Editor).length,
   );
   const usersCount = computed(
     () => staff.value.filter((u) => Number(u.roles) === RolesList.User).length,
   );
-
 
   function getEmployeeById(id: string) {
     if (!id) return false;
@@ -51,7 +51,7 @@ export const useStaffStore = defineStore("staff", () => {
       if (!res || !res.success) return false;
 
       staff.value = res.data;
-      isLoaded.value = true
+      isLoaded.value = true;
       return res.success;
     } catch (err) {
       handleGlobalError(err, "فشل جلب المستخدمين ! ");
@@ -62,7 +62,6 @@ export const useStaffStore = defineStore("staff", () => {
   }
 
   async function createStaff(body: CreateStaffType["body"]) {
-
     if (
       isSaving.value ||
       typeof body !== "object" ||
@@ -122,7 +121,6 @@ export const useStaffStore = defineStore("staff", () => {
   }
 
   async function deleteStaff(staffId: string) {
-    
     if (!staffId || isSaving.value) return false;
     if (!authStore.checkRole(authStore.isAdmin, "Admin")) return false;
 

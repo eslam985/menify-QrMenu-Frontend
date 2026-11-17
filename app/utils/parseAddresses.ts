@@ -33,7 +33,7 @@ export const parseAddresses = (rawAddress?: string | null): BranchAddress[] => {
     const toArray: BranchAddress[] = [
       { branch_name: "", address: String(rawAddress) },
     ];
-    
+
     return toArray;
   } catch {
     // Fallback for legacy plain-text addresses stored before multi-branch support

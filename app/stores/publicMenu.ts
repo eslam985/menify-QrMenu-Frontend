@@ -48,9 +48,7 @@ export const usePublicMenuStore = defineStore("publicMenu", () => {
     if (!slug || isLoading.value) return false;
     if (!force && loadedSlug.value === slug && restaurant.value) return true;
 
-
     if (loadedSlug.value !== slug) clearMenu();
-
 
     isLoading.value = true;
     error.value = null;

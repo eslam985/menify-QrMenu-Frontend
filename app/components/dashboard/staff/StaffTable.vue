@@ -11,13 +11,8 @@ import { formatRoleLabel } from "#imports";
 const { tableColumns } = staffFormConfig();
 const { setTableConfig } = useTable();
 
-const {
-  filteredEmployee,
-  staffStore,
-  authStore,
-  loadData,
-  handleDelete,
-} = useStaffState();
+const { filteredEmployee, staffStore, authStore, loadData, handleDelete } =
+  useStaffState();
 
 onMounted(() => {
   if (staffStore.staff?.length < 1) {

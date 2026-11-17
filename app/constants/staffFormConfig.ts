@@ -1,5 +1,4 @@
 export const staffFormConfig = () => {
-
   const tableColumns = [
     { key: "avatar_url", label: "الصورة" },
     { key: "username", label: "اسم الموظف" },

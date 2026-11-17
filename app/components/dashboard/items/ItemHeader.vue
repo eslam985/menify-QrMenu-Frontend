@@ -29,7 +29,6 @@ const {
         class="sm:w-60"
       />
 
-
       <select
         :value="selectedCategoryFilter"
         @change="setCategoryFilter(($event.target as HTMLSelectElement).value)"

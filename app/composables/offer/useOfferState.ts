@@ -151,7 +151,7 @@ export const useOfferState = () => {
     return foundItem.category_id;
   };
 
-    const mapOfferItemsToFormRows = (
+  const mapOfferItemsToFormRows = (
     offerItems?: OfferResponse["items"],
   ): OfferItemFormRow[] => {
     if (!offerItems || offerItems.length === 0) {
@@ -180,7 +180,6 @@ export const useOfferState = () => {
 
     return result;
   };
-
 
   const populateOfferData = (offer: OfferResponse) => {
     startsAt.value = formatForDateTimeInput(offer.starts_at);

@@ -46,7 +46,7 @@ const handleAdd = (selectedItem: any) => {
           <h2 class="text-text text-fluid-h2 mb-fluid font-bold">
             {{ item?.title }}
           </h2>
-          <p class="text-primary mt-1 text-fluid-p font-black">
+          <p class="text-primary text-fluid-p mt-1 font-black">
             <span>السعر</span>
             {{
               formatPrice(item?.price ?? "") +
@@ -76,7 +76,7 @@ const handleAdd = (selectedItem: any) => {
             @click="closeItemModal"
             class="btn-danger flex justify-center gap-1"
           >
-            <span class="self-center mb-1">رجوع</span>
+            <span class="mb-1 self-center">رجوع</span>
             <Icon name="lucide:x" class="h-5 w-5 self-center" />
           </button>
         </div>

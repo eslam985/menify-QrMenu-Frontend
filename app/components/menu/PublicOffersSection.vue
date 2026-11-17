@@ -47,7 +47,14 @@ const { publicMenuStore } = usePublicMenuState();
             class="text-fluid-xs px-fluid flex items-center gap-1 rounded-full bg-green-500 py-1 font-black text-white shadow-md"
           >
             <Icon name="lucide:trending-down" class="h-3.5 w-3.5" />
-            <span>وفّر {{ formatPrice(offer.savings)  +   ' ' + publicMenuStore.restaurant?.currency}} </span>
+            <span
+              >وفّر
+              {{
+                formatPrice(offer.savings) +
+                " " +
+                publicMenuStore.restaurant?.currency
+              }}
+            </span>
           </div>
 
           <div
@@ -169,8 +176,12 @@ const { publicMenuStore } = usePublicMenuState();
                         </span>
                       </strong>
                       <span class="text-text/50">
-                        ({{ formatPrice(item.unit_price) + ' ' + publicMenuStore.restaurant?.currency }} لل
-                        {{ item.title }} الواحد)
+                        ({{
+                          formatPrice(item.unit_price) +
+                          " " +
+                          publicMenuStore.restaurant?.currency
+                        }}
+                        لل {{ item.title }} الواحد)
                       </span>
                     </span>
                     <span
@@ -207,9 +218,12 @@ const { publicMenuStore } = usePublicMenuState();
             <div class="text-text/70 flex items-center justify-between">
               <span>السعر الإجمالي قبل العرض:</span>
               <span class="text-text/50 font-bold line-through"
-                >{{ formatPrice(offer.original_total) + ' ' + publicMenuStore.restaurant?.currency  }}
+                >{{
+                  formatPrice(offer.original_total) +
+                  " " +
+                  publicMenuStore.restaurant?.currency
+                }}
               </span>
-              
             </div>
             <div
               class="text-primary flex items-center justify-between font-bold"
@@ -229,7 +243,13 @@ const { publicMenuStore } = usePublicMenuState();
               class="border-primary/5 flex items-center justify-between border-t pt-1 font-bold text-green-500"
             >
               <span>وفرت معنا:</span>
-              <span>{{ formatPrice(offer.savings)  +   ' ' + publicMenuStore.restaurant?.currency}} </span>
+              <span
+                >{{
+                  formatPrice(offer.savings) +
+                  " " +
+                  publicMenuStore.restaurant?.currency
+                }}
+              </span>
             </div>
           </div>
 
@@ -243,7 +263,11 @@ const { publicMenuStore } = usePublicMenuState();
               >
               <div class="flex items-baseline gap-2.5">
                 <span class="text-primary text-fluid-p font-black">
-                  {{ formatPrice(offer.offer_price)  +   ' ' + publicMenuStore.restaurant?.currency}}
+                  {{
+                    formatPrice(offer.offer_price) +
+                    " " +
+                    publicMenuStore.restaurant?.currency
+                  }}
                   <span
                     v-if="offer.offer_price"
                     class="text-fluid-xs font-bold"
@@ -254,7 +278,11 @@ const { publicMenuStore } = usePublicMenuState();
                   v-if="getOriginalTotal(offer) > (offer.offer_price || 0)"
                   class="text-text/40 text-fluid-xs font-semibold line-through"
                 >
-                  {{ formatPrice(getOriginalTotal(offer))  +   ' ' + publicMenuStore.restaurant?.currency}}
+                  {{
+                    formatPrice(getOriginalTotal(offer)) +
+                    " " +
+                    publicMenuStore.restaurant?.currency
+                  }}
                 </span>
               </div>
             </div>

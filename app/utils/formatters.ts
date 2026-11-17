@@ -35,8 +35,6 @@ export const formatForDateTimeInput = (dateStr?: string | null): string => {
   return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 16);
 };
 
-
-
 export const formatRoleLabel = (
   role?: string | number | null,
 ): "Admin" | "Editor" | "User" | "N/A" => {

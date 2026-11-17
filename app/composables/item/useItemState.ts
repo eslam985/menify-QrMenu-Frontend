@@ -14,7 +14,7 @@ export const useItemState = () => {
   const itemStore = useItemStore();
   const authStore = useAuthStore();
   const isAvailable = ref<boolean>(true);
-  
+
   const matchesSearchText = (
     text: string | null | undefined,
     query: string,

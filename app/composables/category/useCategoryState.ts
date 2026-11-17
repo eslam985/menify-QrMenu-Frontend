@@ -7,7 +7,8 @@ export const useCategoryState = () => {
   const notiStore = useNotificationStore();
   const authStore = useAuthStore();
 
-  const loadCategoreData = async (force = false) => await categoryStore.fetchCategories(force);
+  const loadCategoreData = async (force = false) =>
+    await categoryStore.fetchCategories(force);
 
   const handleRefresh = async () => {
     const isSuccess = await loadCategoreData(true);

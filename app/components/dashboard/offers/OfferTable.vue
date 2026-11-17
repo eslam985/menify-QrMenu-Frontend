@@ -93,7 +93,7 @@ watchEffect(() => {
         "
         class="text-fluid-xs rounded-md bg-green-500/10 px-2 py-0.5 font-bold text-green-500"
       >
-        وفّر {{ row.savings }} 
+        وفّر {{ row.savings }}
       </span>
       <span v-else class="text-text/40 text-fluid-xs">—</span>
     </template>
@@ -101,7 +101,11 @@ watchEffect(() => {
     <template #cell-status="{ row }">
       <span
         class="rounded-lg px-2.5 py-1 text-[10px] font-bold"
-        :class="row.status === 'active' ? 'bg-success/5 text-success': 'bg-danger/5 text-danger' "
+        :class="
+          row.status === 'active'
+            ? 'bg-success/5 text-success'
+            : 'bg-danger/5 text-danger'
+        "
       >
         {{ row.status || "" }}
       </span>

@@ -13,7 +13,6 @@ const togglePasswordVisibility = (column: string) => {
   visiblePasswords.value[column] = !visiblePasswords.value[column];
 };
 
-
 const daysTranslation: Record<string, string> = {
   sat: "السبت",
   sun: "الأحد",

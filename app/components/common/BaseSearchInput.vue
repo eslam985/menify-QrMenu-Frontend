@@ -13,11 +13,10 @@ const computedPlaceholder = computed(() => {
 
   const cleanParts: string[] = route.path.split("/").filter(Boolean);
   const currentSection: string = cleanParts[cleanParts.length - 1] ?? "";
-  const placeholder =  `بحث سريع في الـ ${currentSection}`;
-  
-  return placeholder
-});
+  const placeholder = `بحث سريع في الـ ${currentSection}`;
 
+  return placeholder;
+});
 </script>
 
 <template>

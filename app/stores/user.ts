@@ -20,7 +20,7 @@ export const useUserStore = defineStore("user", () => {
 
   async function findUserById(force = false) {
     if (isLoading.value) return false;
-    if (!force &&  isLoaded.value) return true;
+    if (!force && isLoaded.value) return true;
     isLoading.value = true;
     try {
       const res = await userService.findUserById();
@@ -29,7 +29,7 @@ export const useUserStore = defineStore("user", () => {
 
       authStore.user = { ...authStore.user, ...res.data };
 
-      isLoaded.value = true
+      isLoaded.value = true;
       return res.success;
     } catch (err) {
       handleGlobalError(err, "فشل جلب بيانات المستخدم !");
@@ -78,7 +78,7 @@ export const useUserStore = defineStore("user", () => {
     const msg = `هل انت متأكد من تغير كلمة المرور الحالية \n
   (سيتم تسجيل الخروج من كل الاجهزة النشظه بما في ذلك هذا الجهاز)`;
     const isConfirmed = await confirmStore.ask(msg);
-    if (!isConfirmed) return false;    
+    if (!isConfirmed) return false;
 
     isSaving.value = true;
     try {
@@ -88,7 +88,7 @@ export const useUserStore = defineStore("user", () => {
       const successMsg = "تم تحديث كلمة المرور بنجاح";
       const isRes = handleApiResult(res, errMsg, successMsg, false);
       if (!isRes) return false;
-      
+
       reloadNuxtApp();
       return res.success;
     } catch (err) {
@@ -145,7 +145,7 @@ export const useUserStore = defineStore("user", () => {
   }
 
   async function uploadAvatar(body: FormData) {
-    if(isSaving.value || !body) return false
+    if (isSaving.value || !body) return false;
     isSaving.value = true;
     try {
       const res = await userService.uploadAvatar(body);
@@ -154,7 +154,7 @@ export const useUserStore = defineStore("user", () => {
       const successMsg = "تم رفع الصورة بنجاح";
       const isRes = handleApiResult(res, errMsg, successMsg);
       if (!isRes || !authStore.user) return false;
-      
+
       authStore.user.avatar_url = res.data.avatar_url;
       authStore.user.avatar_history = res.data.avatar_history;
 

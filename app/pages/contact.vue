@@ -25,7 +25,9 @@ const facebook = String(config.public.supportFacebook || "");
       </div>
 
       <h1 class="text-text text-fluid-h1 font-black">تواصل معنا</h1>
-      <p class="text-text/70 text-fluid-p mx-auto mt-2 max-w-xl leading-relaxed">
+      <p
+        class="text-text/70 text-fluid-p mx-auto mt-2 max-w-xl leading-relaxed"
+      >
         فريق دعم <strong>Tabloz</strong> جاهز للرد على استفساراتك ومساعدتك في
         إنشاء المنيو الخاص بمطعمك أو كافيهك في أسرع وقت.
       </p>
@@ -38,7 +40,7 @@ const facebook = String(config.public.supportFacebook || "");
           :href="`https://wa.me/${whatsapp}?text=${encodeURIComponent('مرحباً، أرغب في الاستفسار عن الاشتراك في منصة Tabloz')}`"
           target="_blank"
           rel="noopener noreferrer"
-          class="bg-bg hover:border-emerald-500/50 border-primary/10 p-fluid group flex flex-col items-center rounded-2xl border transition"
+          class="bg-bg border-primary/10 p-fluid group flex flex-col items-center rounded-2xl border transition hover:border-emerald-500/50"
         >
           <div
             class="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 transition group-hover:scale-105"

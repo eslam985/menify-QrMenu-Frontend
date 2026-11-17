@@ -1,6 +1,6 @@
 <!-- app/components/dashboard/restaurant/RestaurantForm.vue -->
 <script setup lang="ts">
-import { RolesList } from "~/constants/auth"; 
+import { RolesList } from "~/constants/auth";
 
 definePageMeta({
   layout: "dashboard",
@@ -38,7 +38,6 @@ const removeAddress = (index: number) => {
 };
 
 const handleRestaurantSubmit = async () => {
-  
   const address: string | null = stringifyAddresses(addresses.value);
 
   const payload: UpdateRestaurantType["body"] = {
@@ -49,8 +48,7 @@ const handleRestaurantSubmit = async () => {
   handleSubmit({
     formDataPayload: payload,
     isSubmitting,
-    apiCall: () =>
-      restaurantStore.updateRestaurant(payload),
+    apiCall: () => restaurantStore.updateRestaurant(payload),
   });
 };
 
@@ -162,9 +160,9 @@ onUnmounted(() => {
                 class="bg-denger/10 text-denger hover:bg-denger/20 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors"
                 title="حذف الفرع"
               >
-              <span class="btn-danger">
-                <Icon name="lucide:trash-2"/>
-              </span>
+                <span class="btn-danger">
+                  <Icon name="lucide:trash-2" />
+                </span>
               </button>
             </div>
           </div>

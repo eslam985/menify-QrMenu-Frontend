@@ -106,7 +106,7 @@ export const useApi = () => {
     opts: Record<string, unknown> = {},
   ): Promise<T> => {
     try {
-      return await base<T>(url, opts) as T;
+      return (await base<T>(url, opts)) as T;
     } catch (err: unknown) {
       const { status, code } = handleGlobalError(err, "", false);
 
@@ -137,7 +137,7 @@ export const useApi = () => {
 
       authStore.accessToken = token;
 
-      return await base<T>(url, opts) as T;
+      return (await base<T>(url, opts)) as T;
     }
   };
 

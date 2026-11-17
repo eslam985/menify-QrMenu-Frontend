@@ -7,7 +7,6 @@ const { publicMenuStore, todayHours } = usePublicMenuState();
 const branchAddresses = computed(() =>
   parseAddresses(publicMenuStore.restaurant?.address),
 );
-
 </script>
 
 <template>
@@ -84,21 +83,24 @@ const branchAddresses = computed(() =>
           <div
             class="gap-fluid text-fluid-sm flex max-w-xl flex-wrap items-center text-white/80"
           >
-        <template v-if="branchAddresses.length > 0">
-          <span
-            v-for="(branch, index) in branchAddresses"
-            :key="index"
-            class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5"
-          >
-            <Icon name="lucide:map-pin" class="text-primary h-4 w-4 shrink-0" />
-            <span>
-              <strong v-if="branch.branch_name" class="font-semibold">
-                {{ branch.branch_name }}:
-              </strong>
-              {{ branch.address }}
-            </span>
-          </span>
-        </template>
+            <template v-if="branchAddresses.length > 0">
+              <span
+                v-for="(branch, index) in branchAddresses"
+                :key="index"
+                class="border-primary/15 px-fluid flex items-center gap-1.5 rounded-full border bg-white/10 py-1.5"
+              >
+                <Icon
+                  name="lucide:map-pin"
+                  class="text-primary h-4 w-4 shrink-0"
+                />
+                <span>
+                  <strong v-if="branch.branch_name" class="font-semibold">
+                    {{ branch.branch_name }}:
+                  </strong>
+                  {{ branch.address }}
+                </span>
+              </span>
+            </template>
 
             <span
               v-if="todayHours"

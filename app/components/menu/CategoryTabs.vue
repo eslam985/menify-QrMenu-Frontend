@@ -5,12 +5,8 @@ import { useMenuNavigation } from "~/composables/menu/useMenuNavigation";
 
 const { activeCategory, isSticky, scrollToCategory, handleScroll } =
   useMenuNavigation();
-const {
-  targetCategories,
-  publicMenuStore,
-  selectedsection,
-  sections,
-} = usePublicMenuState();
+const { targetCategories, publicMenuStore, selectedsection, sections } =
+  usePublicMenuState();
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll, true);
@@ -20,7 +16,6 @@ onUnmounted(() => window.removeEventListener("scroll", handleScroll, true));
 
 watch(selectedsection, () => (activeCategory.value = null));
 </script>
-
 
 <template>
   <div dir="rtl" v-if="publicMenuStore.categories.length" class="my-fluid">

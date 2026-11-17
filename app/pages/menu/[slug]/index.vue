@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import type { CartItem } from "~/types/dataType/menuItemType";
 import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
+import { useMenuSeo } from "~/composables/menu/useMenuSeo";
 import { useShowModal } from "#imports";
 
 const { publicMenuStore, PublicSlug, notFound, handleFetchMenu } =
@@ -19,63 +20,12 @@ await useAsyncData(
   { watch: [PublicSlug] },
 );
 
-// 1. السيو الديناميكي لكل مطعم (يظهر في جوجل وعند مشاركة الرابط على واتساب وفيسبوك)
-useSeoMeta({
-  title: () =>
-    publicMenuStore.restaurant?.name
-      ? `منيو ${publicMenuStore.restaurant.name} | Tabloz`
-      : "منيو المطعم | Tabloz",
-  description: () =>
-    publicMenuStore.restaurant?.description ||
-    `تصفح القائمة الرقمية والأسعار والعروض الخاصة بـ ${publicMenuStore.restaurant?.name || "المطعم"} عبر Tabloz.`,
-  ogTitle: () =>
-    publicMenuStore.restaurant?.name
-      ? `منيو ${publicMenuStore.restaurant.name}`
-      : "منيو المطعم",
-  ogDescription: () =>
-    publicMenuStore.restaurant?.description ||
-    "تصفح المنيو الإلكتروني واطلب بسهولة.",
-  ogImage: () => publicMenuStore.restaurant?.logo_url || "/imgs/hero.webp",
-  twitterCard: "summary_large_image",
-  robots: () => (notFound.value ? "noindex, nofollow" : "index, follow"),
-});
-
-// 2. البيانات المنظمة (Schema.org) ليفهم جوجل أن الصفحة قائمة طعام لمطعم
-useSchemaOrg([
-  defineWebPage({
-    name: () =>
-      publicMenuStore.restaurant?.name
-        ? `منيو ${publicMenuStore.restaurant.name}`
-        : "منيو المطعم",
-  }),
-  {
-    "@type": "Restaurant",
-    name: () => publicMenuStore.restaurant?.name,
-    description: () => publicMenuStore.restaurant?.description,
-    image: () => publicMenuStore.restaurant?.logo_url,
-    telephone: () => publicMenuStore.restaurant?.phone,
-    address: () => publicMenuStore.restaurant?.address,
-    hasMenu: {
-      "@type": "Menu",
-      name: () => `قائمة طعام ${publicMenuStore.restaurant?.name || ""}`,
-      hasMenuSection: () =>
-        publicMenuStore.categories.map((cat) => ({
-          "@type": "MenuSection",
-          name: cat.name,
-          hasMenuItem: cat.items.slice(0, 15).map((item) => ({
-            "@type": "MenuItem",
-            name: item.title,
-            description: item.description,
-            offers: {
-              "@type": "Offer",
-              price: item.price,
-              priceCurrency: publicMenuStore.restaurant?.currency || "EGP",
-            },
-          })),
-        })),
-    },
-  },
-]);
+// السيو الديناميكي والبيانات المنظمة للمطعم
+useMenuSeo(
+  computed(() => publicMenuStore.restaurant),
+  computed(() => publicMenuStore.categories),
+  notFound,
+);
 </script>
 
 <template>

@@ -32,9 +32,11 @@ const clearCart = () => {
           <span class="btn-primary">عرض الفاتورة</span>
         </div>
         <span class="text-fluid-p">
-          اجمالي الفاتورة 
-          <span class="text-success">({{ formatPrice(cartStore.totalPrice) }}
-          {{ publicMenuStore.restaurant?.currency || "EGP" }})</span>
+          اجمالي الفاتورة
+          <span class="text-success"
+            >({{ formatPrice(cartStore.totalPrice) }}
+            {{ publicMenuStore.restaurant?.currency || "EGP" }})</span
+          >
         </span>
       </button>
     </div>

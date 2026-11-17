@@ -21,7 +21,8 @@
     </nav>
 
     <NuxtLink to="/" class="text-fluid-xs cursor-pointer">
-      © {{ new Date().getFullYear() }} <span class="text-primary font-bold">Tabloz</span>. جميع الحقوق محفوظة.
+      © {{ new Date().getFullYear() }}
+      <span class="text-primary font-bold">Tabloz</span>. جميع الحقوق محفوظة.
     </NuxtLink>
   </footer>
 </template>

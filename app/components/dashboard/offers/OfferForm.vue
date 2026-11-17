@@ -94,7 +94,7 @@ const loadData = async () => {
     title: string;
     offer_price: string | number;
     description: string;
-  }  
+  };
   const tasks: Promise<unknown>[] = [];
 
   if (categoryStore.categoriesCount < 1)
@@ -105,7 +105,9 @@ const loadData = async () => {
   if (tasks.length > 0) await Promise.all(tasks);
 
   if (isEditMode.value && id.value) {
-    let targetOffer: OfferResponse | undefined = offerStore.offers.find((o) => o.id === id.value);
+    let targetOffer: OfferResponse | undefined = offerStore.offers.find(
+      (o) => o.id === id.value,
+    );
 
     if (!targetOffer) {
       await loadOfferData();
@@ -114,7 +116,7 @@ const loadData = async () => {
 
     if (targetOffer) {
       const initialValues: initialValuesType = populateOfferData(targetOffer);
-      
+
       setFormConfig(offerFieldsConfig, handleSubmitOffer, initialValues);
     }
   } else {

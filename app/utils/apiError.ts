@@ -49,7 +49,6 @@ export const handleGlobalError = (
   };
 };
 
-
 export const mapRegisterError = (status?: number, message?: string): string => {
   if (status === 403) {
     return "كود الدعوة غير صالح أو منتهي الصلاحية";

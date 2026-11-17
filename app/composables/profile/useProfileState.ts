@@ -3,7 +3,6 @@ import { storeToRefs } from "pinia";
 import type { SessionResponse } from "@/types/userType/userType";
 
 export const useProfileState = () => {
-
   const notiStore = useNotificationStore();
   const authStore = useAuthStore();
   const userStore = useUserStore();

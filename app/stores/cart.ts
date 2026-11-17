@@ -8,16 +8,15 @@ export const useCartStore = defineStore("cart", () => {
   const currentSlug = ref<string | null>(null);
   let isInitializing = false;
 
-
   const getRouteSlug = (): string | null => {
     try {
       const route = useRoute();
       const slug = route?.params?.slug;
       if (typeof slug === "string") return slug;
       if (Array.isArray(slug) && slug[0]) return slug[0];
-    } catch(err) {
+    } catch (err) {
       // route may not be available outside Nuxt context
-      console.error(err)
+      console.error(err);
       return null;
     }
     return null;

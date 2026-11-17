@@ -5,7 +5,6 @@ export interface submitType<TData = unknown> {
   onSuccess?: (isSuccess: boolean) => void | Promise<void>;
 }
 
-
 export const useSubmitstate = () => {
   const handleSubmit = async <TData = unknown>({
     formDataPayload,
@@ -19,8 +18,9 @@ export const useSubmitstate = () => {
 
     // التحقق من وجود بيانات صالحة سواء كانت نصاً أو كائناً
     if (formDataPayload !== undefined) {
-      if (typeof formDataPayload === "string" && !formDataPayload.trim()) return;
-      
+      if (typeof formDataPayload === "string" && !formDataPayload.trim())
+        return;
+
       if (
         typeof formDataPayload === "object" &&
         formDataPayload !== null &&

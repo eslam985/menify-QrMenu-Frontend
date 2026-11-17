@@ -24,6 +24,9 @@ useSeoMeta({
   ogTitle: "Tabloz - منيو إلكتروني ذكي للمطاعم والكافيهات",
   ogDescription:
     "منيو إلكتروني تفاعلي عبر QR كود مع حاسبة فاتورة ذكية ولوحة تحكم كاملة لتعديل الأسعار والأصناف في ثوانٍ.",
+  ogType: "website",
+  ogLocale: "ar_AR",
+  ogUrl: "https://tabloz-bice.vercel.app",
   twitterCard: "summary_large_image",
 });
 
@@ -48,7 +51,6 @@ useSchemaOrg([
   },
 ]);
 </script>
-
 
 <template>
   <div class="bg-bg text-text flex min-h-screen flex-col justify-between">

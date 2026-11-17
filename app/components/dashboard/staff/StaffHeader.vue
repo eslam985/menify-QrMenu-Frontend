@@ -1,7 +1,7 @@
 <!-- /tabloz/frontend/app/components/dashboard/staff/StaffHeader.vue -->
 <script setup lang="ts">
 import { useStaffState } from "~/composables/staff/useStaffState";
-const { staffStore, searchQuery, handleRefresh } = useStaffState()
+const { staffStore, searchQuery, handleRefresh } = useStaffState();
 </script>
 
 <template>

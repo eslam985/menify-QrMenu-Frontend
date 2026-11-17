@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { usePublicMenuState } from "~/composables/menu/usePublicMenu";
-import { useMenuShare } from "~/composables/menu/useMenuShare"; 
-const {  menuLink, qrCodeUrl, copied, generateQr, copyLink} = useMenuShare()
-const { slug, } =
-  usePublicMenuState();
+import { useMenuShare } from "~/composables/menu/useMenuShare";
+const { menuLink, qrCodeUrl, copied, generateQr, copyLink } = useMenuShare();
+const { slug } = usePublicMenuState();
 
 onMounted(() => {
   generateQr();

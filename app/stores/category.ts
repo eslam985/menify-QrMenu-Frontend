@@ -33,7 +33,6 @@ export const useCategoryStore = defineStore("category", () => {
     () => (id: string) => categories.value.find((c) => c.id === id),
   );
 
-  
   async function fetchCategories(force = false) {
     if (isLoading.value) return false;
     if (!force && isLoaded.value) return true;

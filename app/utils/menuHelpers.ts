@@ -14,6 +14,5 @@ export const menuHelpers = () => {
     }, 0);
   };
 
-
   return { getOriginalTotal };
 };

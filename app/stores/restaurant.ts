@@ -14,9 +14,10 @@ export const useRestaurantStore = defineStore("restaurant", () => {
   const isLoaded = ref(false);
 
   const restaurantStatus = computed(() => restaurant.value?.status);
-  const subscription_ends_at = computed(() => restaurant.value?.subscription_ends_at);
+  const subscription_ends_at = computed(
+    () => restaurant.value?.subscription_ends_at,
+  );
   const joinIn = computed(() => restaurant.value?.created_at);
-
 
   async function fetchRestaurant(force = false) {
     if (isLoading.value) return false;
@@ -30,7 +31,7 @@ export const useRestaurantStore = defineStore("restaurant", () => {
       if (!res || !res.success || !res.data) return false;
 
       restaurant.value = res.data;
-      isLoaded.value = true
+      isLoaded.value = true;
       return res.success;
     } catch (err) {
       handleGlobalError(err, "فشل جلب البيانات ! ");

@@ -21,6 +21,14 @@ export default defineSitemapEventHandler(async () => {
       loc: `/menu/${restaurant.slug}`,
       changefreq: "daily" as const,
       priority: 0.9,
+      images: restaurant.logo_url
+        ? [
+            {
+              loc: restaurant.logo_url,
+              title: restaurant.name,
+            },
+          ]
+        : [],
     }));
   } catch (err) {
     console.error("Sitemap fetch error:", err);

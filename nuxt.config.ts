@@ -2,7 +2,14 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-  modules: ["@pinia/nuxt", "@nuxt/icon/module", "@nuxtjs/color-mode", "@nuxtjs/sitemap", "@nuxtjs/robots", "nuxt-schema-org"],
+  modules: [
+    "@pinia/nuxt",
+    "@nuxt/icon/module",
+    "@nuxtjs/color-mode",
+    "@nuxtjs/sitemap",
+    "@nuxtjs/robots",
+    "nuxt-schema-org",
+  ],
   compatibilityDate: "2025-07-15",
   telemetry: false,
   devtools: { enabled: true },
@@ -43,6 +50,21 @@ export default defineNuxtConfig({
       scrollBehaviorType: "smooth",
     },
   },
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: "ar",
+        dir: "rtl",
+      },
+      meta: [
+        { charset: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "format-detection", content: "telephone=no" },
+      ],
+      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+    },
+  },
+
   pinia: {
     storesDirs: ["stores"],
   },
@@ -74,7 +96,6 @@ export default defineNuxtConfig({
       "ودّع المنيوهات الورقية، وابدأ المستقبل مع Tabloz. منيو إلكتروني تفاعلي عبر QR كود مع لوحة تحكم كاملة.",
     defaultLocale: "ar",
   },
-    // 2. التحكم في الزحف ومنع أرشفة صفحات الداشبورد والحسابات
   robots: {
     disallow: [
       "/dashboard",
@@ -87,13 +108,8 @@ export default defineNuxtConfig({
     allow: ["/", "/about", "/contact", "/terms", "/privacy", "/menu/**"],
   },
 
-  // 3. ربط السايت ماب بمصدر الروابط الديناميكية للمطاعم
   sitemap: {
     sources: ["/__sitemap__/urls"],
-    exclude: [
-      "/dashboard/**",
-      "/auth/**",
-      "/subscription-inactive",
-    ],
-  },  
+    exclude: ["/dashboard/**", "/auth/**", "/subscription-inactive"],
+  },
 });
