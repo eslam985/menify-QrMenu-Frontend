@@ -75,14 +75,14 @@ const { openModal: openItemModal } = useShowModal("item-model");
           class="mb-section-fluid border-primary/30 scroll-mt-24 border-b pb-3"
         >
           <h2
-            class="text-fluid-h2 text-text mb-fluid border-primary/10 border-b pb-2 font-bold"
+            class="text-fluid-h2 text-primary mb-fluid border-primary/10 border-b pb-2 font-bold"
           >
             {{ category.name }}
           </h2>
 
           <div
             :class="[
-              'scrollbar-thumb-primary/20 gap-fluid grid snap-x snap-mandatory scrollbar-thin scrollbar-track-transparent auto-cols-[260px] grid-flow-col overflow-x-auto pt-1 pb-4 sm:auto-cols-80 md:auto-cols-[320px]',
+              'scrollbar-thumb-primary/20 gap-fluid grid snap-x snap-mandatory scrollbar-thin scrollbar-track-transparent auto-cols-[200px] grid-flow-col overflow-x-auto pt-1 pb-4 sm:auto-cols-[220px] md:auto-cols-[240px]',
               category.items.length > 8 ? 'grid-rows-2' : 'grid-rows-1',
             ]"
           >
@@ -91,7 +91,7 @@ const { openModal: openItemModal } = useShowModal("item-model");
               :key="item.id"
               @click="openItemModal(item)"
               :class="[
-                'bg-card text-text p-fluid border-primary/25 group hover:border-primary/50 flex w-full snap-start flex-col justify-between rounded-3xl border shadow-xl',
+                'bg-card text-text p-fluid border-primary/25 group hover:border-primary/50 flex snap-start flex-col justify-between rounded-3xl border shadow-xl',
                 item.is_available
                   ? 'cursor-pointer hover:scale-[1.02]'
                   : 'cursor-not-allowed opacity-60',
@@ -148,7 +148,7 @@ const { openModal: openItemModal } = useShowModal("item-model");
               >
                 <span class="text-fluid-xs text-text/50 font-bold">السعر</span>
 
-                <span class="text-primary text-xl font-black">
+                <span class="text-success text-xl font-black">
                   {{ formatPrice(item.price) }}
                   <span class="ext-fluid-xs">
                     {{ publicMenuStore.restaurant?.currency }}

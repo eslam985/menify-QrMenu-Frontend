@@ -167,8 +167,8 @@ const { publicMenuStore } = usePublicMenuState();
                       class="text-fluid-xs text-text/60"
                     >
                       الإجمالي:
-                      <strong class="text-primary font-bold">
-                        <span class="text-primary font-black">
+                      <strong class="text-success font-bold">
+                        <span class="text-success font-black">
                           {{ formatPrice(item.unit_price * item.quantity) }}
                           <span class="ext-fluid-xs">
                             {{ publicMenuStore.restaurant?.currency }}
@@ -262,7 +262,7 @@ const { publicMenuStore } = usePublicMenuState();
                 >سعر العرض الخاص</span
               >
               <div class="flex items-baseline gap-2.5">
-                <span class="text-primary text-fluid-p font-black">
+                <span class="text-success text-fluid-p font-black">
                   {{
                     formatPrice(offer.offer_price) +
                     " " +

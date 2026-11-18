@@ -75,10 +75,8 @@ watch(selectedsection, () => (activeCategory.value = null));
             :key="category.id"
             @click="scrollToCategory(category.id)"
             :class="[
-              'px-fluid text-fluid-p cursor-pointer rounded-xl py-2 font-bold whitespace-nowrap transition-all',
-              activeCategory === category.id
-                ? 'bg-primary text-white shadow-md dark:text-black'
-                : 'bg-bg text-text md:hover:text-primary',
+              'btn-primary p-fluid py-2.5 font-bold whitespace-nowrap ',
+              activeCategory === category.id ? 'text-fluid-h3' : 'text-text text-fluid-p',
             ]"
           >
             {{ category.name }}

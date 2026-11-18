@@ -156,7 +156,7 @@ onMounted(async () => {
       <UiBaseForm>
         <template #extra-fields>
           <div class="gap-section-fluid mt-2 flex flex-col">
-            <div class="gap-fluid grid grid-cols-1 items-end md:grid-cols-3">
+            <div class="gap-fluid grid grid-cols-1 items-end md:grid-cols-3 mb-fluid">
               <div>
                 <label
                   class="text-fluid-xs text-primary mb-1.5 block font-medium"

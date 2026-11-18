@@ -5,6 +5,7 @@ const telegram = supportTelegram || "+201013080898";
 
 <template>
   <div id="pricing" class="w-full text-right">
+    <!-- Header -->
     <div class="mb-section-fluid">
       <h2 class="text-primary text-(length:--text-fluid-h2) font-bold">
         باقات الأسعار والاشتراكات
@@ -15,16 +16,17 @@ const telegram = supportTelegram || "+201013080898";
     </div>
 
     <div class="gap-fluid grid w-full grid-cols-1 md:grid-cols-3">
+      <!-- plan 1 -->
       <div
-        class="bg-card p-fluid border-primary/10 shadow-soft relative flex flex-col justify-between overflow-hidden rounded-xl border"
+        class="bg-card p-fluid border-primary/10 shadow-soft relative flex flex-col justify-between gap-section overflow-hidden rounded-xl border"
       >
         <div
           class="bg-primary/20 text-primary px-fluid text-fluid-xs absolute top-0 left-0 rounded-br-xl py-1 font-bold"
         >
           تجربة مرنة
         </div>
-        <div class="flex flex-col items-center">
-          <h3 class="mb-2 text-(length:--text-fluid-h3) font-bold">
+        <div class="flex flex-col">
+          <h3 class="mb-2 text-fluid-h2 font-bold">
             الاشتراك الشهري
           </h3>
           <p class="text-text/60 mb-fluid text-fluid-xs">
@@ -55,6 +57,7 @@ const telegram = supportTelegram || "+201013080898";
         </a>
       </div>
 
+      <!-- plan 2 -->
       <div
         class="bg-card p-fluid border-primary/20 shadow-soft relative flex flex-col justify-between overflow-hidden rounded-xl border"
       >
@@ -64,7 +67,7 @@ const telegram = supportTelegram || "+201013080898";
           الأكثر توفيراً
         </div>
         <div>
-          <h3 class="mb-2 text-(length:--text-fluid-h3) font-bold">
+          <h3 class="mb-2 text-fluid-h2 font-bold">
             اشتراك نصف سنوي
           </h3>
           <p class="text-text/60 mb-fluid text-fluid-xs">
@@ -98,6 +101,7 @@ const telegram = supportTelegram || "+201013080898";
         </a>
       </div>
 
+      <!-- plan 3 -->
       <div
         class="bg-card p-fluid border-primary shadow-soft relative flex flex-col justify-between overflow-hidden rounded-xl border-2"
       >
@@ -107,7 +111,7 @@ const telegram = supportTelegram || "+201013080898";
           العضوية المميزة
         </div>
         <div>
-          <h3 class="mb-2 text-(length:--text-fluid-h3) font-bold">
+          <h3 class="mb-2 text-fluid-h2 font-bold">
             اشتراك سنوي
           </h3>
           <p class="text-text/60 mb-fluid text-fluid-xs">

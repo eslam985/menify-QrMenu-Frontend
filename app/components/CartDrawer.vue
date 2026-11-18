@@ -47,10 +47,10 @@ onMounted(()=> {
     <div
       v-if="isCartOpen"
       @click.self="isCartOpen = false"
-      class="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex justify-start bg-black/60 backdrop-blur-sm"
     >
       <div
-        class="bg-card p-fluid border-primary/10 flex h-full w-full max-w-md flex-col border-l shadow-2xl"
+        class="bg-card p-fluid border-primary/10 flex h-full md:w-full max-w-md flex-col border-l shadow-2xl"
       >
         <div
           class="border-primary/10 flex items-center justify-between border-b pb-4"
@@ -85,7 +85,7 @@ onMounted(()=> {
                   {{ item.quantity }} × {{ formatPrice(item.price) }}
                   {{ publicMenuStore.restaurant?.currency || "EGP" }}
                 </span>
-                <span class="text-primary font-bold">
+                <span class="text-success font-bold">
                   {{ formatPrice(item.price * item.quantity) }}
                   {{ publicMenuStore.restaurant?.currency || "EGP" }}
                 </span>
@@ -118,7 +118,7 @@ onMounted(()=> {
           >
             <span>الإجمالي الكلي:</span>
 
-            <span class="text-primary text-xl font-black">
+            <span class="text-success text-fluid-h3 font-black">
               {{ formatPrice(cartStore.totalPrice) }}
               <span class="ext-fluid-xs">
                 {{ publicMenuStore.restaurant?.currency }}
