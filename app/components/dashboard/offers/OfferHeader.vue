@@ -26,7 +26,7 @@ const {
     </div>
 
     <div class="gap-fluid flex w-full flex-wrap items-center lg:w-auto">
-      <div class="relative w-full sm:w-60">
+      <div class="relative  w-[40%] sm:w-72">
         <span
           class="text-text/40 text-fluid-xs pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
           >🔍</span
