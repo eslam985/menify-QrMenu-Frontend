@@ -1,8 +1,10 @@
 <!-- app/pages/terms.vue -->
 <script setup lang="ts">
+const { siteName } = useBrand();
+
 useSeoMeta({
-  title: "الشروط والأحكام - Tabloz",
-  description: "الشروط والأحكام المنظمة لاستخدام منصة Tabloz وباقات الاشتراك.",
+  title: `الشروط والأحكام - ${siteName}`,
+  description: `الشروط والأحكام المنظمة لاستخدام منصة ${siteName} وباقات الاشتراك.`,
 });
 </script>
 
@@ -28,8 +30,9 @@ useSeoMeta({
             1. قبول الشروط
           </h2>
           <p class="text-text/80 text-fluid-sm">
-            باستخدامك لمنصة <strong>Tabloz</strong> أو تسجيل مطعمك أو الكافيه
-            الخاص بك، فإنك توافق على الالتزام الكامل بهذه الشروط والأحكام.
+            باستخدامك لمنصة <strong>{{ siteName }}</strong> أو تسجيل مطعمك أو
+            الكافيه الخاص بك، فإنك توافق على الالتزام الكامل بهذه الشروط
+            والأحكام.
           </p>
         </section>
 

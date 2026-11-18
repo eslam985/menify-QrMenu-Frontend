@@ -1,5 +1,10 @@
+<script setup lang="ts">
+const { siteName, supportTelegram } = useBrand();
+const telegram = supportTelegram || "+201013080898";
+</script>
+
 <template>
-  <div id="pricing" class=" w-full text-right">
+  <div id="pricing" class="w-full text-right">
     <div class="mb-section-fluid">
       <h2 class="text-primary text-(length:--text-fluid-h2) font-bold">
         باقات الأسعار والاشتراكات
@@ -42,7 +47,7 @@
           </ul>
         </div>
         <a
-          href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في الباقة الشهرية (أول شهر مجاناً) لبرنامج tabloz"
+          :href="`https://t.me/${telegram}?text=${encodeURIComponent(`مرحباً، أرغب في الاشتراك في الباقة الشهرية (أول شهر مجاناً) لبرنامج ${siteName}`)}`"
           target="_blank"
           class="btn-primary p-fluid text-center"
         >
@@ -85,7 +90,7 @@
           </ul>
         </div>
         <a
-          href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في باقة النصف سنوي (1200 ج) لبرنامج tabloz"
+          :href="`https://t.me/${telegram}?text=${encodeURIComponent(`مرحباً، أرغب في الاشتراك في باقة النصف سنوي (1200 ج) لبرنامج ${siteName}`)}`"
           target="_blank"
           class="btn-primary p-fluid text-center"
         >
@@ -129,7 +134,7 @@
           </ul>
         </div>
         <a
-          href="https://t.me/+201013080898?text=مرحباً، أرغب في الاشتراك في الباقة السنوية (2700 ج) لبرنامج tabloz"
+          :href="`https://t.me/${telegram}?text=${encodeURIComponent(`مرحباً، أرغب في الاشتراك في الباقة السنوية (2700 ج) لبرنامج ${siteName}`)}`"
           target="_blank"
           class="btn-primary p-fluid text-center"
         >

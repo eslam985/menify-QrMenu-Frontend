@@ -1,8 +1,10 @@
 <!-- app/pages/privacy.vue -->
 <script setup lang="ts">
+const { siteName } = useBrand();
+
 useSeoMeta({
-  title: "سياسة الخصوصية - Tabloz",
-  description: "كيف تقوم منصة Tabloz بجمع وحماية بيانات المطاعم والزوار.",
+  title: `سياسة الخصوصية - ${siteName}`,
+  description: `كيف تقوم منصة ${siteName} بجمع وحماية بيانات المطاعم والزوار.`,
 });
 </script>
 

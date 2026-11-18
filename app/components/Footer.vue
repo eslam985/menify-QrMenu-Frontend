@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { siteName } = useBrand();
+</script>
+
 <template>
   <footer
     dir="rtl"
@@ -22,7 +26,8 @@
 
     <NuxtLink to="/" class="text-fluid-xs cursor-pointer">
       © {{ new Date().getFullYear() }}
-      <span class="text-primary font-bold">Tabloz</span>. جميع الحقوق محفوظة.
+      <span class="text-primary font-bold">{{ siteName }}</span
+      >. جميع الحقوق محفوظة.
     </NuxtLink>
   </footer>
 </template>

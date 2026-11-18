@@ -1,9 +1,10 @@
 <!-- app/pages/about.vue -->
 <script setup lang="ts">
+const { siteName } = useBrand();
+
 useSeoMeta({
-  title: "من نحن - Tabloz",
-  description:
-    "تعرف على منصة Tabloz للتحول الرقمي وإدارة المنيو الإلكتروني للمطاعم والكافيهات.",
+  title: `من نحن - ${siteName}`,
+  description: `تعرف على منصة ${siteName} للتحول الرقمي وإدارة المنيو الإلكتروني للمطاعم والكافيهات.`,
 });
 </script>
 
@@ -23,9 +24,9 @@ useSeoMeta({
         <p
           class="text-text/70 text-fluid-p mx-auto mt-3 max-w-2xl leading-relaxed"
         >
-          نحن في <strong class="text-primary">Tabloz</strong> نساعد المطاعم
-          والكافيهات على التحول الرقمي الكامل وتقديم تجربة طلب عصرية وسريعة
-          لعملائهم.
+          نحن في <strong class="text-primary">{{ siteName }}</strong> نساعد
+          المطاعم والكافيهات على التحول الرقمي الكامل وتقديم تجربة طلب عصرية
+          وسريعة لعملائهم.
         </p>
       </div>
 

@@ -1,16 +1,22 @@
 <!-- app/pages/contact.vue -->
 <script setup lang="ts">
+const {
+  siteName,
+  supportWhatsapp,
+  supportEmail,
+  supportTelegram,
+  supportFacebook,
+} = useBrand();
+
 useSeoMeta({
-  title: "تواصل معنا - Tabloz",
-  description:
-    "تواصل مع فريق دعم Tabloz للاستفسارات وطلبات الاشتراك في المنيو الإلكتروني.",
+  title: `تواصل معنا - ${siteName}`,
+  description: `تواصل مع فريق دعم ${siteName} للاستفسارات وطلبات الاشتراك في المنيو الإلكتروني.`,
 });
 
-const config = useRuntimeConfig();
-const whatsapp = String(config.public.supportWhatsapp || "").replace(/\D/g, "");
-const email = String(config.public.supportEmail || "");
-const telegram = String(config.public.supportTelegram || "").replace(/^@/, "");
-const facebook = String(config.public.supportFacebook || "");
+const whatsapp = supportWhatsapp.replace(/\D/g, "");
+const email = supportEmail;
+const telegram = supportTelegram.replace(/^@/, "");
+const facebook = supportFacebook;
 </script>
 
 <template>
@@ -28,8 +34,8 @@ const facebook = String(config.public.supportFacebook || "");
       <p
         class="text-text/70 text-fluid-p mx-auto mt-2 max-w-xl leading-relaxed"
       >
-        فريق دعم <strong>Tabloz</strong> جاهز للرد على استفساراتك ومساعدتك في
-        إنشاء المنيو الخاص بمطعمك أو كافيهك في أسرع وقت.
+        فريق دعم <strong>{{ siteName }}</strong> جاهز للرد على استفساراتك
+        ومساعدتك في إنشاء المنيو الخاص بمطعمك أو كافيهك في أسرع وقت.
       </p>
 
       <!-- قنوات التواصل المباشر (Grid 2x2 متناسق) -->
@@ -37,7 +43,7 @@ const facebook = String(config.public.supportFacebook || "");
         <!-- واتساب -->
         <a
           v-if="whatsapp"
-          :href="`https://wa.me/${whatsapp}?text=${encodeURIComponent('مرحباً، أرغب في الاستفسار عن الاشتراك في منصة Tabloz')}`"
+          :href="`https://wa.me/${whatsapp}?text=${encodeURIComponent(`مرحباً، أرغب في الاستفسار عن الاشتراك في منصة ${siteName}`)}`"
           target="_blank"
           rel="noopener noreferrer"
           class="bg-bg border-primary/10 p-fluid group flex flex-col items-center rounded-2xl border transition hover:border-emerald-500/50"

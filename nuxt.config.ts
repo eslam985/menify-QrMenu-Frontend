@@ -1,6 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
 
+const siteName = process.env.NUXT_PUBLIC_SITE_NAME ?? "Tabloz";
+const siteUrl =
+  process.env.NUXT_PUBLIC_SITE_URL ?? "https://tabloz-bice.vercel.app";
+
 export default defineNuxtConfig({
   modules: [
     "@pinia/nuxt",
@@ -16,6 +20,9 @@ export default defineNuxtConfig({
   spaLoadingTemplate: true, // a loader instead of a blank screen while the SPA boots
   runtimeConfig: {
     public: {
+      siteName,
+      siteUrl,
+      nuxtPublicSiteUrl: siteUrl,
       supportWhatsapp: process.env.NUXT_PUBLIC_SUPPORT_WHATSAPP ?? "",
       supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL ?? "",
       supportTelegram: process.env.NUXT_PUBLIC_SUPPORT_TELEGRAM ?? "", // اسم المستخدم بدون @ مثلاً: tabloz_support
@@ -90,10 +97,9 @@ export default defineNuxtConfig({
 
   // 1. تعريف هوية الموقع الأساسية (تُستخدم لبناء Canonical URLs والسايت ماب تلقائياً)
   site: {
-    url: "https://tabloz-bice.vercel.app",
-    name: "Tabloz - منيو إلكتروني ذكي للمطاعم والكافيهات",
-    description:
-      "ودّع المنيوهات الورقية، وابدأ المستقبل مع Tabloz. منيو إلكتروني تفاعلي عبر QR كود مع لوحة تحكم كاملة.",
+    url: siteUrl,
+    name: `${siteName} - منيو إلكتروني ذكي للمطاعم والكافيهات`,
+    description: `ودّع المنيوهات الورقية، وابدأ المستقبل مع ${siteName}. منيو إلكتروني تفاعلي عبر QR كود مع لوحة تحكم كاملة.`,
     defaultLocale: "ar",
   },
   robots: {

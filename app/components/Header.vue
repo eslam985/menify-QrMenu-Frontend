@@ -1,4 +1,7 @@
-<!-- /project_Full-stack/tabloz/frontend/app/components/Header.vue -->
+<script setup lang="ts">
+const { siteName, firstLetter } = useBrand();
+</script>
+
 <template>
   <header
     class="border-primary/50 p-fluid mx-auto flex w-full items-center justify-between border-b 2xl:max-w-[80%]"
@@ -44,12 +47,12 @@
         <span
           class="text-text md:hover:text-primary text-(length:--text-fluid-h3) font-black tracking-tight"
         >
-          Tabloz
+          {{ siteName }}
         </span>
         <div
           class="bg-card shadow-glow text-fluid-h3 text-primary border-primary/20 flex h-10 w-10 items-center justify-center rounded-xl border font-black"
         >
-          T
+          {{ firstLetter }}
         </div>
       </NuxtLink>
     </div>

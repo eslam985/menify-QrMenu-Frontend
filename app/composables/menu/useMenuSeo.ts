@@ -4,6 +4,7 @@ import type {
   PublicMenuCategory,
 } from "~/types/dataType/publicMenuType";
 import { toIsoCurrency } from "~/constants/currency";
+import { useBrand } from "~/composables/useBrand";
 
 /**
  * Composable مخصص لإدارة السيو والبيانات المنظمة (Schema.org) لصفحة المنيو العامة
@@ -16,6 +17,8 @@ export const useMenuSeo = (
   categories: Ref<PublicMenuCategory[]> | ComputedRef<PublicMenuCategory[]>,
   notFound: Ref<boolean> | ComputedRef<boolean>,
 ) => {
+  const { siteName } = useBrand();
+
   // 1. معالجة حالة الـ 404 على السيرفر فقط (Server-side Only) لمنع مشكلة Soft 404
   if (import.meta.server) {
     try {
@@ -32,16 +35,16 @@ export const useMenuSeo = (
   useSeoMeta({
     title: () =>
       notFound.value
-        ? "المنيو غير متاح | Tabloz"
+        ? `المنيو غير متاح | ${siteName}`
         : restaurant.value?.name
-          ? `منيو ${restaurant.value.name} | Tabloz`
-          : "منيو المطعم | Tabloz",
+          ? `منيو ${restaurant.value.name} | ${siteName}`
+          : `منيو المطعم | ${siteName}`,
 
     description: () =>
       notFound.value
         ? "عذراً، هذا المنيو غير متاح أو الرابط غير صحيح."
         : restaurant.value?.description ||
-          `تصفح القائمة الرقمية والأسعار والعروض الخاصة بـ ${restaurant.value?.name || "المطعم"} عبر Tabloz.`,
+          `تصفح القائمة الرقمية والأسعار والعروض الخاصة بـ ${restaurant.value?.name || "المطعم"} عبر ${siteName}.`,
 
     ogTitle: () =>
       notFound.value
@@ -55,7 +58,7 @@ export const useMenuSeo = (
         ? "عذراً، هذا المنيو غير متاح أو الرابط غير صحيح."
         : restaurant.value?.description ||
           "تصفح المنيو الإلكتروني واطلب بسهولة.",
-          
+
     ogImage: () =>
       !notFound.value && restaurant.value?.logo_url
         ? restaurant.value.logo_url
