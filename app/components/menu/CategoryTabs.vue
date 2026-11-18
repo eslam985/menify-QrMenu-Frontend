@@ -5,14 +5,19 @@ import { useMenuNavigation } from "~/composables/menu/useMenuNavigation";
 
 const { activeCategory, isSticky, scrollToCategory, handleScroll } =
   useMenuNavigation();
+
 const { targetCategories, publicMenuStore, selectedsection, sections } =
   usePublicMenuState();
 
 onMounted(() => {
-  window.addEventListener("scroll", handleScroll, true);
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  // حساب الموضع الأولي فور التحميل (في حال تم عمل refresh والصفحة ممررة لأسفل)
+  handleScroll();
 });
 
-onUnmounted(() => window.removeEventListener("scroll", handleScroll, true));
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleScroll);
+});
 
 watch(selectedsection, () => (activeCategory.value = null));
 </script>
@@ -37,40 +42,48 @@ watch(selectedsection, () => (activeCategory.value = null));
       </span>
     </div>
 
-    <div
-      :class="[
-        'z-50 w-full transition-all duration-300',
-        isSticky
-          ? 'px-fluid bg-bg/95 fixed top-0 right-0 left-0 py-3 shadow-md backdrop-blur-md'
-          : 'my-fluid relative',
-      ]"
-    >
+    <!-- نقطة الارتكاز (Sentinel): تظل دائماً في مكانها الطبيعي في الـ DOM لقياس موضع الشريط ديناميكياً -->
+    <div id="category-tabs-sentinel" class="pointer-events-none h-0 w-full" />
+
+    <!-- حاوية تحافظ على المساحة لمنع قفزة المحتوى (Layout Shift) عند تحول الشريط إلى Fixed -->
+    <div :class="{ 'h-16': isSticky }">
       <div
         :class="[
-          'p-fluid no-scrollbar bg-card/80 border-primary/30 flex items-center gap-2 overflow-x-auto border-y',
-          isSticky ? 'mx-auto md:max-w-[90%] md:rounded-xl' : 'md:rounded-full',
+          'z-50 w-full transition-all duration-300',
+          isSticky
+            ? 'px-fluid bg-bg/95 fixed top-0 right-0 left-0 py-3 shadow-md backdrop-blur-md'
+            : 'my-fluid relative',
         ]"
       >
-        <select v-model="selectedsection" class="select-primary">
-          <option value="كل الاقسام">كل الاقسام</option>
-          <option v-for="sec in sections" :key="sec.value" :value="sec.value">
-            {{ sec.label }}
-          </option>
-        </select>
-
-        <button
-          v-for="category in targetCategories"
-          :key="category.id"
-          @click="scrollToCategory(category.id)"
+        <div
           :class="[
-            'px-fluid text-fluid-p cursor-pointer rounded-xl py-2 font-bold whitespace-nowrap transition-all',
-            activeCategory === category.id
-              ? 'bg-primary text-white shadow-md dark:text-black'
-              : 'bg-bg text-text md:hover:text-primary',
+            'p-fluid no-scrollbar bg-card/80 border-primary/30 flex items-center gap-2 overflow-x-auto border-y',
+            isSticky
+              ? 'mx-auto md:max-w-[90%] md:rounded-xl'
+              : 'md:rounded-full',
           ]"
         >
-          {{ category.name }}
-        </button>
+          <select v-model="selectedsection" class="select-primary">
+            <option value="كل الاقسام">كل الاقسام</option>
+            <option v-for="sec in sections" :key="sec.value" :value="sec.value">
+              {{ sec.label }}
+            </option>
+          </select>
+
+          <button
+            v-for="category in targetCategories"
+            :key="category.id"
+            @click="scrollToCategory(category.id)"
+            :class="[
+              'px-fluid text-fluid-p cursor-pointer rounded-xl py-2 font-bold whitespace-nowrap transition-all',
+              activeCategory === category.id
+                ? 'bg-primary text-white shadow-md dark:text-black'
+                : 'bg-bg text-text md:hover:text-primary',
+            ]"
+          >
+            {{ category.name }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
