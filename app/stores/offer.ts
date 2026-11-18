@@ -17,6 +17,7 @@ export const useOfferStore = defineStore("offer", () => {
   const isLoading = ref(false);
   const isSaving = ref(false);
   const isLoaded = ref(false);
+  let fetchPromise: Promise<boolean> | null = null;
 
   const offersCount = computed(() => offers.value?.length);
   const offersIsActiveCount = computed(
@@ -26,25 +27,51 @@ export const useOfferStore = defineStore("offer", () => {
     () => offers.value.filter((offer) => !offer.is_active).length,
   );
 
-  async function fetchOffers(params?: ListOffersType["query"], force = false) {
-    if (isLoading.value) return false;
+  const getOfferById = async (offerId: string) => {
+    if(!offerId) return
+    const findOffer = () => 
+      offers.value.find((offer) => String(offer.id) === String(offerId));
+
+    // 1. بحث سريع في البيانات الموجودة حالياً
+    const cachedOffer = findOffer();
+    if (cachedOffer) return cachedOffer;
+
+    // 2. لو مش موجودة، نجيب البيانات من السيرفر
+    const res = await fetchOffers();
+    if (!res) return undefined;
+
+    // 3. نبحث تاني بعد التحديث ونرجع النتيجة مباشرة (العنصر أو undefined)
+    return findOffer();
+  };
+
+
+  async function fetchOffers(params?: ListOffersType["query"], force = false): Promise<boolean> {
+    // لو فيه طلب شغال فعلاً ونفس الشروط، استناه يخلص بدل ما ترجع false
+    if (fetchPromise && !force && !params) return fetchPromise;
     if (!force && !params && isLoaded.value) return true;
+
     isLoading.value = true;
-    try {
-      const res = await offerService.getOffers(params);
 
-      if (!res || !res.success) return;
+    fetchPromise = (async () => {
+      try {
+        const res = await offerService.getOffers(params);
+        if (!res || !res.success) return false;
 
-      offers.value = res.data || [];
-      if (!params) isLoaded.value = true;
-      return res.success;
-    } catch (err: unknown) {
-      handleGlobalError(err, "فشل جلب العروض ! ");
-      return false;
-    } finally {
-      isLoading.value = false;
-    }
+        offers.value = res.data || [];
+        if (!params) isLoaded.value = true;
+        return true;
+      } catch (err: unknown) {
+        handleGlobalError(err, "فشل جلب العروض ! ");
+        return false;
+      } finally {
+        isLoading.value = false;
+        fetchPromise = null;
+      }
+    })();
+
+    return fetchPromise;
   }
+
 
   async function addOffer(body: CreateOfferType["body"]) {
     if (isSaving.value) return false;
@@ -166,6 +193,7 @@ export const useOfferStore = defineStore("offer", () => {
     addOffer,
     updateOffer,
     removeOffer,
+    getOfferById,
   };
 });
 // 153

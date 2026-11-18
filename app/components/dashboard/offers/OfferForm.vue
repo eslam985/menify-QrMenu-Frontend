@@ -35,7 +35,7 @@ const {
   buildOfferPayload,
   populateOfferData,
 } = useOfferState();
-
+const route = useRoute();
 const isEditMode = computed(() => Boolean(id.value));
 
 const offerFieldsConfig: FormField[] = [
@@ -47,14 +47,7 @@ const offerFieldsConfig: FormField[] = [
     type: "text",
     colspan: "col-span-3 md:col-span-2",
   },
-  {
-    column: "offer_price",
-    value: "",
-    label: "سعر العرض (ج.م) - اختياري",
-    required: false,
-    type: "number",
-    colspan: "col-span-3 md:col-span-1",
-  },
+
   {
     column: "description",
     value: "",
@@ -62,6 +55,14 @@ const offerFieldsConfig: FormField[] = [
     required: false,
     type: "textarea",
     colspan: "col-span-3",
+  },
+  {
+    column: "offer_price",
+    value: "",
+    label: "سعر العرض (ج.م) - اختياري",
+    required: false,
+    type: "number",
+    colspan: "col-span-3 md:col-span-1",
   },
 ];
 
@@ -125,8 +126,17 @@ const loadData = async () => {
   }
 };
 
+const currentOffer = ref<OfferResponse | undefined>();
+
+watch(
+  () => route.params.id,
+  async (newId) => {
+    currentOffer.value = await offerStore.getOfferById(String(newId));
+  },
+  { immediate: true }, // عشان تشتغل أول ما الصفحة تفتح وعند الـ Reload
+);
+
 onMounted(async () => {
-  console.log("isEditMode.value: ", isEditMode.value);
   await loadData();
 });
 </script>
@@ -156,7 +166,9 @@ onMounted(async () => {
       <UiBaseForm>
         <template #extra-fields>
           <div class="gap-section-fluid mt-2 flex flex-col">
-            <div class="gap-fluid grid grid-cols-1 items-end md:grid-cols-3 mb-fluid">
+            <div
+              class="gap-fluid mb-fluid grid grid-cols-1 items-end md:grid-cols-3"
+            >
               <div>
                 <label
                   class="text-fluid-xs text-primary mb-1.5 block font-medium"
@@ -321,6 +333,15 @@ onMounted(async () => {
                       <Icon name="lucide:trash-2" class="h-4 w-4" />
                     </button>
                   </div>
+                </div>
+
+                <div
+                  v-if="currentOffer?.original_total"
+                  class="bg-bg px-fluid text-text flex rounded-full py-2"
+                >
+                  <span>اجمالي سعر الاصناف قبل العرض:</span>
+
+                  <span class="text-success ms-2">{{ currentOffer.original_total }}</span>
                 </div>
               </div>
             </div>

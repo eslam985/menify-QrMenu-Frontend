@@ -100,7 +100,7 @@
   }
 
   .select-primary {
-    @apply text-primary bg-bg px-fluid mx-fluid text-fluid-p border-primary/30 cursor-pointer rounded-lg border py-1.5 shadow-md outline-none;
+    @apply text-primary bg-bg px-fluid text-fluid-p border-primary/30 cursor-pointer rounded-lg border py-1.5 shadow-md outline-none;
   }
 }
 

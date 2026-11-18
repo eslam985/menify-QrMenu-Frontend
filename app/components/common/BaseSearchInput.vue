@@ -20,7 +20,7 @@ const computedPlaceholder = computed(() => {
 </script>
 
 <template>
-  <div class="relative w-full sm:w-72">
+  <div class="relative w-[40%] sm:w-72">
     <span
       class="text-primary text-fluid-sm pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5"
     >
@@ -31,7 +31,7 @@ const computedPlaceholder = computed(() => {
       v-model="modelValue"
       type="text"
       :placeholder="computedPlaceholder"
-      class="bg-card border-primary/10 text-text focus:border-primary text-fluid-sm p-section-fluid w-full rounded-xl border py-2.5 shadow-xs transition focus:outline-none"
+      class="bg-card border-primary/10 text-text focus:border-primary text-fluid-sm p-section-fluid w-full rounded-xl border py-2.5 shadow-xs transition focus:outline-none ps-8"
     />
 
     <button

@@ -47,6 +47,7 @@ export const useItemStore = defineStore("item", () => {
     if (isLoading.value) return false;
     if (!force && !params && isLoaded.value) return true;
 
+    isLoading.value = true
     try {
       const res = await itemService.getItems(params);
       if (!res) return false;

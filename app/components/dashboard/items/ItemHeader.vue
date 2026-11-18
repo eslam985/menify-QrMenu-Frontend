@@ -32,7 +32,7 @@ const {
       <select
         :value="selectedCategoryFilter"
         @change="setCategoryFilter(($event.target as HTMLSelectElement).value)"
-        class="bg-card border-primary/10 text-text focus:border-primary text-fluid-xs cursor-pointer rounded-xl border p-2.5 shadow-xs focus:outline-none"
+        class="select-primary p-fluid"
       >
         <option value="">جميع التصنيفات</option>
         <option
@@ -47,7 +47,7 @@ const {
       <button
         @click="handleRefresh"
         :disabled="itemStore.isLoading"
-        class="bg-card border-primary/10 text-text hover:text-primary flex cursor-pointer items-center justify-center rounded-xl border p-2.5 shadow-xs transition disabled:opacity-50"
+        class="btn-primary flex p-fluid"
         title="تحديث البيانات"
       >
         <Icon
@@ -60,7 +60,7 @@ const {
       <button
         v-if="authStore?.isEditorAndAbove"
         @click="openItemModal()"
-        class="btn-primary flex justify-between gap-1"
+        class="btn-primary flex justify-between gap-1 p-fluid"
       >
         <span>إضافة صنف جديد</span>
         <Icon name="lucide:plus" class="h-4 w-4 self-center" />
@@ -70,7 +70,7 @@ const {
         <button
           type="button"
           @click="openModalItemReorderModal"
-          class="btn-primary text-text"
+          class="btn-primary text-text p-fluid"
         >
           <Icon name="lucide:arrow-up-down" class="h-4 w-4" />
           ترتيب الأصناف
