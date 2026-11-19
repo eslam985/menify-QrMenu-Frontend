@@ -1,6 +1,7 @@
 import { useItemSearch } from "~/composables/item/useItemSearch";
 import type { CategoryResponse } from "~/types/dataType/categoryType";
 import type { MenuItemResponse } from "~/types/dataType/menuItemType";
+
 export const useItemState = () => {
   const {
     selectedCategoryFilter,
@@ -14,6 +15,7 @@ export const useItemState = () => {
   const itemStore = useItemStore();
   const authStore = useAuthStore();
   const isAvailable = ref<boolean>(true);
+  const selectedStatus = ref("");
 
   const matchesSearchText = (
     text: string | null | undefined,
@@ -55,8 +57,15 @@ export const useItemState = () => {
 
     return result;
   });
+  const getItemsByStatus = () => {
+    const status = selectedStatus.value;
+    itemStore.fetchItems(status ? { is_available: status === "true" } : {});
+  };
 
   const handleRefresh = async () => {
+    searchQuery.value = ""
+    selectedCategoryFilter.value = "";
+    selectedStatus.value = "";
     const isSuccess = await itemStore.fetchItems({}, true);
 
     if (isSuccess) notiStore.show("تم تحديث الأصناف بنجاح", "success");
@@ -77,10 +86,12 @@ export const useItemState = () => {
     searchQuery,
     notiStore,
     authStore,
+    selectedStatus,
     itemStore,
     setCategoryFilter,
     setSearchQuery,
     handleRefresh,
     loadItemsData,
+    getItemsByStatus,
   };
 };

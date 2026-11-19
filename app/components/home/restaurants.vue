@@ -14,7 +14,7 @@ await useAsyncData("home-restaurants", async () => {
   >
     <div class="text-right">
       <h3 class="text-(length:--text-fluid-h3) font-bold">
-        اختـر المطاعـم أو الكـافيهات الممـيزه لـدينــا
+        تصفح المطاعـم أو الكـافيهات الممـيزه لـدينــا
       </h3>
       <p class="text-text/60 text-fluid-xs mt-1">
         تصفح القوائم الرقمية للمطاعم أو الكـافيهات المتاحة فوراً

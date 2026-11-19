@@ -2,8 +2,8 @@
 <script setup lang="ts">
 import { useItemState } from "@/composables/item/useItemState";
 import { useItemModal } from "~/composables/item/useItemModal";
-const { openItemModal } = useItemModal();
 import { useItemReorderModal } from "~/composables/item/useItemReorderModal";
+const { openItemModal } = useItemModal();
 const { openModalItemReorderModal } = useItemReorderModal();
 const {
   selectedCategoryFilter,
@@ -13,7 +13,15 @@ const {
   itemStore,
   setCategoryFilter,
   handleRefresh,
+  selectedStatus,
+  getItemsByStatus,
 } = useItemState();
+
+const statusItems = [
+  { label: "كل الاصناف", value: "" },
+  { label: "الاصناف النشطة", value: "true" },
+  { label: "الاصناف الغير نشطة حاليا", value: "false" },
+];
 </script>
 
 <template>
@@ -28,6 +36,20 @@ const {
         placeholder="بحث في الأصناف..."
         class="sm:w-60"
       />
+
+      <select
+        v-model="selectedStatus"
+        @change="getItemsByStatus"
+        class="select-primary p-fluid"
+      >
+        <option
+          v-for="item in statusItems"
+          :key="item.label"
+          :value="item.value"
+        >
+          {{ item.label }}
+        </option>
+      </select>
 
       <select
         :value="selectedCategoryFilter"
@@ -47,7 +69,7 @@ const {
       <button
         @click="handleRefresh"
         :disabled="itemStore.isLoading"
-        class="btn-primary flex p-fluid"
+        class="btn-primary p-fluid flex"
         title="تحديث البيانات"
       >
         <Icon
@@ -60,7 +82,7 @@ const {
       <button
         v-if="authStore?.isEditorAndAbove"
         @click="openItemModal()"
-        class="btn-primary flex justify-between gap-1 p-fluid"
+        class="btn-primary p-fluid flex justify-between gap-1"
       >
         <span>إضافة صنف جديد</span>
         <Icon name="lucide:plus" class="h-4 w-4 self-center" />

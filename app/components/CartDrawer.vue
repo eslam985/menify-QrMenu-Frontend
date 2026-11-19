@@ -13,20 +13,21 @@ const clearCart = () => {
   cartStore.clearCart();
   isCartOpen.value = false;
 };
-onMounted(()=> {
-  cartStore.initCart()
-})
+onMounted(() => {
+  cartStore.initCart();
+});
 </script>
 
 <template>
   <div>
+    <!-- بدل السطر القديم في CartDrawer.vue -->
     <div
       v-if="cartStore.items.length > 0"
-      class="fixed bottom-6 left-1/2 z-40 w-[90%] max-w-xl -translate-x-1/2"
+      class="fixed inset-x-0 bottom-3 z-40 mx-auto w-[92%] max-w-xl"
     >
       <button
         @click="isCartOpen = true"
-        class="bg-card border-primary/20 p-fluid shadow-glow flex w-full cursor-pointer flex-row-reverse items-center justify-between rounded-xl border font-bold transition hover:opacity-95"
+        class="bg-card gap-fluid border-primary/20 p-fluid shadow-glow flex w-full cursor-pointer flex-row-reverse items-center justify-between rounded-xl border font-bold transition hover:opacity-95"
       >
         <div class="gap-fluid flex items-center">
           <span class="px-fluid text-fluid-sm text-primary rounded-lg py-1">
@@ -50,7 +51,7 @@ onMounted(()=> {
       class="fixed inset-0 z-50 flex justify-start bg-black/60 backdrop-blur-sm"
     >
       <div
-        class="bg-card p-fluid border-primary/10 flex h-full md:w-full max-w-md flex-col border-l shadow-2xl"
+        class="bg-card p-fluid border-primary/10 flex h-full max-w-md flex-col border-l shadow-2xl md:w-full"
       >
         <div
           class="border-primary/10 flex items-center justify-between border-b pb-4"

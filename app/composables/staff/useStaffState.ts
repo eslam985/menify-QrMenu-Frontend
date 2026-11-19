@@ -14,6 +14,7 @@ export const useStaffState = () => {
   const isAdmin = computed(() => authStore.isAdmin);
 
   const handleRefresh = async () => {
+    searchQuery.value = ""
     const isSuccess = await staffStore.getStaff(true);
     if (isSuccess) notiStore.show("تم تحديث البيانات بنجاح", "success");
   };

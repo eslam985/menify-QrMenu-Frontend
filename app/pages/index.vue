@@ -11,11 +11,12 @@ useHomeSeo();
     >
       <HomeHeroHome />
 
+      <HomeFeaturesCards />
+
       <HomeRestaurants />
 
       <HomeSubscriptionPrices />
 
-      <HomeFeaturesCards />
     </main>
   </div>
 </template>

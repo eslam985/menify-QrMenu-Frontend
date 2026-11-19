@@ -11,6 +11,7 @@ export const useCategoryState = () => {
     await categoryStore.fetchCategories(force);
 
   const handleRefresh = async () => {
+    searchQuery.value = ""
     const isSuccess = await loadCategoreData(true);
 
     if (isSuccess) notiStore.show("تم تحديث البيانات بنجاح", "success");

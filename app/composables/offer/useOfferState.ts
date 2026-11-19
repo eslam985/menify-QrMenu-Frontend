@@ -51,6 +51,8 @@ export const useOfferState = () => {
   };
 
   const handleRefresh = async () => {
+    searchQuery.value = "";
+    statusFilter.value = "";
     const isSuccess = await loadOfferData(true);
     if (isSuccess) notiStore.show("تم تحديث العروض بنجاح", "success");
   };
