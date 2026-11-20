@@ -1,40 +1,19 @@
 <!-- app/pages/auth/forgot-password.vue -->
 <script setup lang="ts">
-import { ref } from "vue";
-import { useAuthService } from "@/services/authService";
-
 definePageMeta({ middleware: "guest" });
 
-const { requestPasswordReset } = useAuthService();
-
+const authStore = useAuthStore();
 const email = ref("");
-const isLoading = ref(false);
-const errorMessage = ref("");
-const successMessage = ref("");
 
 const handleSubmit = async () => {
-  errorMessage.value = "";
-  successMessage.value = "";
-
   if (!email.value.trim()) {
-    errorMessage.value = "يرجى إدخال البريد الإلكتروني";
+    authStore.errorMessage = "يرجى إدخال البريد الإلكتروني";
     return;
   }
 
-  isLoading.value = true;
-  try {
-    const res = await requestPasswordReset(email.value.trim().toLowerCase());
-    if (res?.success) {
-      successMessage.value =
-        "إذا كان البريد الإلكتروني مسجلاً، ستصلك رسالة بكود التحقق خلال دقيقة.";
-    }
-  } catch (err: any) {
-    const msg = err?.data?.message ?? err?.message ?? "حدث خطأ، يرجى المحاولة لاحقاً.";
-    errorMessage.value = msg;
-  } finally {
-    isLoading.value = false;
-  }
+  await authStore.requestPasswordReset(email.value.trim().toLowerCase());
 };
+
 </script>
 
 <template>
@@ -53,23 +32,27 @@ const handleSubmit = async () => {
       </div>
 
       <!-- Success state -->
-      <div v-if="successMessage" class="gap-fluid flex flex-col">
+      <div v-if="authStore.successMessage" class="gap-fluid flex flex-col">
         <div
-          class="bg-success/10 p-fluid text-fluid-sm text-success rounded-xl flex items-start gap-2"
+          class="bg-success/10 p-fluid text-fluid-sm text-success flex items-start gap-2 rounded-xl"
         >
           <Icon name="heroicons:check-circle" class="mt-0.5 shrink-0" />
-          <span>{{ successMessage }}</span>
+          <span>{{ authStore.successMessage }}</span>
         </div>
-        <NuxtLink
-          to="/auth/reset-password"
-          class="bg-primary text-white p-fluid rounded-xl text-center font-semibold hover:opacity-90 transition-opacity"
-        >
-          أدخل رمز التحقق →
-        </NuxtLink>
+
+        <div class="flex justify-center mt-fluid">
+          <NuxtLink 
+            to="/auth/reset-password"
+            class="btn-primary p-fluid text-center"
+          >
+            أدخل رمز التحقق →
+          </NuxtLink>
+        </div>
+
         <div class="text-text/60 text-fluid-xs text-center">
           <button
-            class="text-primary hover:underline font-medium"
-            :disabled="isLoading"
+            class="text-primary font-medium hover:underline"
+            :disabled="authStore.isLoading"
             @click="handleSubmit"
           >
             إعادة إرسال الرمز
@@ -78,7 +61,11 @@ const handleSubmit = async () => {
       </div>
 
       <!-- Form -->
-      <form v-else class="gap-fluid flex flex-col" @submit.prevent="handleSubmit">
+      <form
+        v-else
+        class="gap-fluid flex flex-col"
+        @submit.prevent="handleSubmit"
+      >
         <div class="flex flex-col gap-1">
           <label for="email" class="text-text text-fluid-sm font-medium">
             البريد الإلكتروني
@@ -90,29 +77,34 @@ const handleSubmit = async () => {
             autocomplete="email"
             placeholder="example@email.com"
             required
-            class="border-primary/20 focus:border-primary focus:ring-primary/20 bg-background text-text placeholder:text-text/40 w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-2 transition-all"
+            class="border-primary/20 focus:border-primary focus:ring-primary/20 bg-background text-text placeholder:text-text/40 w-full rounded-xl border px-4 py-3 text-sm transition-all outline-none focus:ring-2"
           />
         </div>
 
         <p
-          v-if="errorMessage"
+          v-if="authStore.errorMessage"
           class="bg-danger/10 p-fluid text-fluid-sm text-danger rounded-xl"
         >
-          {{ errorMessage }}
+          {{ authStore.errorMessage }}
         </p>
 
         <button
           type="submit"
-          :disabled="isLoading"
-          class="bg-primary text-white p-fluid rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          :disabled="authStore.isLoading || authStore.isLoaded || !email"
+          class="btn-primary"
         >
-          <Icon v-if="isLoading" name="svg-spinners:3-dots-fade" />
-          <span>{{ isLoading ? "جاري الإرسال..." : "إرسال رمز التحقق" }}</span>
+          <Icon v-if="authStore.isLoading" name="svg-spinners:3-dots-fade" />
+          <span>{{
+            authStore.isLoading ? "جاري الإرسال..." : "إرسال رمز التحقق"
+          }}</span>
         </button>
 
         <div class="text-text/60 text-fluid-xs text-center">
           تذكرت كلمة المرور؟
-          <NuxtLink to="/auth/login" class="text-primary font-bold hover:underline">
+          <NuxtLink
+            to="/auth/login"
+            class="text-primary font-bold hover:underline"
+          >
             تسجيل الدخول
           </NuxtLink>
         </div>

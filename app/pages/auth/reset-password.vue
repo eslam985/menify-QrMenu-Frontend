@@ -1,68 +1,55 @@
 <!-- app/pages/auth/reset-password.vue -->
 <script setup lang="ts">
-import { ref } from "vue";
-import { useAuthService } from "@/services/authService";
-
 definePageMeta({ middleware: "guest" });
 
-const { confirmPasswordReset } = useAuthService();
+const authStore = useAuthStore();
 const router = useRouter();
 
-const email = ref("");
-const otp = ref("");
-const newPassword = ref("");
-const confirmPassword = ref("");
-
-const isLoading = ref(false);
-const errorMessage = ref("");
-const successMessage = ref("");
+const form = ref({
+  email: "",
+  otp: "",
+  newPassword: "",
+  confirmPassword: "",
+});
 
 // Client-side validation before hitting the API
 const validate = (): string | null => {
-  if (!email.value.trim()) return "البريد الإلكتروني مطلوب";
-  if (!/^\d{6}$/.test(otp.value.trim()))
+  if (!form.value.email.trim()) return "البريد الإلكتروني مطلوب";
+  if (!/^\d{6}$/.test(form.value.otp.trim()))
     return "رمز التحقق يجب أن يكون 6 أرقام";
-  if (newPassword.value.length < 8)
+  if (form.value.newPassword.length < 8)
     return "كلمة المرور يجب أن تكون 8 أحرف على الأقل";
-  if (newPassword.value !== confirmPassword.value)
+  if (form.value.newPassword !== form.value.confirmPassword)
     return "كلمتا المرور غير متطابقتين";
   return null;
 };
 
 const handleSubmit = async () => {
-  errorMessage.value = "";
-  successMessage.value = "";
-
   const validationError = validate();
+
   if (validationError) {
-    errorMessage.value = validationError;
+    authStore.errorMessage = validationError;
     return;
   }
 
-  isLoading.value = true;
-  try {
-    const res = await confirmPasswordReset({
-      email: email.value.trim().toLowerCase(),
-      otp: otp.value.trim(),
-      newPassword: newPassword.value,
-    });
+  const payload = {
+    email: form.value.email.trim().toLowerCase(),
+    otp: form.value.otp.trim(),
+    newPassword: form.value.newPassword,
+  };
 
-    if (res?.success) {
-      successMessage.value =
-        "تم تغيير كلمة المرور بنجاح! سيتم توجيهك لصفحة الدخول...";
-      setTimeout(() => router.push("/auth/login"), 2500);
-    }
-  } catch (err: any) {
-    const msg =
-      err?.data?.message ??
-      err?.data?.errors?.otp?.[0] ??
-      err?.message ??
-      "رمز التحقق غير صالح أو منتهي الصلاحية. يرجى طلب كود جديد.";
-    errorMessage.value = msg;
-  } finally {
-    isLoading.value = false;
-  }
+  const success = await authStore.confirmPasswordReset(payload);
+
+  if (!success) return;
+  
+  setTimeout(() => router.push("/auth/login"), 2500);
 };
+
+onMounted(() => {
+  // Resetting the success message is required when the page loads. If it is not reset, the form will not   appear, and you will have to reload the page first for the form to display.
+  authStore.successMessage = "";
+  authStore.errorMessage = "";
+});
 </script>
 
 <template>
@@ -84,11 +71,11 @@ const handleSubmit = async () => {
 
       <!-- Success state -->
       <div
-        v-if="successMessage"
+        v-if="authStore.successMessage"
         class="bg-success/10 p-fluid text-fluid-sm text-success flex items-start gap-2 rounded-xl"
       >
         <Icon name="heroicons:check-circle" class="mt-0.5 shrink-0" />
-        <span>{{ successMessage }}</span>
+        <span>{{ authStore.successMessage }}</span>
       </div>
 
       <!-- Form -->
@@ -104,7 +91,7 @@ const handleSubmit = async () => {
           </label>
           <input
             id="email"
-            v-model="email"
+            v-model="form.email"
             type="email"
             autocomplete="email"
             placeholder="example@email.com"
@@ -120,7 +107,7 @@ const handleSubmit = async () => {
           </label>
           <input
             id="otp"
-            v-model="otp"
+            v-model="form.otp"
             type="text"
             inputmode="numeric"
             autocomplete="one-time-code"
@@ -138,7 +125,7 @@ const handleSubmit = async () => {
           </label>
           <input
             id="new-password"
-            v-model="newPassword"
+            v-model="form.newPassword"
             type="password"
             autocomplete="new-password"
             placeholder="8 أحرف على الأقل"
@@ -158,7 +145,7 @@ const handleSubmit = async () => {
           </label>
           <input
             id="confirm-password"
-            v-model="confirmPassword"
+            v-model="form.confirmPassword"
             type="password"
             autocomplete="new-password"
             placeholder="أعد إدخال كلمة المرور"
@@ -168,20 +155,24 @@ const handleSubmit = async () => {
         </div>
 
         <p
-          v-if="errorMessage"
+          v-if="authStore.errorMessage"
           class="bg-danger/10 p-fluid text-fluid-sm text-danger rounded-xl"
         >
-          {{ errorMessage }}
+          {{ authStore.errorMessage }}
         </p>
 
-        <button
+        <div class="flex justify-center">
+          <button
           type="submit"
-          :disabled="isLoading"
-          class="bg-primary p-fluid flex items-center justify-center gap-2 rounded-xl font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          :disabled="authStore.isLoading"
+          class="btn-primary mt-fluid p-fluid"
         >
-          <Icon v-if="isLoading" name="svg-spinners:3-dots-fade" />
-          <span>{{ isLoading ? "جاري التحديث..." : "تعيين كلمة المرور" }}</span>
+          <Icon v-if="authStore.isLoading" name="svg-spinners:3-dots-fade" />
+          <span>{{
+            authStore.isLoading ? "جاري التحديث..." : "تعيين كلمة المرور"
+          }}</span>
         </button>
+        </div>
 
         <!-- Links -->
         <div class="gap-fluid flex flex-col text-center">

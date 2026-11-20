@@ -123,7 +123,7 @@ export const useAuthStore = defineStore("auth", () => {
       if (!success || !data) return false;
 
       successMessage.value = message;
-
+      
       return res.success;
     } catch (err: unknown) {
       const { status, message } = handleGlobalError(
@@ -135,6 +135,60 @@ export const useAuthStore = defineStore("auth", () => {
       return false;
     } finally {
       isSaving.value = false;
+    }
+  }
+  async function requestPasswordReset(email: string) {
+    if (!email || isSaving.value || isLoading.value) return false;
+
+    successMessage.value = "";
+    errorMessage.value = "";
+    isSaving.value = true;
+    isLoading.value = true;
+    try {
+      const res = await authService.requestPasswordReset(email);
+
+      if (!res || !res.success) return false;
+
+      successMessage.value = res.message;
+
+      console.log('res requestPasswordReset: ', res)
+      return res.success;
+    } catch (err: unknown) {
+
+      const { message } = handleGlobalError(err, "فشلت الطلب  ! ");
+      errorMessage.value = message;
+      return false;
+    } finally {
+      isSaving.value = false;
+      isLoading.value = false;
+    }
+  }
+
+    async function confirmPasswordReset(body: { email: string; otp: string; newPassword: string }) {
+    if (!body || isSaving.value || isLoading.value) return false;
+
+    successMessage.value = "";
+    errorMessage.value = "";
+    isSaving.value = true;
+    isLoading.value = true;
+    try {
+      const res = await authService.confirmPasswordReset(body);
+
+      if (!res) return false;
+
+      successMessage.value = res.message;
+
+      console.log('res confirmPasswordReset: ', res)
+
+      return true;
+    } catch (err: unknown) {
+      const { message } = handleGlobalError(err, "فشلت الطلب  ! ");
+
+      errorMessage.value = message;
+      return false;
+    } finally {
+      isSaving.value = false;
+      isLoading.value = false;
     }
   }
 
@@ -287,6 +341,8 @@ export const useAuthStore = defineStore("auth", () => {
     isAdmin,
     isEditorAndAbove,
     hasRole,
+    requestPasswordReset,
+    confirmPasswordReset,
     resetState,
     login,
     logout,
