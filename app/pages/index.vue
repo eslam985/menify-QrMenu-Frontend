@@ -16,7 +16,6 @@ useHomeSeo();
       <HomeRestaurants />
 
       <HomeSubscriptionPrices />
-
     </main>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="gap-fluid mt-12 grid w-full grid-cols-1 text-right md:grid-cols-3"
+    class="gap-fluid my-section-fluid grid w-full grid-cols-1 text-right md:grid-cols-3"
   >
     <div
       class="bg-card p-fluid border-primary/10 shadow-soft gap-fluid flex flex-col rounded-xl border"

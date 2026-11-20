@@ -89,7 +89,7 @@ const visibleNavLinks = computed(() => {
 
     <aside
       :class="[
-        'bg-card border-primary/10 p-fluid fixed inset-y-0 right-0 z-50 flex h-full w-64 shrink-0 flex-col justify-between border-l transition-transform duration-300 ease-in-out md:static',
+        'bg-card border-primary/10 p-fluid fixed inset-y-0 right-0 z-70 flex h-full w-64 shrink-0 flex-col justify-between border-l transition-transform duration-300 ease-in-out md:static',
         isMobileOpen
           ? 'translate-x-0 shadow-2xl'
           : 'translate-x-full md:translate-x-0',

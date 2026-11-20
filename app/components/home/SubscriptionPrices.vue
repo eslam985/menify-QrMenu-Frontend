@@ -4,7 +4,7 @@ const telegram = supportTelegram || "+201013080898";
 </script>
 
 <template>
-  <div id="pricing" class="w-full text-right">
+  <div id="pricing" class=" my-section-fluid w-full text-right">
     <!-- Header -->
     <div class="mb-section-fluid">
       <h2 class="text-primary text-(length:--text-fluid-h2) font-bold">

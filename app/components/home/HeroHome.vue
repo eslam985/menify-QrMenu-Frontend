@@ -3,7 +3,7 @@ const { siteName } = useBrand();
 </script>
 
 <template>
-  <div class="gap-fluid flex max-w-3xl flex-col">
+  <div class="gap-fluid my-section-fluid flex max-w-3xl flex-col">
     <h1 class="text-fluid-h1 leading-tight font-black tracking-tighter">
       ودّع المنيوهات الورقية، <br />
       <span class="text-primary">وابدأ المستقبل مع {{ siteName }}</span>
