@@ -78,11 +78,39 @@ export const useAuthService = () => {
     return res;
   }
 
+  async function requestPasswordReset(email: string) {
+    const res = await $fetch<Promise<BaseApiResponse>>(
+      `${apiBase()}/auth/password-reset/request`,
+      {
+        method: "POST",
+        body: { email },
+        credentials: "include",
+      },
+    );
+    return res;
+  }
+
+  async function confirmPasswordReset(
+    body: { email: string; otp: string; newPassword: string },
+  ) {
+    const res = await $fetch<Promise<BaseApiResponse>>(
+      `${apiBase()}/auth/password-reset/confirm`,
+      {
+        method: "POST",
+        body,
+        credentials: "include",
+      },
+    );
+    return res;
+  }
+
   return {
     findUserById,
     login,
     logout,
     init,
     register,
+    requestPasswordReset,
+    confirmPasswordReset,
   };
 };

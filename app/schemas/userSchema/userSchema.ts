@@ -141,3 +141,29 @@ export type LoginUserType = z.infer<typeof loginUserSchema>;
 export type ChangePasswordType = z.infer<typeof changePasswordSchema>;
 export type GetSessionsQueryType = z.infer<typeof getSessionsQuerySchema>;
 export type DeleteSessionByIdType = z.infer<typeof deleteSessionByIdSchema>;
+
+
+// ---------------------------------------------------------------
+// Password Reset Schemas (frontend)
+// ---------------------------------------------------------------
+const requestPasswordResetSchema = z.object({
+  body: z.strictObject({
+    email: emailField,
+  }),
+});
+
+const resetPasswordSchema = z.object({
+  body: z.strictObject({
+    email: emailField,
+    otp: z
+      .string({ error: "رمز التحقق مطلوب" })
+      .trim()
+      .length(6, "رمز التحقق يجب أن يكون 6 أرقام")
+      .regex(/^\d{6}$/, "رمز التحقق يجب أن يحتوي على أرقام فقط"),
+    newPassword: newPasswordField,
+  }),
+});
+
+export { requestPasswordResetSchema, resetPasswordSchema };
+export type RequestPasswordResetType = z.infer<typeof requestPasswordResetSchema>;
+export type ResetPasswordType = z.infer<typeof resetPasswordSchema>;

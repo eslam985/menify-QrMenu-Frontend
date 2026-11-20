@@ -84,6 +84,15 @@ onMounted(() => {
               {{ authStore.errorMessage }}
             </p>
 
+            <div class="text-left">
+              <NuxtLink
+                to="/auth/forgot-password"
+                class="text-primary text-fluid-xs hover:underline"
+              >
+                نسيت كلمة المرور؟
+              </NuxtLink>
+            </div>
+
             <div class="text-text/60 text-fluid-xs mt-2 text-center">
               ليس لديك مطعم مسجل؟
               <NuxtLink
